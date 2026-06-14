@@ -77,7 +77,7 @@ const TRANSLATIONS = {
     'calc-s-res-total-label': { ar: 'إجمالي القيمة النقدية المستلمة:', en: 'Total Cash Received:' },
     'calc-s-res-weight-label': { ar: 'الوزن الصافي المستحق للقيمة:', en: 'Net Eligible Weight:' },
     'calc-s-type-label': { ar: 'نوع الذهب المباع للصائغ', en: 'Gold Type Sold to Jeweler' },
-    'calc-s-weight-label': { ar: 'الوزن الإجمالي (جرام / جنيهات)', en: 'Total Weight' },
+    'calc-s-weight-label': { ar: 'الوزن الإجمالي (جرام)', en: 'Total Weight (grams)' },
     'calc-selector-label': { ar: 'اختر نوع العملية الحسابية:', en: 'Select Calculation Type:' },
     'calc-swap-new-heading': { ar: 'الذهب الجديد (المشتري من الصائغ)', en: 'New Gold (Purchased from Jeweler)' },
     'calc-swap-new-karat-label': { ar: 'العيار الجديد', en: 'New Karat' },
@@ -137,12 +137,12 @@ const TRANSLATIONS = {
     'guide-sec2-desc': { ar: 'يعرض هذا القسم أسعار الذهب الفورية في مصر لجميع الأعيرة (24، 21، 18، 14) بالإضافة إلى مؤشرات هامة مثل دولار الصاغة والدولار البنكي ونسبة الفجوة بينهما وسعر الأونصة العالمي. يوضح المخطط البياني حركة سعر عيار 21 خلال آخر 7 أيام لتحديد الوقت الأنسب للشراء أو البيع.', en: 'Displays live gold prices in Egypt for all karats (24, 21, 18, 14), plus key indicators like Gold Dollar, Bank Dollar, and the spread gap. The line chart shows the 21K price over the last 7 days to help you determine the best time to buy or sell.' },
     'guide-sec2-title': { ar: '📈 1. الأسعار والشارت (تحديث مباشر)', en: '📈 1. Spot Prices & Line Chart' },
     'guide-sec3-bullet1': { ar: '<b>تعدد المحافظ:</b> يمكنك إنشاء محافظ متعددة لتنظيم مدخراتك بشكل منفصل (مثلاً: محفظة شخصية، محفظة للأولاد).', en: '<b>Multiple Portfolios:</b> Create separate portfolios to organize savings (e.g., Personal, Kids).' },
-    'guide-sec3-bullet2': { ar: '<b>تسجيل العمليات:</b> يدعم تسجيل السبائك، الجنيهات، المشغولات والذهب القديم مع حساب "الكاش باك" التلقائي للشركات المعتمدة مثل BTC وسليمة.', en: '<b>Record Transactions:</b> Log bars, coins, jewelry, and scrap gold with automatic cashback calculation for BTC and Selema.' },
+    'guide-sec3-bullet2': { ar: '<b>تسجيل العمليات:</b> يدعم تسجيل السبائك، الجنيهات، المشغولات والذهب القديم ومتابعتها.', en: '<b>Record Transactions:</b> Log bars, coins, jewelry, and scrap gold.' },
     'guide-sec3-bullet3': { ar: '<b>إدخال سعر الشراء:</b> يمكنك إدخال المبلغ الإجمالي الذي دفعته، أو تركه فارغاً للذهب القديم الذي لا تتذكر سعره، وسيقوم البرنامج بحساب إحصائياتك بذكاء.', en: '<b>Optional Cost Input:</b> Leave the purchase price empty for old gold of unknown cost, and the system adjusts stats automatically.' },
     'guide-sec3-bullet4': { ar: '<b>محاكي الأهداف الادخارية:</b> حدد هدفاً بالجرامات وسيقوم البرنامج بحساب الوقت اللازم للوصول إليه بناءً على قدرتك الادخارية الشهرية.', en: '<b>Goal Simulator:</b> Set a target weight, and the app calculates the time to reach it based on your monthly savings capacity.' },
     'guide-sec3-title': { ar: '💼 2. إدارة المحفظة الاستثمارية', en: '💼 2. Portfolio Management' },
     'guide-sec4-bullet1': { ar: '<b>حاسبة الشراء:</b> لحساب التكلفة الإجمالية لشراء ذهب جديد شاملة سعر الذهب الخام، والمصنعية للجرام.', en: '<b>Purchase Calculator:</b> Calculate final cost including raw price and workmanship.' },
-    'guide-sec4-bullet2': { ar: '<b>حاسبة البيع والتصفية:</b> لحساب المبلغ المستلم عند البيع للصائغ مع احتساب استرداد الكاش باك للسبائك والجنيهات المغلفة.', en: '<b>Selling Calculator:</b> Calculate exact payout when selling gold, including cashback refunds.' },
+    'guide-sec4-bullet2': { ar: '<b>حاسبة البيع والتصفية:</b> لحساب المبلغ المستلم عند البيع للصائغ بناءً على أسعار السوق والعيار والوزن.', en: '<b>Selling Calculator:</b> Calculate exact payout when selling gold based on current market prices, karat, and weight.' },
     'guide-sec4-bullet3': { ar: '<b>حاسبة المبادلة:</b> لمبادلة ذهب قديم بآخر جديد ومعرفة الفارق المالي الواجب دفعه أو استلامه بدقة.', en: '<b>Gold Swap Calculator:</b> Swap old gold for new pieces with accurate cost difference calculations.' },
     'guide-sec4-bullet4': { ar: '<b>حاسبة الزكاة والصدقة:</b> لحساب النصاب الشرعي لذهبك (ما يعادل 85 جرام عيار 24) وتحديد قيمة زكاة المال الواجبة (2.5%) مع إمكانية حساب صدقة طوعية مخصصة.', en: '<b>Zakat Calculator:</b> Find if your gold reaches the Shariah Nisab (85g 24K) and calculate the 2.5% due Zakat and charity.' },
     'guide-sec4-bullet5': { ar: '<b>حاسبة الميزانية العكسية:</b> أدخل ميزانيتك بالجنيه وسيقترح عليك البرنامج أفضل خيارات الشراء المتاحة (سبائك، جنيهات، مشغولات) مع توضيح الوزن المقدر والكسور المتبقية.', en: '<b>Reverse Budget Calculator:</b> Enter your budget in EGP, and the app suggests the best combination of bars, coins, or jewelry.' },
@@ -172,14 +172,14 @@ const TRANSLATIONS = {
     'prof-name-label': { ar: '👤 الاسم:', en: '👤 Name:' },
     'prof-natid-label': { ar: '💳 الرقم القومي:', en: '💳 National ID:' },
     'prof-phone-label': { ar: '📞 رقم الهاتف:', en: '📞 Phone:' },
-    'quick-guide-tip1-desc': { ar: 'احرص على شراء سبائك مغلفة (كاش باك) لأن مصنعيتها قليلة ويُرد جزء منها عند البيع.', en: 'Buy certified wrapped bullion bars for low workmanship fees and cashback refund.' },
+    'quick-guide-tip1-desc': { ar: 'احرص على شراء السبائك لأن مصنعيتها أقل مقارنة بالمشغولات الذهبية.', en: 'Buy bullion bars as they have lower workmanship fees compared to jewelry.' },
     'quick-guide-tip1-title': { ar: 'السبائك أولاً:', en: 'Bullion Bars First:' },
     'quick-guide-tip2-desc': { ar: 'يزن 8 جرامات عيار 21 وهو خيار رائع لحفظ المدخرات المتوسطة وتسييلها بسرعة.', en: 'Weighs 8 grams 21K. A great choice for medium-sized savings.' },
     'quick-guide-tip2-title': { ar: 'الجنيه الذهب:', en: 'Gold Coin:' },
     'quick-guide-tip3-desc': { ar: 'تجنب المشغولات الفنية لغرض الادخار، فالصائغ يشتريها بوزنها الصافي كـ "ذهب كسر".', en: 'Avoid complex jewelry for savings; jewelers buy it back as scrap gold.' },
     'quick-guide-tip3-title': { ar: 'المصنعية الضائعة:', en: 'Jewelry Losses:' },
-    'quick-guide-tip4-desc': { ar: 'شركات كـ BTC و سليمة تتميز بأعلى درجات المصداقية والتداول الكاش باك.', en: 'BTC, Selema, and Master are highly recommended.' },
-    'quick-guide-tip4-title': { ar: 'الشركات المضمونة:', en: 'Verified Brands:' },
+    'quick-guide-tip4-desc': { ar: 'اختر دائماً الشركات والورش المعتمدة لضمان العيار والوزن والدقة.', en: 'Always choose certified brands to ensure correct karat, weight, and precision.' },
+    'quick-guide-tip4-title': { ar: 'الشركات المعتمدة:', en: 'Certified Brands:' },
     'quick-guide-title': { ar: 'نصائح استثمارية هامة للمدخرين', en: 'Practical Tips for Gold Savers' },
     'status-live': { ar: 'تحديث لحظي', en: 'Live Update' },
     'tab-admin': { ar: 'التحكم', en: 'IT Dashboard' },
@@ -1173,7 +1173,7 @@ function setupPortfolioListeners() {
 
             const workGroup = document.getElementById('workmanship-group');
             if (type === 'bar' || type === 'coin') {
-                brandGroup.style.display = 'flex';
+                brandGroup.style.display = 'none';
                 karatSelect.value = type === 'bar' ? '24k' : '21k';
                 if (type === 'bar') {
                     if (workGroup) workGroup.style.display = 'none';
@@ -1228,7 +1228,7 @@ function setupPortfolioListeners() {
             const workmanship = parseFloat(workInput.value) || 0;
             const buyPriceRaw = document.getElementById('tx-price').value;
             const buyPrice = buyPriceRaw ? parseFloat(buyPriceRaw) : 0;
-            const brand = type === 'bar' || type === 'coin' ? document.getElementById('tx-brand').value : 'none';
+            const brand = 'other';
 
             if (isNaN(weight) || weight <= 0 || (buyPriceRaw && (isNaN(buyPrice) || buyPrice < 0))) return;
 
@@ -1329,22 +1329,13 @@ function renderPortfolio() {
         }
         const karatPriceBuy = getKaratPrice(item.karat, 'buy');
         
-        let cashbackVal = 0;
-        if (item.type === 'bar' || item.type === 'coin') {
-            if (item.brand === 'btc' || item.brand === 'selema' || item.brand === 'master') {
-                cashbackVal = (item.workmanship * 0.50) * (item.type === 'coin' ? item.weight * 8 : item.weight);
-            } else if (item.brand === 'other') {
-                cashbackVal = 20 * (item.type === 'coin' ? item.weight * 8 : item.weight);
-            }
-        }
-        
         let itemValue = 0;
         if (item.type === 'coin') {
-            itemValue = (karatPriceBuy * (item.weight * 8)) + cashbackVal;
+            itemValue = (karatPriceBuy * (item.weight * 8));
             totalWeight21 += item.weight * 8;
             typeBreakdown.coin += item.weight * 8;
         } else {
-            itemValue = (karatPriceBuy * item.weight) + cashbackVal;
+            itemValue = (karatPriceBuy * item.weight);
             const mult = getKaratMultiplier(item.karat);
             totalWeight21 += item.weight * mult;
             
@@ -1400,7 +1391,7 @@ function renderPortfolio() {
             <td class="font-bold">${typeLabel} (${getKaratLabel(item.karat)})</td>
             <td>${item.weight} <span class="text-xs text-muted">${item.type === 'coin' ? (isEn ? 'coin(s)' : 'جنيه') : (isEn ? 'g' : 'جرام')}</span></td>
             <td>${buyPriceText}</td>
-            <td class="font-bold">${formatNumber(Math.round(itemValue))} ${egpLabel} ${cashbackVal > 0 ? `<span class="text-xs text-emerald" title="${isEn ? 'Cashback' : 'كاش باك'} ${Math.round(cashbackVal)} ${egpLabel}">💰</span>` : ''}</td>
+            <td class="font-bold">${formatNumber(Math.round(itemValue))} ${egpLabel}</td>
             <td class="${profitClass}">${profitText}</td>
             <td>
                 <button class="delete-btn" onclick="deleteTransaction('${item.id}')">
@@ -1683,25 +1674,16 @@ function setupCalculators() {
     const sBrandGroup = document.getElementById('s-brand-group');
 
     sType?.addEventListener('change', () => {
-        const type = sType.value;
         const sKarat = document.getElementById('s-karat');
         const sWorkRow = document.getElementById('s-res-cashback-row');
         const sDedRow = document.getElementById('s-res-deduction-row');
 
-        if (type === 'jewelry_scrap') {
-            sDeductionGroup.style.display = 'flex';
-            sBrandGroup.style.display = 'none';
-            sKarat.disabled = false;
-            sWorkRow.style.display = 'none';
-            sDedRow.style.display = 'flex';
-        } else {
-            sDeductionGroup.style.display = 'none';
-            sBrandGroup.style.display = 'flex';
-            sKarat.disabled = true;
-            sKarat.value = type === 'bar_wrapped' ? '24k' : '21k';
-            sWorkRow.style.display = 'flex';
-            sDedRow.style.display = 'none';
-        }
+        sDeductionGroup.style.display = 'flex';
+        sBrandGroup.style.display = 'none';
+        sKarat.disabled = false;
+        sWorkRow.style.display = 'none';
+        sDedRow.style.display = 'flex';
+
         calculateSelling();
     });
 
@@ -1748,41 +1730,24 @@ function calculatePurchase() {
 function calculateSelling() {
     if (!goldPrices) return;
 
-    const type = document.getElementById('s-type').value;
     const karat = document.getElementById('s-karat').value;
     const weight = parseFloat(document.getElementById('s-weight').value) || 0;
     const deduction = parseFloat(document.getElementById('s-deduction').value) || 0;
     const dedUnit = document.getElementById('s-deduction-unit').value;
-    const brand = document.getElementById('s-brand').value;
 
     const price = getKaratPrice(karat, 'buy');
     const egpLabel = currentLanguage === 'en' ? 'EGP' : 'ج.م';
     document.getElementById('s-res-pure-gram').textContent = `${formatNumber(price)} ${egpLabel}`;
 
-    let total = 0;
-
-    if (type === 'jewelry_scrap') {
-        let netWeight = weight;
-        if (dedUnit === 'pct') {
-            netWeight = weight * (1 - deduction / 100);
-        } else {
-            netWeight = Math.max(0, weight - deduction);
-        }
-        total = netWeight * price;
-        const unit = currentLanguage === 'en' ? 'g' : 'جرام';
-        document.getElementById('s-res-pure-weight').textContent = `${netWeight.toFixed(2)} ${unit}`;
+    let netWeight = weight;
+    if (dedUnit === 'pct') {
+        netWeight = weight * (1 - deduction / 100);
     } else {
-        // Wrapped bar/coin
-        let cashbackRate = 20; // default other
-        if (brand === 'btc' || brand === 'selema') cashbackRate = 45; // flat cashback EGP per gram
-        
-        const grams = type === 'coin_wrapped' ? weight * 8 : weight;
-        const cashback = cashbackRate * grams;
-        
-        total = (price * grams) + cashback;
-        
-        document.getElementById('s-res-cashback').textContent = `${formatNumber(Math.round(cashback))} ${egpLabel}`;
+        netWeight = Math.max(0, weight - deduction);
     }
+    const total = netWeight * price;
+    const unit = currentLanguage === 'en' ? 'g' : 'جرام';
+    document.getElementById('s-res-pure-weight').textContent = `${netWeight.toFixed(2)} ${unit}`;
 
     document.getElementById('s-res-total').textContent = `${formatNumber(Math.round(total))} ${egpLabel}`;
 }
@@ -1997,18 +1962,10 @@ function calculateZakat() {
         let totalCost = 0;
         (p.holdings || []).forEach(item => {
             const karatPriceBuy = getKaratPrice(item.karat, 'buy');
-            let cashbackVal = 0;
-            if (item.type === 'bar' || item.type === 'coin') {
-                if (item.brand === 'btc' || item.brand === 'selema' || item.brand === 'master') {
-                    cashbackVal = (item.workmanship * 0.50) * (item.type === 'coin' ? item.weight * 8 : item.weight);
-                } else if (item.brand === 'other') {
-                    cashbackVal = 20 * (item.type === 'coin' ? item.weight * 8 : item.weight);
-                }
-            }
             if (item.type === 'coin') {
-                totalCurrentValue += (karatPriceBuy * (item.weight * 8)) + cashbackVal;
+                totalCurrentValue += (karatPriceBuy * (item.weight * 8));
             } else {
-                totalCurrentValue += (karatPriceBuy * item.weight) + cashbackVal;
+                totalCurrentValue += (karatPriceBuy * item.weight);
             }
             totalCost += item.buyPrice;
         });

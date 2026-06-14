@@ -192,13 +192,13 @@
                 </div>
                 
                 <div class="input-row-flex">
-                    <div class="input-group" id="brand-group">
+                    <div class="input-group" id="brand-group" style="display: none;">
                         <label for="tx-brand" data-i18n="tx-brand-label">الشركة (لحساب الكاش باك)</label>
                         <select id="tx-brand">
                             <option value="btc" data-i18n="tx-brand-btc">BTC (استرداد 50% مصنعية)</option>
                             <option value="selema" data-i18n="tx-brand-selema">سليمة جولد (استرداد 50%)</option>
                             <option value="master" data-i18n="tx-brand-master">ماستر جولد (استرداد 50%)</option>
-                            <option value="other" data-i18n="tx-brand-other">أخرى / بدون كاش باك</option>
+                            <option value="other" selected data-i18n="tx-brand-other">أخرى / بدون كاش باك</option>
                         </select>
                     </div>
                     <div class="input-group" id="workmanship-group">
@@ -626,7 +626,7 @@
                                     <th data-i18n="holdings-th-karat">الشكل / العيار</th>
                                     <th data-i18n="holdings-th-weight">الوزن</th>
                                     <th data-i18n="holdings-th-buyprice">إجمالي سعر الشراء</th>
-                                    <th data-i18n="holdings-th-spotval">القيمة الفورية (مع الكاش باك)</th>
+                                    <th data-i18n="holdings-th-spotval">القيمة الحالية</th>
                                     <th data-i18n="holdings-th-profit">صافي الأرباح والخسائر</th>
                                     <th data-i18n="holdings-th-delete">حذف</th>
                                 </tr>
@@ -724,12 +724,10 @@
                     <div class="calc-panel-view" id="calc-view-selling">
                         <div class="inputs-layout">
                             <div class="input-row-flex">
-                                <div class="input-group">
+                                <div class="input-group" style="display: none;">
                                     <label for="s-type" data-i18n="calc-s-type-label">نوع الذهب المباع للصائغ</label>
                                     <select id="s-type">
                                         <option value="jewelry_scrap" selected data-i18n="calc-s-option-scrap">مشغولات قديمة / ذهب كسر</option>
-                                        <option value="bar_wrapped" data-i18n="calc-s-option-bar">سبيكة مغلفة (BTC، سليمة..)</option>
-                                        <option value="coin_wrapped" data-i18n="calc-s-option-coin">جنيه ذهب مغلف</option>
                                     </select>
                                 </div>
                                 <div class="input-group">
