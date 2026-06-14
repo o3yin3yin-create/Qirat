@@ -331,6 +331,11 @@ h1, h2, h3, h4, h5, h6 {
     align-items: start;
 }
 
+.calc-zakat-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
 .portfolio-analytics-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -340,6 +345,7 @@ h1, h2, h3, h4, h5, h6 {
 
 @media (max-width: 900px) {
     .page-grid { grid-template-columns: 1fr; gap: 20px; }
+    .calc-zakat-grid { grid-template-columns: 1fr; gap: 15px; }
     .portfolio-analytics-grid { grid-template-columns: 1fr; }
 }
 
