@@ -179,8 +179,8 @@
                     <div class="input-group">
                         <label for="tx-karat" data-i18n="tx-karat-label">العيار</label>
                         <select id="tx-karat">
-                            <option value="24k" data-i18n="tx-karat-24">عيار 24</option>
-                            <option value="21k" data-i18n="tx-karat-21" selected>عيار 21</option>
+                            <option value="24k" data-i18n="tx-karat-24" selected>عيار 24</option>
+                            <option value="21k" data-i18n="tx-karat-21">عيار 21</option>
                             <option value="18k" data-i18n="tx-karat-18">عيار 18</option>
                             <option value="14k" data-i18n="tx-karat-14">عيار 14</option>
                         </select>
@@ -286,6 +286,49 @@
             <button class="btn-primary" id="btn-logout" style="margin-top: 24px; width: 100%; background: #EF4444; border-color: #EF4444; color: white; display: flex; align-items: center; justify-content: center; gap: 8px;">
                 <span data-i18n="auth-logout-btn">تسجيل الخروج</span> <i data-lucide="log-out"></i>
             </button>
+        </div>
+    </div>
+
+    <!-- Modal: Weights Breakdown (منبثقة تفصيل أوزان المحفظة) -->
+    <div class="modal-overlay" id="modal-weights-breakdown">
+        <div class="modal-content" style="max-width: 400px; padding: 24px;">
+            <button class="modal-close-btn" id="btn-close-breakdown-modal">
+                <i data-lucide="x"></i>
+            </button>
+            <div class="modal-header" style="text-align: center; margin-bottom: 15px;">
+                <h3 data-i18n="breakdown-modal-title">⚖️ تفصيل أوزان الذهب</h3>
+            </div>
+            
+            <div class="inputs-layout" style="text-align: start; font-size: 13px; gap: 12px; margin-top: 15px;">
+                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+                    <span class="text-muted" data-i18n="breakdown-24k">عيار 24:</span>
+                    <span id="breakdown-w-24k" class="font-bold">0.00 جرام</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+                    <span class="text-muted" data-i18n="breakdown-21k">عيار 21:</span>
+                    <span id="breakdown-w-21k" class="font-bold">0.00 جرام</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+                    <span class="text-muted" data-i18n="breakdown-18k">عيار 18:</span>
+                    <span id="breakdown-w-18k" class="font-bold">0.00 جرام</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+                    <span class="text-muted" data-i18n="breakdown-14k">عيار 14:</span>
+                    <span id="breakdown-w-14k" class="font-bold">0.00 جرام</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+                    <span class="text-muted" data-i18n="breakdown-coins">جنيهات ذهب:</span>
+                    <span id="breakdown-w-coins" class="font-bold">0 جنيه</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-color); padding-top: 8px; padding-bottom: 8px; margin-top: 10px;">
+                    <span class="font-bold text-amber-500" data-i18n="breakdown-eq24">إجمالي معادل عيار 24:</span>
+                    <span id="breakdown-total-24k" class="font-bold text-amber-500">0.00 جرام</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+                    <span class="font-bold text-emerald-500" data-i18n="breakdown-eq21">إجمالي معادل عيار 21:</span>
+                    <span id="breakdown-total-21k" class="font-bold text-emerald-500">0.00 جرام</span>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -503,10 +546,10 @@
                         <div class="value" id="port-total-profit">0 <span class="currency" data-i18n="currency-egp">ج.م</span></div>
                         <span class="sub" id="port-roi" data-i18n="port-roi-default">العائد: 0%</span>
                     </div>
-                    <div class="mini-stat-card">
-                        <span class="label" data-i18n="port-weight-label">الوزن الكلي (معادل عيار 21)</span>
+                    <div class="mini-stat-card" id="card-total-weight" style="cursor: pointer;">
+                        <span class="label" data-i18n="port-weight-label">الوزن الكلي (معادل عيار 24)</span>
                         <div class="value" id="port-total-weight">0.00 <span class="currency" data-i18n="badge-gram">جرام</span></div>
-                        <span class="sub" id="port-weight-breakdown">سبيكة: 0ج | جنيه: 0ج</span>
+                        <span class="sub" id="port-weight-breakdown">اضغط لمعرفة الأوزان بالتفصيل</span>
                     </div>
                     <div class="mini-stat-card">
                         <span class="label" data-i18n="port-dca-label">متوسط تكلفة الشراء للجرام</span>

@@ -59,7 +59,11 @@ if (isPg) {
 
             const isInsert = convertedSql.trim().toUpperCase().startsWith('INSERT');
             if (isInsert && !convertedSql.toUpperCase().includes('RETURNING')) {
-                convertedSql += ' RETURNING id';
+                if (convertedSql.toUpperCase().includes('PORTFOLIOS')) {
+                    convertedSql += ' RETURNING user_id AS id';
+                } else {
+                    convertedSql += ' RETURNING id';
+                }
             }
 
             pool.query(convertedSql, params, (err, res) => {

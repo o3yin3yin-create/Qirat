@@ -42,6 +42,14 @@ const TRANSLATIONS = {
     'brand-btc': { ar: 'BTC (كاش باك كامل)', en: 'BTC (Full Cashback)' },
     'brand-other': { ar: 'شركات أخرى (كاش باك جزئي)', en: 'Other Company (Partial Cashback)' },
     'brand-selema': { ar: 'سليمة (كاش باك كامل)', en: 'Selema (Full Cashback)' },
+    'breakdown-modal-title': { ar: '⚖️ تفصيل أوزان الذهب الفعلي', en: '⚖️ Detailed Gold Weights' },
+    'breakdown-24k': { ar: 'عيار 24 (سبائك):', en: '24K (Bullion):' },
+    'breakdown-21k': { ar: 'عيار 21 (مشغولات):', en: '21K (Jewelry):' },
+    'breakdown-18k': { ar: 'عيار 18:', en: '18K:' },
+    'breakdown-14k': { ar: 'عيار 14:', en: '14K:' },
+    'breakdown-coins': { ar: 'جنيهات الذهب (عدد):', en: 'Gold Coins (count):' },
+    'breakdown-eq24': { ar: 'الوزن الإجمالي (معادل ع24):', en: 'Total Weight (24K equiv):' },
+    'breakdown-eq21': { ar: 'الوزن الإجمالي (معادل ع21):', en: 'Total Weight (21K equiv):' },
     'calc-b-amount-label': { ar: 'الميزانية المتوفرة بالجنيه', en: 'Available Budget' },
     'calc-b-option-bar': { ar: 'سبائك ذهبية مغلفة (مصنعية ~80 ج.م)', en: 'Wrapped Bullion Bars (Workmanship ~80 EGP)' },
     'calc-b-option-coin': { ar: 'جنيهات ذهب مغلفة (مصنعية ~100 ج.م)', en: 'Wrapped Gold Coins (Workmanship ~100 EGP)' },
@@ -157,7 +165,7 @@ const TRANSLATIONS = {
     'port-profit-label': { ar: 'إجمالي الأرباح والخسائر', en: 'Total Profit / Loss' },
     'port-roi-default': { ar: 'العائد الاستثماري', en: 'ROI' },
     'port-total-value-label': { ar: 'إجمالي القيمة الحالية للمحفظة', en: 'Total Portfolio Value' },
-    'port-weight-label': { ar: 'إجمالي الوزن الفعلي (عيار 21)', en: 'Total Gold Weight (21K equiv)' },
+    'port-weight-label': { ar: 'إجمالي الوزن معادل عيار 24 (اضغط للتفاصيل)', en: 'Total Gold Weight 24K equiv (click for details)' },
     'prof-eq21-label': { ar: '🏆 وزن مكافئ (عيار 21):', en: '🏆 Equivalent 21K Weight:' },
     'prof-gold-label': { ar: '⚖️ إجمالي الذهب الفعلي:', en: '⚖️ Total Gold Weight:' },
     'prof-modal-title': { ar: 'بيانات الحساب والمدخرات السريعة', en: 'Quick Profile Information' },
@@ -814,6 +822,15 @@ function setupModals() {
         addTxModal?.classList.remove('active');
     });
 
+    // Weights Breakdown Modal
+    const breakdownModal = document.getElementById('modal-weights-breakdown');
+    document.getElementById('card-total-weight')?.addEventListener('click', () => {
+        breakdownModal?.classList.add('active');
+    });
+    document.getElementById('btn-close-breakdown-modal')?.addEventListener('click', () => {
+        breakdownModal?.classList.remove('active');
+    });
+
     // Open Edit Goal
     document.getElementById('btn-edit-goal')?.addEventListener('click', () => {
         if (portfoliosData && portfoliosData.portfolios[activePortfolioId]) {
@@ -1229,7 +1246,7 @@ function setupPortfolioListeners() {
             
             renderPortfolio();
             txForm.reset();
-            brandGroup.style.display = 'none'; // reset brand layout
+            typeSelect.dispatchEvent(new Event('change'));
         });
     }
 }
@@ -1279,7 +1296,7 @@ function renderPortfolio() {
 
     if (holdingsList.length === 0) {
         list.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-muted">${currentLanguage === 'en' ? 'Portfolio is empty, record a purchase to track your savings.' : 'المحفظة خالية، سجل عملية شراء لتتبع مدخراتك.'}</td></tr>`;
-        updatePortfolioSummary(0, 0, 0, { bar: 0, coin: 0, jewelry: 0, scrap: 0 });
+        updatePortfolioSummary(0, 0, 0, { bar: 0, coin: 0, jewelry: 0, scrap: 0 }, 0, 0, { '24k': 0, '21k': 0, '18k': 0, '14k': 0, 'coin': 0 });
         return;
     }
 
@@ -1289,8 +1306,18 @@ function renderPortfolio() {
     let totalCurrentValueForProfit = 0;
     let totalWeight21ForDCA = 0;
     let typeBreakdown = { bar: 0, coin: 0, jewelry: 0, scrap: 0 };
+    let rawWeights = { '24k': 0, '21k': 0, '18k': 0, '14k': 0, 'coin': 0 };
 
     holdingsList.forEach(item => {
+        const w = parseFloat(item.weight) || 0;
+        if (item.type === 'coin') {
+            rawWeights['coin'] += w;
+        } else {
+            const karat = item.karat;
+            if (rawWeights[karat] !== undefined) {
+                rawWeights[karat] += w;
+            }
+        }
         const karatPriceBuy = getKaratPrice(item.karat, 'buy');
         
         let cashbackVal = 0;
@@ -1376,7 +1403,7 @@ function renderPortfolio() {
     });
 
     if (window.lucide) window.lucide.createIcons();
-    updatePortfolioSummary(totalWeight21, totalCurrentValue, totalCost, typeBreakdown, totalCurrentValueForProfit, totalWeight21ForDCA);
+    updatePortfolioSummary(totalWeight21, totalCurrentValue, totalCost, typeBreakdown, totalCurrentValueForProfit, totalWeight21ForDCA, rawWeights);
 }
 
 function getKaratMultiplier(karat) {
@@ -1387,20 +1414,41 @@ function getKaratMultiplier(karat) {
     return 1;
 }
 
-function updatePortfolioSummary(totalWeight21, totalCurrentValue, totalCost, typeBreakdown, totalCurrentValueForProfit = 0, totalWeight21ForDCA = 0) {
+let currentPortfolioRawWeights = { '24k': 0, '21k': 0, '18k': 0, '14k': 0, 'coin': 0 };
+
+function updatePortfolioSummary(totalWeight21, totalCurrentValue, totalCost, typeBreakdown, totalCurrentValueForProfit = 0, totalWeight21ForDCA = 0, rawWeights = null) {
     const egpLabel = currentLanguage === 'en' ? 'EGP' : 'ج.م';
     document.getElementById('port-total-value').textContent = `${formatNumber(Math.round(totalCurrentValue))} ${egpLabel}`;
     
     const usdBank = goldPrices.usdBankDollar || 50;
     const usdEquivalentText = currentLanguage === 'en' ? `Equivalent to $${formatNumber(Math.round(totalCurrentValue / usdBank))}` : `ما يعادل $${formatNumber(Math.round(totalCurrentValue / usdBank))}`;
     document.getElementById('port-total-value-usd').textContent = usdEquivalentText;
-    document.getElementById('port-total-weight').textContent = totalWeight21.toFixed(2);
+    
+    const totalWeight24 = totalWeight21 * (21 / 24);
+    document.getElementById('port-total-weight').textContent = totalWeight24.toFixed(2);
     
     const breakdown = typeBreakdown || { bar: 0, coin: 0, jewelry: 0, scrap: 0 };
     const breakdownText = currentLanguage === 'en'
         ? `Bars: ${breakdown.bar.toFixed(1)}g | Coins: ${breakdown.coin.toFixed(1)}g | Jewelry: ${breakdown.jewelry.toFixed(1)}g`
         : `سبائك: ${breakdown.bar.toFixed(1)}ج | جنيهات: ${breakdown.coin.toFixed(1)}ج | مشغولات: ${breakdown.jewelry.toFixed(1)}ج`;
-    document.getElementById('port-weight-breakdown').textContent = breakdownText;
+    
+    document.getElementById('port-weight-breakdown').textContent = currentLanguage === 'en'
+        ? 'Click to view detailed weights'
+        : 'اضغط لمعرفة الأوزان بالتفصيل';
+        
+    currentPortfolioRawWeights = rawWeights || { '24k': 0, '21k': 0, '18k': 0, '14k': 0, 'coin': 0 };
+    
+    const unit = currentLanguage === 'en' ? 'g' : 'جرام';
+    const coinUnit = currentLanguage === 'en' ? 'coin(s)' : 'جنيه';
+    
+    document.getElementById('breakdown-w-24k').textContent = `${currentPortfolioRawWeights['24k'].toFixed(2)} ${unit}`;
+    document.getElementById('breakdown-w-21k').textContent = `${currentPortfolioRawWeights['21k'].toFixed(2)} ${unit}`;
+    document.getElementById('breakdown-w-18k').textContent = `${currentPortfolioRawWeights['18k'].toFixed(2)} ${unit}`;
+    document.getElementById('breakdown-w-14k').textContent = `${currentPortfolioRawWeights['14k'].toFixed(2)} ${unit}`;
+    document.getElementById('breakdown-w-coins').textContent = `${currentPortfolioRawWeights['coin']} ${coinUnit}`;
+    
+    document.getElementById('breakdown-total-24k').textContent = `${totalWeight24.toFixed(2)} ${unit}`;
+    document.getElementById('breakdown-total-21k').textContent = `${totalWeight21.toFixed(2)} ${unit}`;
 
     // DCA Avg: compute using only items with known costs
     const dcaEl = document.getElementById('port-dca-average');
