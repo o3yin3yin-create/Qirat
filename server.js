@@ -1,7 +1,7 @@
 const express = require('express');
 const path = require('path');
 const cheerio = require('cheerio');
-const sqlite3 = require('sqlite3').verbose();
+// sqlite3 required dynamically for local sqlite development only
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 
@@ -107,32 +107,52 @@ if (isPg) {
         }
     };
 } else {
-    // Initialize SQLite database
-    db = new sqlite3.Database(path.join(__dirname, 'dahaby.db'), (err) => {
-        if (err) console.error('Error opening database:', err);
-        else console.log('Connected to SQLite database.');
-    });
+    if (process.env.VERCEL) {
+        console.error('CRITICAL: DATABASE_URL is not set on Vercel! PostgreSQL connection is required.');
+        db = {
+            serialize: (fn) => fn(),
+            run: (sql, params, cb) => {
+                const callback = typeof params === 'function' ? params : cb;
+                if (callback) callback(new Error('Database not configured. Please set DATABASE_URL in Vercel settings.'));
+            },
+            get: (sql, params, cb) => {
+                const callback = typeof params === 'function' ? params : cb;
+                if (callback) callback(new Error('Database not configured. Please set DATABASE_URL in Vercel settings.'));
+            },
+            all: (sql, params, cb) => {
+                const callback = typeof params === 'function' ? params : cb;
+                if (callback) callback(new Error('Database not configured. Please set DATABASE_URL in Vercel settings.'));
+            }
+        };
+    } else {
+        // Initialize SQLite database
+        const sqlite3 = require('sqlite3').verbose();
+        db = new sqlite3.Database(path.join(__dirname, 'dahaby.db'), (err) => {
+            if (err) console.error('Error opening database:', err);
+            else console.log('Connected to SQLite database.');
+        });
 
-    db.serialize(() => {
-        db.run(`
-            CREATE TABLE IF NOT EXISTS users (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name TEXT,
-                phone TEXT UNIQUE,
-                national_id TEXT UNIQUE,
-                password_hash TEXT,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-            )
-        `);
-        db.run(`
-            CREATE TABLE IF NOT EXISTS portfolios (
-                user_id INTEGER PRIMARY KEY,
-                data TEXT,
-                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
-            )
-        `);
-    });
+        db.serialize(() => {
+            db.run(`
+                CREATE TABLE IF NOT EXISTS users (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    name TEXT,
+                    phone TEXT UNIQUE,
+                    national_id TEXT UNIQUE,
+                    password_hash TEXT,
+                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                )
+            `);
+            db.run(`
+                CREATE TABLE IF NOT EXISTS portfolios (
+                    user_id INTEGER PRIMARY KEY,
+                    data TEXT,
+                    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+                )
+            `);
+        });
+    }
 }
 
 // Crypto Helpers
