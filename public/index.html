@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>قيراط | حاسبة ومستشار الاستثمار في الذهب</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="احسب سعر الذهب الذي تملكه بالتحديث اللحظي المباشر لأسعار الصاغة في مصر. حاسبة المحفظة الاستثمارية، الزكاة، المبادلة، ومتوسط الشراء (DCA).">
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#d4af37">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="قيراط">
+    <link rel="apple-touch-icon" href="https://assets.gold-price-today.com/favicon/apple-touch-icon.png">
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Google Fonts: Tajawal -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="app.css">
+</head>
+<body class="dark-theme">
+
+
+    <!-- Authentication Overlay -->
+    <div class="locker-overlay" id="auth-overlay">
+        <!-- Form 1: Login -->
+        <div class="locker-modal auth-form-container" id="login-form-box">
+            <div class="locker-icon">
+                <i data-lucide="log-in" class="gold-text"></i>
+            </div>
+            <h3 data-i18n="auth-login-title">تسجيل الدخول لموقع قيراط</h3>
+            <p data-i18n="auth-login-desc">أدخل بياناتك للوصول ومزامنة محفظتك الذهبية سحابياً.</p>
+            
+            <form id="auth-login-form" class="inputs-layout" style="text-align: start; width: 100%; margin-top: 10px;">
+                <div class="input-group">
+                    <label for="login-phone" data-i18n="auth-phone-label">رقم الهاتف</label>
+                    <input type="text" id="login-phone" placeholder="مثال: 01050442007" data-i18n-placeholder="auth-phone-placeholder" required>
+                </div>
+                <div class="input-group">
+                    <label for="login-password" data-i18n="auth-password-label">كلمة المرور</label>
+                    <input type="password" id="login-password" placeholder="أدخل كلمة المرور" data-i18n-placeholder="auth-password-placeholder" required>
+                </div>
+                <div style="text-align: left; margin-top: -5px; margin-bottom: 10px;">
+                    <a href="#" onclick="toggleAuthForms(event, 'forgot')" class="text-xs text-muted" style="text-decoration: none; font-size: 11px;" data-i18n="auth-forgot-link">نسيت كلمة السر؟</a>
+                </div>
+                
+                <button type="submit" class="btn-primary" style="margin-top: 15px; width: 100%;">
+                    <span data-i18n="auth-login-btn">تسجيل الدخول</span> <i data-lucide="check"></i>
+                </button>
+            </form>
+            
+            <div class="auth-toggle-link" style="margin-top: 20px; font-size: 11px;">
+                <span class="text-muted" data-i18n="auth-no-account-span">ليس لديك حساب؟</span> 
+                <a href="#" onclick="toggleAuthForms(event, 'register')" class="gold-text font-bold" style="text-decoration: underline;" data-i18n="auth-register-link">إنشاء حساب جديد</a>
+            </div>
+        </div>
+
+        <!-- Form 2: Register -->
+        <div class="locker-modal auth-form-container" id="register-form-box" style="display: none;">
+            <div class="locker-icon">
+                <i data-lucide="user-plus" class="gold-text"></i>
+            </div>
+            <h3 data-i18n="auth-reg-title">إنشاء حساب استثماري جديد</h3>
+            <p data-i18n="auth-reg-desc">سجل حسابك لحفظ ممتلكاتك ومزامنتها بأمان.</p>
+            
+            <form id="auth-register-form" class="inputs-layout" style="text-align: start; width: 100%; margin-top: 10px;">
+                <div class="input-group">
+                    <label for="reg-name" data-i18n="auth-fullname-label">الاسم بالكامل</label>
+                    <input type="text" id="reg-name" placeholder="مثال: عمر عادل" data-i18n-placeholder="auth-fullname-placeholder" required>
+                </div>
+                <div class="input-group">
+                    <label for="reg-phone" data-i18n="auth-phone-label">رقم الهاتف</label>
+                    <input type="text" id="reg-phone" placeholder="يتكون من 11 رقماً" data-i18n-placeholder="auth-phone-reg-placeholder" required>
+                </div>
+                <div class="input-group">
+                    <label for="reg-national-id" data-i18n="auth-national-id-label">الرقم القومي</label>
+                    <input type="text" id="reg-national-id" placeholder="يتكون من 14 رقماً" data-i18n-placeholder="auth-national-id-placeholder" required>
+                </div>
+                <div class="input-group">
+                    <label for="reg-password" data-i18n="auth-password-label">كلمة المرور</label>
+                    <input type="password" id="reg-password" placeholder="6 أحرف أو أرقام كحد أدنى" data-i18n-placeholder="auth-password-reg-placeholder" required>
+                </div>
+                
+                <button type="submit" class="btn-primary" style="margin-top: 15px; width: 100%;">
+                    <span data-i18n="auth-confirm-reg-btn">تأكيد وإنشاء الحساب</span> <i data-lucide="shield-check"></i>
+                </button>
+            </form>
+            
+            <div class="auth-toggle-link" style="margin-top: 20px; font-size: 11px;">
+                <span class="text-muted" data-i18n="auth-already-have-account-span">لديك حساب بالفعل؟</span> 
+                <a href="#" onclick="toggleAuthForms(event, 'login')" class="gold-text font-bold" style="text-decoration: underline;" data-i18n="auth-login-btn">تسجيل الدخول</a>
+            </div>
+        </div>
+
+        <!-- Form 3: Forgot Password -->
+        <div class="locker-modal auth-form-container" id="forgot-form-box" style="display: none;">
+            <div class="locker-icon">
+                <i data-lucide="key-round" class="gold-text"></i>
+            </div>
+            <h3 data-i18n="auth-forgot-title">استعادة كلمة المرور</h3>
+            <p data-i18n="auth-forgot-desc">أدخل البيانات المطلوبة بدقة لتأكيد هويتك وتعيين كلمة مرور جديدة.</p>
+            
+            <form id="auth-forgot-form" class="inputs-layout" style="text-align: start; width: 100%; margin-top: 10px;">
+                <div class="input-group">
+                    <label for="forgot-phone" data-i18n="auth-forgot-phone-label">رقم الهاتف المسجل</label>
+                    <input type="text" id="forgot-phone" placeholder="مثال: 01050442007" data-i18n-placeholder="auth-phone-placeholder" required>
+                </div>
+                <div class="input-group">
+                    <label for="forgot-national-id" data-i18n="auth-national-id-label">الرقم القومي</label>
+                    <input type="text" id="forgot-national-id" placeholder="14 رقم" data-i18n-placeholder="auth-national-id-forgot-placeholder" required>
+                </div>
+                <div class="input-group">
+                    <label for="forgot-gold-weight" data-i18n="auth-forgot-weight-label">إجمالي ذهب المحفظة (بالجرام)</label>
+                    <input type="number" step="any" id="forgot-gold-weight" placeholder="اكتب إجمالي وزن محفظتك للتأكيد" data-i18n-placeholder="auth-forgot-weight-placeholder" required>
+                </div>
+                <div class="input-group">
+                    <label for="forgot-new-password" data-i18n="auth-forgot-newpw-label">كلمة المرور الجديدة</label>
+                    <input type="password" id="forgot-new-password" placeholder="كلمة المرور الجديدة (6 أحرف/أرقام كحد أدنى)" data-i18n-placeholder="auth-forgot-newpw-placeholder" required>
+                </div>
+                
+                <button type="submit" class="btn-primary" style="margin-top: 15px; width: 100%;">
+                    <span data-i18n="auth-forgot-submit-btn">تحديث كلمة المرور والدخول</span> <i data-lucide="check-check"></i>
+                </button>
+            </form>
+            
+            <button class="btn-secondary" id="btn-show-support-info" style="margin-top: 10px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <span data-i18n="auth-support-btn">نسيت تفاصيل المحفظة؟ تواصل مع الدعم</span> <i data-lucide="help-circle"></i>
+            </button>
+            
+            <div id="support-info-box" style="display: none; margin-top: 15px; padding: 12px; border: 1px dashed var(--border-color); border-radius: var(--radius-sm); background: var(--bg-dark); font-size: 11px; text-align: start; line-height: 1.6;">
+                <div style="font-weight: 700; color: var(--gold-primary); margin-bottom: 6px;" data-i18n="auth-support-title">قنوات الدعم الفني المباشر (المهندس عمر عادل):</div>
+                <div data-i18n="auth-support-phone1">📞 رقم الموبايل الأساسي: <b>01050442007</b></div>
+                <div data-i18n="auth-support-phone2">💬 رقم الموبايل البديل: <b>01099675196</b></div>
+                <div><span data-i18n="auth-support-instagram">📸 حساب الإنستجرام:</span> <a href="https://www.instagram.com/jj3_xx?igsh=MWVkaGI5ZjNsb3Nreg%3D%3D&utm_source=qr" target="_blank" class="gold-text">@jj3_xx</a></div>
+                <div style="margin-top: 8px; color: var(--text-secondary);" data-i18n="auth-support-desc">تواصل مع الدعم لمساعدتك في إعادة تعيين كلمة مرورك يدوياً.</div>
+            </div>
+            
+            <div class="auth-toggle-link" style="margin-top: 20px; font-size: 11px;">
+                <a href="#" onclick="toggleAuthForms(event, 'login')" class="gold-text font-bold" style="text-decoration: underline;" data-i18n="auth-back-to-login">العودة لتسجيل الدخول</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Add Gold Transaction (منبثقة إضافة الذهب) -->
+    <div class="modal-overlay" id="modal-add-tx">
+        <div class="modal-content">
+            <button class="modal-close-btn" id="btn-close-tx-modal">
+                <i data-lucide="x"></i>
+            </button>
+            <div class="modal-header">
+                <h3 data-i18n="tx-modal-title">➕ إضافة ذهب جديد للمحفظة</h3>
+            </div>
+            <form id="add-transaction-form" class="inputs-layout">
+                <div class="input-group">
+                    <label for="tx-type" data-i18n="tx-type-label">شكل الذهب</label>
+                    <select id="tx-type">
+                        <option value="bar" data-i18n="tx-option-bar">سبيكة ذهب (عيار 24)</option>
+                        <option value="coin" data-i18n="tx-option-coin">جنيه ذهب (عيار 21)</option>
+                        <option value="jewelry" data-i18n="tx-option-jewelry">مشغولات ذهبية جديدة</option>
+                        <option value="scrap" data-i18n="tx-option-scrap">ذهب كسر / قديم</option>
+                    </select>
+                </div>
+                <div class="input-row-flex">
+                    <div class="input-group">
+                        <label for="tx-karat" data-i18n="tx-karat-label">العيار</label>
+                        <select id="tx-karat">
+                            <option value="24k" data-i18n="tx-karat-24">عيار 24</option>
+                            <option value="21k" data-i18n="tx-karat-21" selected>عيار 21</option>
+                            <option value="18k" data-i18n="tx-karat-18">عيار 18</option>
+                            <option value="14k" data-i18n="tx-karat-14">عيار 14</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="tx-weight" data-i18n="tx-weight-label">الوزن (جرام / عدد الجنيهات)</label>
+                        <input type="number" id="tx-weight" step="0.01" min="0.01" value="10" required>
+                    </div>
+                </div>
+                
+                <div class="input-row-flex">
+                    <div class="input-group" id="brand-group">
+                        <label for="tx-brand" data-i18n="tx-brand-label">الشركة (لحساب الكاش باك)</label>
+                        <select id="tx-brand">
+                            <option value="btc" data-i18n="tx-brand-btc">BTC (استرداد 50% مصنعية)</option>
+                            <option value="selema" data-i18n="tx-brand-selema">سليمة جولد (استرداد 50%)</option>
+                            <option value="master" data-i18n="tx-brand-master">ماستر جولد (استرداد 50%)</option>
+                            <option value="other" data-i18n="tx-brand-other">أخرى / بدون كاش باك</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="tx-workmanship" data-i18n="tx-workmanship-label">المصنعية للجرام</label>
+                        <input type="number" id="tx-workmanship" step="1" min="0" value="80">
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="tx-price" data-i18n="tx-price-label">إجمالي سعر الشراء للمنتج (بالجنيه)</label>
+                    <input type="number" id="tx-price" step="1" min="0" placeholder="شامل المصنعية والضريبة (اختياري - اتركه فارغاً إذا لم تتذكره)" data-i18n-placeholder="tx-price-placeholder">
+                </div>
+
+                <div class="input-group" id="tx-quantity-group">
+                    <label for="tx-quantity" data-i18n="tx-qty-label">الكمية (عدد القطع المكررة المماثلة)</label>
+                    <input type="number" id="tx-quantity" min="1" value="1" step="1" required>
+                </div>
+
+                <button type="submit" class="btn-primary" style="margin-top: 10px;">
+                    <i data-lucide="save"></i> <span data-i18n="tx-save-btn">حفظ العملية بالمحفظة</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Edit Goal & savings (منبثقة تعديل الهدف) -->
+    <div class="modal-overlay" id="modal-edit-goal">
+        <div class="modal-content">
+            <button class="modal-close-btn" id="btn-close-goal-modal">
+                <i data-lucide="x"></i>
+            </button>
+            <div class="modal-header">
+                <h3 data-i18n="goal-modal-title">🎯 تعديل الهدف الاستثماري</h3>
+            </div>
+            <div class="inputs-layout">
+                <div class="input-group">
+                    <label for="input-goal-weight" data-i18n="goal-weight-label">الوزن المستهدف الكلي (معادل لجرام 21)</label>
+                    <div class="input-with-badge">
+                        <input type="number" id="input-goal-weight" min="1" value="50">
+                        <span class="badge" data-i18n="goal-badge-gram">جرام</span>
+                    </div>
+                </div>
+                <div class="input-group" style="margin-top: 10px;">
+                    <button class="btn-primary" id="btn-save-goal-settings">
+                        <i data-lucide="check"></i> <span data-i18n="goal-save-btn">حفظ التعديلات</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: User Profile Details (منبثقة تفاصيل الحساب) -->
+    <div class="modal-overlay" id="modal-user-profile">
+        <div class="modal-content" style="max-width: 400px; padding: 24px;">
+            <button class="modal-close-btn" id="btn-close-profile-modal">
+                <i data-lucide="x"></i>
+            </button>
+            <div class="modal-header" style="text-align: center; margin-bottom: 15px;">
+                <h3 data-i18n="prof-modal-title">👤 معلومات الحساب المسجل</h3>
+            </div>
+            
+            <div class="inputs-layout" style="text-align: start; font-size: 13px; gap: 12px; margin-top: 15px;">
+                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+                    <span class="text-muted" data-i18n="prof-name-label">👤 اسم المستخدم:</span>
+                    <span id="prof-name" class="font-bold">--</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+                    <span class="text-muted" data-i18n="prof-phone-label">📞 رقم الهاتف:</span>
+                    <span id="prof-phone" class="font-bold">--</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+                    <span class="text-muted" data-i18n="prof-natid-label">💳 الرقم القومي:</span>
+                    <span id="prof-national-id" class="font-bold">--</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+                    <span class="text-muted" data-i18n="prof-gold-label">⚖️ إجمالي الذهب المخزن:</span>
+                    <span id="prof-gold" class="font-bold text-amber-500">-- جرام</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+                    <span class="text-muted" data-i18n="prof-eq21-label">🏆 وزن مكافئ (عيار 21):</span>
+                    <span id="prof-eq21" class="font-bold text-emerald-500">-- جرام</span>
+                </div>
+            </div>
+            
+            <button class="btn-primary" id="btn-logout" style="margin-top: 24px; width: 100%; background: #EF4444; border-color: #EF4444; color: white; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <span data-i18n="auth-logout-btn">تسجيل الخروج</span> <i data-lucide="log-out"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal: User Guide (منبثقة دليل الاستخدام) -->
+    <div class="modal-overlay" id="modal-user-guide">
+        <div class="modal-content" style="max-width: 600px; padding: 24px; max-height: 85vh; overflow-y: auto;">
+            <button class="modal-close-btn" id="btn-close-guide">
+                <i data-lucide="x"></i>
+            </button>
+            <div class="modal-header" style="text-align: center; margin-bottom: 20px;">
+                <h3 data-i18n="guide-modal-title">📖 دليل استخدام منصة قيراط</h3>
+            </div>
+            
+            <div class="guide-content-wrapper" style="text-align: start; line-height: 1.6; font-size: 13px; display: flex; flex-direction: column; gap: 15px;">
+                <section>
+                    <h4 class="gold-text" style="font-weight: 700; font-size: 14px; margin-bottom: 5px;" data-i18n="guide-sec1-title">✨ نظرة عامة عن المنصة</h4>
+                    <p data-i18n="guide-sec1-desc">منصة <b>قيراط (Qirat)</b> هي مستشارك الاستثماري والادخاري الأول للذهب في مصر. تم تصميمها لتوفير أدوات دقيقة لحساب مدخراتك الذهبية ومتابعتها لحظة بلحظة وبشكل آمن تماماً، مع دعم كامل للتشغيل دون اتصال بالإنترنت (Offline Mode) وحفظ البيانات محلياً وسحابياً.</p>
+                </section>
+                
+                <section>
+                    <h4 class="gold-text" style="font-weight: 700; font-size: 14px; margin-bottom: 5px;" data-i18n="guide-sec2-title">📈 1. الأسعار والشارت (تحديث مباشر)</h4>
+                    <p data-i18n="guide-sec2-desc">يعرض هذا القسم أسعار الذهب الفورية في مصر لجميع الأعيرة (24، 21، 18، 14) بالإضافة إلى مؤشرات هامة مثل دولار الصاغة والدولار البنكي ونسبة الفجوة بينهما وسعر الأونصة العالمي. يوضح المخطط البياني حركة سعر عيار 21 خلال آخر 7 أيام لتحديد الوقت الأنسب للشراء أو البيع.</p>
+                </section>
+                
+                <section>
+                    <h4 class="gold-text" style="font-weight: 700; font-size: 14px; margin-bottom: 5px;" data-i18n="guide-sec3-title">💼 2. إدارة المحفظة الاستثمارية</h4>
+                    <ul style="padding-inline-start: 20px; list-style-type: disc; display: flex; flex-direction: column; gap: 6px;">
+                        <li data-i18n="guide-sec3-bullet1"><b>تعدد المحافظ:</b> يمكنك إنشاء محافظ متعددة لتنظيم مدخراتك بشكل منفصل (مثلاً: محفظة شخصية، محفظة للأولاد).</li>
+                        <li data-i18n="guide-sec3-bullet2"><b>تسجيل العمليات:</b> يدعم تسجيل السبائك، الجنيهات، المشغولات والذهب القديم مع حساب "الكاش باك" التلقائي للشركات المعتمدة مثل BTC وسليمة.</li>
+                        <li data-i18n="guide-sec3-bullet3"><b>إدخال سعر الشراء:</b> يمكنك إدخال المبلغ الإجمالي الذي دفعته، أو تركه فارغاً للذهب القديم الذي لا تتذكر سعره، وسيقوم البرنامج بحساب إحصائياتك بذكاء.</li>
+                        <li data-i18n="guide-sec3-bullet4"><b>محاكي الأهداف الادخارية:</b> حدد هدفاً بالجرامات وسيقوم البرنامج بحساب الوقت اللازم للوصول إليه بناءً على قدرتك الادخارية الشهرية.</li>
+                    </ul>
+                </section>
+                
+                <section>
+                    <h4 class="gold-text" style="font-weight: 700; font-size: 14px; margin-bottom: 5px;" data-i18n="guide-sec4-title">🧮 3. الحاسبة الذكية الموحدة</h4>
+                    <p data-i18n="guide-sec4-desc">تضم الحاسبة 5 أدوات فرعية متطورة:</p>
+                    <ul style="padding-inline-start: 20px; list-style-type: disc; display: flex; flex-direction: column; gap: 6px;">
+                        <li data-i18n="guide-sec4-bullet1"><b>حاسبة الشراء:</b> لحساب التكلفة الإجمالية لشراء ذهب جديد شاملة سعر الذهب الخام، المصنعية للجرام، ونسبة الضريبة والدمغة.</li>
+                        <li data-i18n="guide-sec4-bullet2"><b>حاسبة البيع والتصفية:</b> لحساب المبلغ المستلم عند البيع للصائغ مع احتساب استرداد الكاش باك للسبائك والجنيهات المغلفة.</li>
+                        <li data-i18n="guide-sec4-bullet3"><b>حاسبة المبادلة:</b> لمبادلة ذهب قديم بآخر جديد ومعرفة الفارق المالي الواجب دفعه أو استلامه بدقة.</li>
+                        <li data-i18n="guide-sec4-bullet4"><b>حاسبة الزكاة والصدقة:</b> لحساب النصاب الشرعي لذهبك (ما يعادل 85 جرام عيار 24) وتحديد قيمة زكاة المال الواجبة (2.5%) مع إمكانية حساب صدقة طوعية مخصصة.</li>
+                        <li data-i18n="guide-sec4-bullet5"><b>حاسبة الميزانية العكسية:</b> أدخل ميزانيتك بالجنيه وسيقترح عليك البرنامج أفضل خيارات الشراء المتاحة (سبائك، جنيهات، مشغولات) مع توضيح الوزن المقدر والكسور المتبقية.</li>
+                    </ul>
+                </section>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Header -->
+    <header class="main-header">
+        <div class="container header-container">
+            <div class="logo-area">
+                <div class="logo-icon">
+                    <i data-lucide="gem" class="gold-text"></i>
+                </div>
+                <div class="logo-text">
+                    <h1 data-i18n="logo-title">قيراط</h1>
+                    <p data-i18n="logo-subtitle">المستشار الفني والادخاري للذهب</p>
+                </div>
+            </div>
+            
+            <div class="header-actions">
+                <div class="status-badge" id="network-status">
+                    <span class="pulse-dot"></span>
+                    <span class="status-text" id="network-status-text" data-i18n="status-live">تحديث لحظي</span>
+                </div>
+                <button class="icon-btn" id="btn-lang-toggle" title="English / عربي" style="font-weight: 700; font-size: 13px;">EN</button>
+                <button class="icon-btn" id="btn-theme-toggle" title="تبديل المظهر">
+                    <i data-lucide="sun" id="theme-icon"></i>
+                </button>
+                <div class="user-profile-badge" id="user-badge" style="display: none; cursor: pointer;">
+                    <span id="user-phone-display" class="font-bold text-xs">--</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container main-content">
+        <!-- Live Ticker (Gaps and USD) -->
+        <div class="live-ticker-card" id="live-ticker-toggle">
+            <div class="ticker-label">
+                <i data-lucide="trending-up" class="gold-text"></i>
+                <span data-i18n="ticker-title">مؤشرات السوق</span>
+                <i data-lucide="chevron-down" class="ticker-chevron-icon"></i>
+            </div>
+            <div class="ticker-values" id="live-ticker-values">
+                <div class="ticker-item">
+                    <span class="item-name" data-i18n="ticker-gold-dollar">دولار الصاغة:</span>
+                    <span class="item-val font-bold" id="tick-gold-dollar">--.-- ج.م</span>
+                </div>
+                <div class="ticker-separator"></div>
+                <div class="ticker-item">
+                    <span class="item-name" data-i18n="ticker-bank-dollar">الدولار البنكي:</span>
+                    <span class="item-val" id="tick-bank-dollar">--.-- ج.م</span>
+                </div>
+                <div class="ticker-separator"></div>
+                <div class="ticker-item">
+                    <span class="item-name" data-i18n="ticker-gap">الفجوة:</span>
+                    <span class="item-val font-bold" id="tick-gap">--.-- %</span>
+                </div>
+                <div class="ticker-separator"></div>
+                <div class="ticker-item">
+                    <span class="item-name" data-i18n="ticker-ounce">أونصة البورصة:</span>
+                    <span class="item-val font-bold gold-text" id="tick-ounce">$--.--</span>
+                </div>
+                <div class="ticker-separator"></div>
+                <div class="ticker-item">
+                    <span class="item-name" data-i18n="ticker-last-update">آخر تحديث:</span>
+                    <span class="item-val text-muted" id="tick-update-time" data-i18n="ticker-loading">جاري التحميل...</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <nav class="tabs-nav" role="tablist">
+            <button class="tab-btn active" data-tab="prices" role="tab" aria-selected="true">
+                <i data-lucide="line-chart"></i>
+                <span data-i18n="tab-prices">الأسعار والشارت</span>
+            </button>
+            <button class="tab-btn" data-tab="portfolio" role="tab" aria-selected="false">
+                <i data-lucide="briefcase"></i>
+                <span data-i18n="tab-portfolio">المحفظة والادخار</span>
+            </button>
+            <button class="tab-btn" data-tab="calculators" role="tab" aria-selected="false">
+                <i data-lucide="calculator"></i>
+                <span data-i18n="tab-calculators">الحاسبة الذكية الموحدة</span>
+            </button>
+            <button class="tab-btn" id="admin-tab-btn" data-tab="admin" role="tab" aria-selected="false" style="display: none;">
+                <i data-lucide="shield-check"></i>
+                <span data-i18n="tab-admin">لوحة التحكم (IT)</span>
+            </button>
+        </nav>
+
+        <!-- Tab Panels -->
+        <div class="tab-panels">
+            
+            <!-- TAB 1: PRICES & CHARTS -->
+            <div class="tab-panel active" id="panel-prices" role="tabpanel">
+                <!-- Prices Box Grid -->
+                <div class="price-cards-grid" id="price-cards-container">
+                    <!-- Loaded dynamically -->
+                </div>
+
+                <div class="page-grid">
+                    <!-- Chart -->
+                    <div class="card-glass">
+                        <div class="card-header-clean">
+                            <h4><i data-lucide="trending-up" class="gold-text"></i> <span data-i18n="chart-title-main">اتجاه سعر عيار 21 في الصاغة</span></h4>
+                            <span class="chart-period text-muted" data-i18n="chart-period-text">آخر 7 أيام</span>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="gold-price-chart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Guide (Cleaned & Spacious) -->
+                    <div class="card-glass">
+                        <div class="card-header-clean">
+                            <h4><i data-lucide="help-circle" class="gold-text"></i> <span data-i18n="quick-guide-title">دليل المستثمر السريع بمصر</span></h4>
+                        </div>
+                        <ul class="tips-list">
+                            <li>
+                                <strong data-i18n="quick-guide-tip1-title">السبائك أولاً:</strong> <span data-i18n="quick-guide-tip1-desc">احرص على شراء سبائك مغلفة (كاش باك) لأن مصنعيتها قليلة ويُرد جزء منها عند البيع.</span>
+                            </li>
+                            <li>
+                                <strong data-i18n="quick-guide-tip2-title">الجنيه الذهب:</strong> <span data-i18n="quick-guide-tip2-desc">يزن 8 جرامات عيار 21 وهو خيار رائع لحفظ المدخرات المتوسطة وتسييلها بسرعة.</span>
+                            </li>
+                            <li>
+                                <strong data-i18n="quick-guide-tip3-title">المصنعية الضائعة:</strong> <span data-i18n="quick-guide-tip3-desc">تجنب المشغولات الفنية لغرض الادخار، فالصائغ يشتريها بوزنها الصافي كـ "ذهب كسر".</span>
+                            </li>
+                            <li>
+                                <strong data-i18n="quick-guide-tip4-title">الشركات المضمونة:</strong> <span data-i18n="quick-guide-tip4-desc">شركات كـ BTC و سليمة تتميز بأعلى درجات المصداقية والتداول الكاش باك.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: PORTFOLIO & GOALS -->
+            <div class="tab-panel" id="panel-portfolio" role="tabpanel">
+                <!-- Controls -->
+                <div class="portfolio-header-controls">
+                    <div class="portfolio-select-group">
+                        <label for="portfolio-selector" class="font-bold" data-i18n="port-active-label">المحفظة النشطة:</label>
+                        <select id="portfolio-selector">
+                            <!-- Loaded -->
+                        </select>
+                        <button class="btn-secondary btn-sm btn-icon-only" id="btn-add-portfolio" title="إضافة محفظة" data-i18n-title="port-add-title">
+                            <i data-lucide="plus"></i>
+                        </button>
+                        <button class="btn-secondary btn-sm btn-icon-only text-rose" id="btn-delete-portfolio" title="حذف المحفظة" data-i18n-title="port-delete-title">
+                            <i data-lucide="trash-2"></i>
+                        </button>
+                    </div>
+
+                    <div class="portfolio-action-btns">
+                        <button class="btn-primary btn-sm" id="btn-open-tx-modal">
+                            <i data-lucide="plus-circle"></i> <span data-i18n="port-add-gold-btn">إضافة ذهب ➕</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Stats summary -->
+                <div class="portfolio-summary-bar">
+                    <div class="mini-stat-card accent">
+                        <span class="label" data-i18n="port-total-value-label">القيمة الإجمالية (بيع للصاغة)</span>
+                        <div class="value" id="port-total-value">0 <span class="currency" data-i18n="currency-egp">ج.م</span></div>
+                        <span class="sub" id="port-total-value-usd">ما يعادل $0</span>
+                    </div>
+                    <div class="mini-stat-card">
+                        <span class="label" data-i18n="port-profit-label">صافي الأرباح والخسائر</span>
+                        <div class="value" id="port-total-profit">0 <span class="currency" data-i18n="currency-egp">ج.م</span></div>
+                        <span class="sub" id="port-roi" data-i18n="port-roi-default">العائد: 0%</span>
+                    </div>
+                    <div class="mini-stat-card">
+                        <span class="label" data-i18n="port-weight-label">الوزن الكلي (معادل عيار 21)</span>
+                        <div class="value" id="port-total-weight">0.00 <span class="currency" data-i18n="badge-gram">جرام</span></div>
+                        <span class="sub" id="port-weight-breakdown">سبيكة: 0ج | جنيه: 0ج</span>
+                    </div>
+                    <div class="mini-stat-card">
+                        <span class="label" data-i18n="port-dca-label">متوسط تكلفة الشراء للجرام</span>
+                        <div class="value" id="port-dca-average">0 <span class="currency" data-i18n="currency-egp">ج.م</span></div>
+                        <span class="sub" data-i18n="port-dca-sub">نقطة تعادل الشراء (DCA)</span>
+                    </div>
+                </div>
+
+                <!-- Analytics Grid (Goals & Donut Chart side-by-side) -->
+                <div class="portfolio-analytics-grid">
+                    <!-- Collapsible Goal Simulator Card -->
+                    <div class="card-glass collapsible-card" id="goals-collapsible-card">
+                        <button class="accordion-header" id="btn-toggle-goals" type="button" style="width: 100%; background: transparent; border: none; display: flex; align-items: center; justify-content: space-between; cursor: pointer; color: var(--text-primary); font-family: var(--font-main); padding: 0;">
+                            <span class="header-title" style="font-size: 14px; font-weight: 800; display: flex; align-items: center; gap: 8px;">
+                                <i data-lucide="target" class="gold-text"></i> <span data-i18n="goal-simulator-header">محاكي الأهداف الادخارية (اختياري)</span>
+                            </span>
+                            <i data-lucide="chevron-down" class="chevron-icon" id="goals-chevron" style="transition: var(--transition-smooth); color: var(--text-secondary);"></i>
+                        </button>
+                        <div class="accordion-content" id="goals-accordion-content" style="display: none; transition: var(--transition-smooth);">
+                            <div class="circular-progress-wrapper" style="margin-top: 15px;">
+                                <div class="progress-ring-container">
+                                    <svg class="progress-ring-svg" width="100" height="100" viewBox="0 0 100 100">
+                                        <circle class="progress-ring-circle-bg" cx="50" cy="50" r="40" stroke-width="8"></circle>
+                                        <circle class="progress-ring-circle-fill" id="goal-ring-fill" cx="50" cy="50" r="40" stroke-width="8" stroke-dasharray="251.33" stroke-dashoffset="251.33"></circle>
+                                    </svg>
+                                    <div class="progress-ring-text" id="goal-progress-pct" style="font-size: 14px;">0%</div>
+                                </div>
+                                <div class="goal-details-side">
+                                    <h5 id="goal-details-title" data-i18n="goal-details-title">هدف المحفظة الادخاري</h5>
+                                    <p id="goal-details-desc" data-i18n="goal-details-desc">جرام الذهب عيار 21 هو الوحدة الأساسية لقياس تقدم محفظتك.</p>
+                                    <div style="display: flex; align-items: center; gap: 8px; margin-top: 6px; flex-wrap: wrap;">
+                                        <span class="badge badge-gold" id="goal-target-text" style="margin: 0;" data-i18n="goal-target-default">الهدف: غير محدد</span>
+                                        <button class="btn-secondary btn-xs" id="btn-edit-goal" style="padding: 2px 8px; font-size: 10px; height: 22px; display: inline-flex; align-items: center; gap: 4px;">
+                                            <i data-lucide="edit-3" style="width: 10px; height: 10px;"></i> <span data-i18n="goal-edit-btn">تعديل الهدف</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="goal-simulator-slider" style="margin-top: 15px;">
+                                <div class="slider-labels">
+                                    <label for="save-monthly-slider" data-i18n="goal-monthly-label">معدل الادخار الشهري المقدر:</label>
+                                    <span class="font-bold gold-text" id="save-monthly-text">5,000 ج.م / شهر</span>
+                                </div>
+                                <input type="range" id="save-monthly-slider" min="1000" max="50000" step="500" value="5000">
+                                <div class="info-alert emerald-alert" style="margin-top: 10px;">
+                                    <i data-lucide="calendar"></i>
+                                    <p id="goal-simulation-result" data-i18n="goal-sim-default">ستصل إلى هدفك المتبقي خلال <b>-- شهور</b> تقريبًا بناءً على الأسعار اليوم.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Asset Allocation Card -->
+                    <div class="card-glass">
+                        <div class="card-header-clean">
+                            <h4><i data-lucide="pie-chart" class="gold-text"></i> <span data-i18n="asset-alloc-title">توزيع أصول الذهب في المحفظة</span></h4>
+                        </div>
+                        <div class="chart-allocation-wrapper">
+                            <canvas id="allocation-donut-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Holdings Table List -->
+                <div class="card-glass">
+                    <div class="card-header-clean">
+                        <h4><i data-lucide="list" class="gold-text"></i> <span data-i18n="holdings-title">ممتلكات المحفظة الحالية</span></h4>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="table-glass" id="portfolio-table">
+                            <thead>
+                                <tr>
+                                    <th data-i18n="holdings-th-karat">الشكل / العيار</th>
+                                    <th data-i18n="holdings-th-weight">الوزن</th>
+                                    <th data-i18n="holdings-th-buyprice">إجمالي سعر الشراء</th>
+                                    <th data-i18n="holdings-th-spotval">القيمة الفورية (مع الكاش باك)</th>
+                                    <th data-i18n="holdings-th-profit">صافي الأرباح والخسائر</th>
+                                    <th data-i18n="holdings-th-delete">حذف</th>
+                                </tr>
+                            </thead>
+                            <tbody id="portfolio-holdings-list">
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted" data-i18n="holdings-empty-state">المحفظة خالية، سجل عملية شراء لتتبع مدخراتك.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: SMART UNIFIED CALCULATOR -->
+            <div class="tab-panel" id="panel-calculators" role="tabpanel">
+                <div class="card-glass shadow-lg">
+                    <!-- Calculator view selector buttons -->
+                    <div class="calc-selector-buttons" style="margin-bottom: 20px;">
+                        <label class="font-bold" style="display: block; margin-bottom: 10px;" data-i18n="calc-selector-label">اختر نوع العملية الحسابية:</label>
+                        <div class="calc-btns-grid">
+                            <button type="button" class="calc-type-btn active" data-value="purchase">
+                                <i data-lucide="shopping-cart"></i>
+                                <span data-i18n="calc-btn-purchase">حاسبة شراء ذهب جديد</span>
+                            </button>
+                            <button type="button" class="calc-type-btn" data-value="selling">
+                                <i data-lucide="dollar-sign"></i>
+                                <span data-i18n="calc-btn-selling">حاسبة بيع وتصفية</span>
+                            </button>
+                            <button type="button" class="calc-type-btn" data-value="swap">
+                                <i data-lucide="refresh-cw"></i>
+                                <span data-i18n="calc-btn-swap">حاسبة مبادلة وتبديل</span>
+                            </button>
+                            <button type="button" class="calc-type-btn" data-value="zakat">
+                                <i data-lucide="moon"></i>
+                                <span data-i18n="calc-btn-zakat">حاسبة الزكاة والصدقة</span>
+                            </button>
+                            <button type="button" class="calc-type-btn" data-value="budget">
+                                <i data-lucide="coins"></i>
+                                <span data-i18n="calc-btn-budget">حاسبة الميزانية العكسية</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- SUB-VIEW 1: PURCHASE (الشراء) -->
+                    <div class="calc-panel-view active" id="calc-view-purchase">
+                        <div class="inputs-layout">
+                            <div class="input-row-flex">
+                                <div class="input-group">
+                                    <label for="p-karat" data-i18n="calc-p-karat-label">العيار المراد شراؤه</label>
+                                    <select id="p-karat">
+                                        <option value="24k" data-i18n="tx-karat-24">عيار 24</option>
+                                        <option value="21k" data-i18n="tx-karat-21" selected>عيار 21</option>
+                                        <option value="18k" data-i18n="tx-karat-18">عيار 18</option>
+                                        <option value="14k" data-i18n="tx-karat-14">عيار 14</option>
+                                    </select>
+                                </div>
+                                <div class="input-group">
+                                    <label for="p-weight" data-i18n="calc-p-weight-label">الوزن بالجرام</label>
+                                    <input type="number" id="p-weight" step="0.01" min="0.01" value="10">
+                                </div>
+                            </div>
+                            
+                            <div class="input-row-flex">
+                                <div class="input-group">
+                                    <label for="p-workmanship" data-i18n="tx-workmanship-label">المصنعية للجرام</label>
+                                    <input type="number" id="p-workmanship" value="150" min="0">
+                                </div>
+                                <div class="input-group">
+                                    <label for="p-tax" data-i18n="calc-p-tax-label">الضريبة والدمغة (%)</label>
+                                    <input type="number" id="p-tax" value="1.5" step="0.1">
+                                </div>
+                            </div>
+
+                            <hr class="result-divider">
+
+                            <div class="result-details">
+                                <div class="detail-row">
+                                    <span data-i18n="calc-p-res-pure-label">سعر جرام الذهب الصافي بالصاغة اليوم:</span>
+                                    <span id="p-res-pure-gram">0 ج.م</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span data-i18n="calc-p-res-final-label">سعر شراء الجرام النهائي بالمصنعية والضريبة:</span>
+                                    <span class="font-bold gold-text" id="p-res-total-gram">0 ج.م</span>
+                                </div>
+                                <div class="detail-row highlight">
+                                    <span data-i18n="calc-p-res-total-label">إجمالي سعر فاتورة الشراء المقدر:</span>
+                                    <span class="font-bold text-lg" id="p-res-total">0 ج.م</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SUB-VIEW 2: SELLING (البيع وتصفية السبائك والكسر) -->
+                    <div class="calc-panel-view" id="calc-view-selling">
+                        <div class="inputs-layout">
+                            <div class="input-row-flex">
+                                <div class="input-group">
+                                    <label for="s-type" data-i18n="calc-s-type-label">نوع الذهب المباع للصائغ</label>
+                                    <select id="s-type">
+                                        <option value="jewelry_scrap" selected data-i18n="calc-s-option-scrap">مشغولات قديمة / ذهب كسر</option>
+                                        <option value="bar_wrapped" data-i18n="calc-s-option-bar">سبيكة مغلفة (BTC، سليمة..)</option>
+                                        <option value="coin_wrapped" data-i18n="calc-s-option-coin">جنيه ذهب مغلف</option>
+                                    </select>
+                                </div>
+                                <div class="input-group">
+                                    <label for="s-karat" data-i18n="tx-karat-label">العيار</label>
+                                    <select id="s-karat">
+                                        <option value="24k" data-i18n="tx-karat-24">عيار 24</option>
+                                        <option value="21k" selected data-i18n="tx-karat-21">عيار 21</option>
+                                        <option value="18k" data-i18n="tx-karat-18">عيار 18</option>
+                                        <option value="14k" data-i18n="tx-karat-14">عيار 14</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="input-row-flex">
+                                <div class="input-group">
+                                    <label for="s-weight" data-i18n="calc-s-weight-label">الوزن الإجمالي (جرام / جنيهات)</label>
+                                    <input type="number" id="s-weight" step="0.01" min="0.01" value="10">
+                                </div>
+                                
+                                <div class="input-group" id="s-deduction-group">
+                                    <label for="s-deduction" data-i18n="calc-s-deduction-label">خصم فصوص وهالك</label>
+                                    <div class="input-with-badge">
+                                        <input type="number" id="s-deduction" value="0" min="0" step="0.01">
+                                        <select id="s-deduction-unit" style="position: absolute; left: 4px; width: 60px; height: 28px; border:none; background: rgba(255,255,255,0.06);">
+                                            <option value="pct" data-i18n="unit-pct">%</option>
+                                            <option value="grams" data-i18n="unit-grams">جرام</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="input-group" id="s-brand-group" style="display: none;">
+                                    <label for="s-brand" data-i18n="calc-s-brand-label">الشركة المصنعة (كاش باك)</label>
+                                    <select id="s-brand">
+                                        <option value="btc" data-i18n="brand-btc">BTC (كاش باك كامل)</option>
+                                        <option value="selema" data-i18n="brand-selema">سليمة (كاش باك كامل)</option>
+                                        <option value="other" data-i18n="brand-other">شركات أخرى (كاش باك جزئي)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <hr class="result-divider">
+
+                            <div class="result-details">
+                                <div class="detail-row">
+                                    <span data-i18n="calc-s-res-pure-label">سعر الشراء الصافي بالصاغة اليوم:</span>
+                                    <span id="s-res-pure-gram">0 ج.م</span>
+                                </div>
+                                <div class="detail-row" id="s-res-deduction-row">
+                                    <span data-i18n="calc-s-res-weight-label">الوزن الصافي المستحق للقيمة:</span>
+                                    <span class="font-bold text-rose" id="s-res-pure-weight">0 جرام</span>
+                                </div>
+                                <div class="detail-row" id="s-res-cashback-row" style="display: none;">
+                                    <span data-i18n="calc-s-res-cashback-label">قيمة الكاش باك المسترد المقدرة:</span>
+                                    <span class="font-bold text-emerald" id="s-res-cashback">0 ج.م</span>
+                                </div>
+                                <div class="detail-row highlight">
+                                    <span data-i18n="calc-s-res-total-label">إجمالي القيمة النقدية المستلمة:</span>
+                                    <span class="font-bold text-lg" id="s-res-total">0 ج.م</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SUB-VIEW 3: GOLD SWAP (المبادلة والتبديل) -->
+                    <div class="calc-panel-view" id="calc-view-swap">
+                        <div class="swap-columns">
+                            <!-- Old -->
+                            <div class="inputs-layout">
+                                <h5 class="text-rose font-bold" data-i18n="calc-swap-old-heading">الذهب القديم (المباع للصائغ)</h5>
+                                <div class="input-row-flex">
+                                    <div class="input-group">
+                                        <label for="swap-old-karat" data-i18n="calc-swap-old-karat-label">العيار القديم</label>
+                                        <select id="swap-old-karat">
+                                            <option value="24k" data-i18n="tx-karat-24">عيار 24</option>
+                                            <option value="21k" selected data-i18n="tx-karat-21">عيار 21</option>
+                                            <option value="18k" data-i18n="tx-karat-18">عيار 18</option>
+                                            <option value="14k" data-i18n="tx-karat-14">عيار 14</option>
+                                        </select>
+                                    </div>
+                                    <div class="input-group">
+                                        <label for="swap-old-weight" data-i18n="calc-swap-old-weight-label">الوزن القديم (جرام)</label>
+                                        <input type="number" id="swap-old-weight" step="0.01" min="0.01" value="15">
+                                    </div>
+                                </div>
+                                <div class="input-group">
+                                    <label for="swap-old-ded" data-i18n="calc-swap-old-ded-label">نسبة هالك وفصوص (%)</label>
+                                    <input type="number" id="swap-old-ded" value="2" min="0" max="20" step="0.5">
+                                </div>
+                            </div>
+                            <!-- New -->
+                            <div class="inputs-layout">
+                                <h5 class="text-emerald font-bold" data-i18n="calc-swap-new-heading">الذهب الجديد (المشتري من الصائغ)</h5>
+                                <div class="input-row-flex">
+                                    <div class="input-group">
+                                        <label for="swap-new-karat" data-i18n="calc-swap-new-karat-label">العيار الجديد</label>
+                                        <select id="swap-new-karat">
+                                            <option value="24k" data-i18n="tx-karat-24">عيار 24</option>
+                                            <option value="21k" selected data-i18n="tx-karat-21">عيار 21</option>
+                                            <option value="18k" data-i18n="tx-karat-18">عيار 18</option>
+                                            <option value="14k" data-i18n="tx-karat-14">عيار 14</option>
+                                        </select>
+                                    </div>
+                                    <div class="input-group">
+                                        <label for="swap-new-weight" data-i18n="calc-swap-new-weight-label">الوزن الجديد (جرام)</label>
+                                        <input type="number" id="swap-new-weight" step="0.01" min="0.01" value="15">
+                                    </div>
+                                </div>
+                                <div class="input-row-flex">
+                                    <div class="input-group">
+                                        <label for="swap-new-work" data-i18n="tx-workmanship-label">المصنعية للجرام</label>
+                                        <input type="number" id="swap-new-work" value="180" min="0">
+                                    </div>
+                                    <div class="input-group">
+                                        <label for="swap-new-tax" data-i18n="calc-p-tax-label">الضريبة والدمغة (%)</label>
+                                        <input type="number" id="swap-new-tax" value="1.5" step="0.1">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="result-divider">
+
+                        <div class="result-details">
+                            <div class="detail-row">
+                                <span data-i18n="calc-swap-res-old-label">قيمة الذهب القديم ككسر (البيع للصائغ):</span>
+                                <span class="text-rose font-bold" id="swap-res-old-val">0 ج.م</span>
+                            </div>
+                            <div class="detail-row">
+                                <span data-i18n="calc-swap-res-new-label">قيمة الذهب الجديد بالمصنعية والضريبة (الشراء):</span>
+                                <span class="text-emerald font-bold" id="swap-res-new-val">0 ج.م</span>
+                            </div>
+                            <div class="detail-row highlight">
+                                <span class="font-extrabold text-lg" data-i18n="calc-swap-res-diff-label">الفرق النقدي الواجب دفعه للصائغ:</span>
+                                <span class="font-extrabold text-xl text-rose" id="swap-res-diff">0 ج.م</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SUB-VIEW 4: ZAKAT & CHARITY (حساب زكاة الذهب والصدقات الطوعية) -->
+                    <div class="calc-panel-view" id="calc-view-zakat">
+                        <div class="page-grid" style="grid-template-columns: 1fr 1fr; gap: 15px;">
+                            <div class="inputs-layout">
+                                <div class="input-group">
+                                    <label data-i18n="calc-z-purpose-label">الغرض من اقتناء الذهب:</label>
+                                    <div class="radio-group">
+                                        <label class="radio-label">
+                                            <input type="radio" name="z-purpose" value="investment" checked>
+                                            <span class="radio-custom"></span>
+                                            <span data-i18n="calc-z-opt-invest"><b>للاستثمار والادخار:</b> (سبائك، جنيهات، كسر) - <i>تجب فيه الزكاة إجماعاً متى بلغ النصاب.</i></span>
+                                        </label>
+                                        <label class="radio-label">
+                                            <input type="radio" name="z-purpose" value="jewelry">
+                                            <span class="radio-custom"></span>
+                                            <span data-i18n="calc-z-opt-jewelry"><b>للزينة والاستخدام الشخصي:</b> (حلي نسائية للارتداء) - <i>خلافية، والأحوط وجوب زكاتها.</i></span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="divider" style="margin: 6px 0;"></div>
+
+                                <div class="input-row-flex">
+                                    <div class="input-group">
+                                        <label for="z-w24" data-i18n="calc-z-w24-label">عيار 24 (جم)</label>
+                                        <input type="number" id="z-w24" min="0" value="0">
+                                    </div>
+                                    <div class="input-group">
+                                        <label for="z-w21" data-i18n="calc-z-w21-label">عيار 21 (جم)</label>
+                                        <input type="number" id="z-w21" min="0" value="0">
+                                    </div>
+                                </div>
+                                <div class="input-row-flex">
+                                    <div class="input-group">
+                                        <label for="z-w18" data-i18n="calc-z-w18-label">عيار 18 (جم)</label>
+                                        <input type="number" id="z-w18" min="0" value="0">
+                                    </div>
+                                    <div class="input-group">
+                                        <label for="z-w14" data-i18n="calc-z-w14-label">عيار 14 (جم)</label>
+                                        <input type="number" id="z-w14" min="0" value="0">
+                                    </div>
+                                </div>
+                                <button id="btn-sync-z-weights" class="btn-secondary btn-sm" style="margin-top: 5px;">
+                                    <i data-lucide="refresh-cw"></i> <span data-i18n="calc-z-import-btn">استيراد الأوزان تلقائيًا من محفظتي</span>
+                                </button>
+
+                                <div class="divider" style="margin: 10px 0;"></div>
+
+                                <div class="input-row-flex">
+                                    <div class="input-group">
+                                        <label for="z-charity-base" data-i18n="calc-z-charity-base-label">حساب الصدقة الطوعية من:</label>
+                                        <select id="z-charity-base">
+                                            <option value="total" data-i18n="calc-z-charity-total">إجمالي قيمة الذهب</option>
+                                            <option value="profit" data-i18n="calc-z-charity-profit">صافي أرباح المحفظة</option>
+                                        </select>
+                                    </div>
+                                    <div class="input-group">
+                                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                                            <label for="z-charity-slider" data-i18n="calc-z-charity-pct-label">نسبة الصدقة:</label>
+                                            <span class="font-bold text-emerald" id="z-charity-pct-text" style="font-size: 11px;">0%</span>
+                                        </div>
+                                        <input type="range" id="z-charity-slider" min="0" max="10" step="1" value="0">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="result-details" style="justify-content: center;">
+                                <div class="detail-row">
+                                    <span data-i18n="calc-z-res-total-label">إجمالي القيمة الخاضعة للزكاة:</span>
+                                    <span class="font-bold" id="z-res-total-value">0 ج.م</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span data-i18n="calc-z-res-nisab-label">النصاب الشرعي (85 جم ع24):</span>
+                                    <span class="font-bold" id="z-res-nisab-val">0 ج.م</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span data-i18n="calc-z-res-equiv-label">الوزن المعادل لعيار 24:</span>
+                                    <span class="font-bold" id="z-res-equiv-weight">0.00 جرام</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span data-i18n="calc-z-res-status-label">حالة بلوغ النصاب:</span>
+                                    <span class="badge" id="z-res-status" data-i18n="calc-z-status-false">لم يبلغ النصاب</span>
+                                </div>
+                                
+                                <div class="result-divider" style="margin: 8px 0;"></div>
+                                
+                                <span class="result-title" data-i18n="calc-z-res-due-label">الزكاة المستحقة (2.5%):</span>
+                                <div class="value font-extrabold text-xl text-emerald" id="z-res-due" style="font-size: 22px;">0 ج.م</div>
+                                <span class="sub" id="z-res-due-grams" style="font-size: 10px; color: var(--text-secondary);">ما يعادل 0.00 جم عيار 24</span>
+
+                                <div class="info-alert" id="z-res-notice" style="margin-top: 10px; font-size: 9px; padding: 6px; margin-bottom: 10px;">
+                                    <i data-lucide="info" style="width:12px; height:12px;"></i>
+                                    <p id="z-res-desc" data-i18n="calc-z-res-desc">تجب الزكاة بمقدار 2.5% على الذهب الادخاري متى بلغ النصاب وحال عليه الحول.</p>
+                                </div>
+
+                                <div class="result-divider" style="margin: 8px 0;"></div>
+                                
+                                <span class="result-title" data-i18n="calc-z-res-charity-label">الصدقة الطوعية المخصصة:</span>
+                                <div class="value font-extrabold text-xl text-emerald" id="z-res-charity-due" style="font-size: 22px;">0 ج.م</div>
+                                <span class="sub" id="z-res-charity-grams" style="font-size: 10px; color: var(--text-secondary);">ما يعادل 0.00 جم عيار 21</span>
+
+                                <!-- Motivational Quranic/Hadith Quotes -->
+                                <div class="charity-quote-box" id="charity-quote-box">
+                                    <blockquote id="charity-quote-text" data-i18n="calc-z-quote-text">"مَّن ذَا الَّذِي يُقْرِضُ اللَّهَ قَرْضًا حَسَنًا فَيُضَاعِفَهُ لَهُ أَضْعَافًا كَثِيرَةً ۚ وَاللَّهُ يَقْبِضُ وَيَبْسُطُ وَإِليْهِ تُرْجَعُونَ"</blockquote>
+                                    <cite id="charity-quote-cite" data-i18n="calc-z-quote-cite">سورة البقرة - الآية 245</cite>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SUB-VIEW 5: BUDGET (الميزانية العكسية) -->
+                    <div class="calc-panel-view" id="calc-view-budget">
+                        <div class="inputs-layout">
+                            <div class="input-row-flex">
+                                <div class="input-group">
+                                    <label for="b-amount" data-i18n="calc-b-amount-label">الميزانية المتوفرة بالجنيه</label>
+                                    <div class="input-with-badge">
+                                        <input type="number" id="b-amount" min="1000" value="50000">
+                                        <span class="badge" data-i18n="currency-egp">ج.م</span>
+                                    </div>
+                                </div>
+                                <div class="input-group">
+                                    <label for="b-workmanship" data-i18n="calc-b-workmanship-label">تقدير مصنعية الشراء للجرام</label>
+                                    <select id="b-workmanship">
+                                        <option value="80" data-i18n="calc-b-option-bar">سبائك ذهبية مغلفة (مصنعية ~80 ج.م)</option>
+                                        <option value="100" selected data-i18n="calc-b-option-coin">جنيهات ذهب مغلفة (مصنعية ~100 ج.م)</option>
+                                        <option value="180" data-i18n="calc-b-option-local">مشغولات ذهبية محلية (مصنعية ~180 ج.م)</option>
+                                        <option value="300" data-i18n="calc-b-option-luxury">مشغولات فاخرة ومستوردة (مصنعية ~300 ج.م)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="budget-options-list" id="b-results-container" style="margin-top: 10px;">
+                                <!-- Loaded dynamically -->
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- TAB 4: ADMIN / IT DASHBOARD -->
+            <div class="tab-panel" id="panel-admin" role="tabpanel">
+                <div class="card-glass shadow-lg" style="padding: 24px;">
+                    <div class="card-header-clean" style="border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-bottom: 20px;">
+                        <h3><i data-lucide="shield-check" class="gold-text"></i> لوحة تحكم وإدارة الـ IT للبرنامج</h3>
+                        <p class="text-muted">مرحباً بالمسؤول. يمكنك استعراض الإحصائيات العامة للموقع، البحث عن الحسابات برقم الهاتف، وتعديل كلمات المرور.</p>
+                    </div>
+
+                    <!-- Statistics Grid -->
+                    <div class="price-cards-grid" style="margin-bottom: 24px;">
+                        <div class="price-card">
+                            <div class="card-inner">
+                                <span class="label text-muted">إجمالي المستخدمين</span>
+                                <span class="value font-bold" id="admin-stat-users">--</span>
+                            </div>
+                        </div>
+                        <div class="price-card">
+                            <div class="card-inner">
+                                <span class="label text-muted">إجمالي المحافظ المزامنة</span>
+                                <span class="value font-bold" id="admin-stat-portfolios">--</span>
+                            </div>
+                        </div>
+                        <div class="price-card">
+                            <div class="card-inner">
+                                <span class="label text-muted">إجمالي جرامات الذهب</span>
+                                <span class="value font-bold" id="admin-stat-gold">-- <span class="text-xs">جرام</span></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Registered Users List Section -->
+                    <div class="card-glass" style="background: var(--bg-dark); border: 1px solid var(--border-color); padding: 18px; border-radius: var(--radius-md); margin-bottom: 24px;">
+                        <h4 style="font-size: 14px; font-weight: 700; margin-bottom: 12px;"><i data-lucide="users" class="gold-text" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; margin-left: 4px;"></i> قائمة المستخدمين المسجلين</h4>
+                        <div style="overflow-x: auto; max-height: 250px;">
+                            <table style="width: 100%; border-collapse: collapse; font-size: 12px; text-align: right;">
+                                <thead>
+                                    <tr style="border-bottom: 1px solid var(--border-color); color: var(--text-secondary);">
+                                        <th style="padding: 10px 8px;">الاسم</th>
+                                        <th style="padding: 10px 8px;">رقم الهاتف</th>
+                                        <th style="padding: 10px 8px; text-align: left; width: 100px;">الإجراءات</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="admin-users-list-body">
+                                    <tr>
+                                        <td colspan="3" class="text-center py-4 text-muted">جاري تحميل قائمة المستخدمين...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Search Section -->
+                    <div class="admin-search-box" style="background: var(--bg-dark); border: 1px solid var(--border-color); padding: 18px; border-radius: var(--radius-md); margin-bottom: 24px;">
+                        <h4 style="font-size: 14px; font-weight: 700; margin-bottom: 10px;"><i data-lucide="search" class="gold-text" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; margin-left: 4px;"></i> البحث السريع عن مستخدم برقم الموبايل</h4>
+                        <div style="display: flex; gap: 8px;">
+                            <input type="text" id="admin-search-phone" placeholder="أدخل رقم الموبايل المكون من 11 رقماً" style="flex: 1; height: 38px;">
+                            <button type="button" id="btn-admin-search" class="btn-primary" style="height: 38px; width: auto; min-width: 100px;">بحث</button>
+                        </div>
+                    </div>
+
+                    <!-- Search Results -->
+                    <div id="admin-search-results" style="display: none; background: var(--bg-dark); border: 1px solid var(--border-color); padding: 20px; border-radius: var(--radius-md);">
+                        <h4 style="font-size: 14px; font-weight: 700; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">بيانات الحساب ومحاذاة المحفظة</h4>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 20px; font-size: 12px;">
+                            <div>👤 الاسم: <span id="admin-res-name" class="font-bold">--</span></div>
+                            <div>📞 رقم الموبايل: <span id="admin-res-phone" class="font-bold">--</span></div>
+                            <div>💳 الرقم القومي: <span id="admin-res-national-id" class="font-bold">--</span></div>
+                            <div>📅 تاريخ التسجيل: <span id="admin-res-date" class="font-bold">--</span></div>
+                            <div>⚖️ إجمالي الذهب الفعلي: <span id="admin-res-gold" class="font-bold text-amber-500">-- جرام</span></div>
+                            <div>🏆 إجمالي وزن مكافئ (عيار 21): <span id="admin-res-eq21" class="font-bold text-emerald-500">-- جرام</span></div>
+                        </div>
+
+                        <!-- Reset Password Form inside search results -->
+                        <div style="border-top: 1px dashed var(--border-color); padding-top: 15px;">
+                            <h5 style="font-size: 12px; font-weight: 700; color: var(--gold-primary); margin-bottom: 10px;">إعادة تعيين كلمة مرور جديدة لهذا المستخدم</h5>
+                            <form id="admin-reset-pw-form" style="display: flex; gap: 8px; align-items: flex-end;">
+                                <input type="hidden" id="admin-reset-user-id">
+                                <div style="flex: 1;">
+                                    <input type="password" id="admin-reset-new-password" placeholder="أدخل الباسورد الجديد (6 أحرف/أرقام كحد أدنى)" required style="height: 38px; width: 100%;">
+                                </div>
+                                <button type="submit" class="btn-primary" style="height: 38px; width: auto; min-width: 140px;">تحديث الباسورد <i data-lucide="save"></i></button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="container footer-content">
+            <div class="footer-brand">
+                <h2 data-i18n="footer-brand-title">قيراط</h2>
+                <p data-i18n="footer-brand-desc">منصة تفاعلية آمنة 100% لإدارة وحساب استثماراتك الذهبية بمصر. حسابك محمي بالكامل ويتم مزامنة ممتلكاتك سحابياً للوصول إليها من أي جهاز.</p>
+            </div>
+            
+            <button class="btn-secondary" id="btn-open-guide" style="margin-top: 15px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 13px; max-width: 320px; margin-inline: auto;">
+                <i data-lucide="help-circle"></i> <span data-i18n="footer-guide-btn">دليل استخدام منصة قيراط</span>
+            </button>
+            
+            <hr class="footer-divider">
+            
+            <div class="footer-bottom">
+                <p class="copyright" data-i18n="footer-copyright">&copy; 2026 قيراط. جميع الحقوق محفوظة.</p>
+                <div class="developer-signature-badge">
+                    <span data-i18n="footer-developed-by">Developed by</span> <a href="developer.html" style="color: var(--gold-primary); font-weight: bold; text-decoration: underline;">Omar Adel</a>
+                </div>
+                <p class="maker-note"><span data-i18n="footer-maker-note">صنع بحب لحماية وخدمة مدخراتك</span> <i data-lucide="heart" class="heart-icon"></i></p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="app.js"></script>
+</body>
+</html>

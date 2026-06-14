@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Developer Information | Qirat</title>
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        :root {
+            --gold-primary: #A08965;
+            --gold-secondary: #21304E;
+            --gold-light: #CCCAC6;
+            --bg-dark: #09090B;
+            --bg-surface: #18181B;
+            --border-color: #27272A;
+            --text-primary: #FCF9F3;
+            --text-secondary: #A1A1AA;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+            --transition-smooth: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .card-developer {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 40px 24px;
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+            position: relative;
+            animation: zoomIn 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes zoomIn {
+            from { transform: scale(0.96); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .dev-avatar {
+            width: 72px;
+            height: 72px;
+            border-radius: var(--radius-md);
+            border: 1.5px solid var(--gold-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: var(--gold-primary);
+            background: var(--bg-dark);
+        }
+
+        .dev-avatar i {
+            width: 32px;
+            height: 32px;
+        }
+
+        .dev-name {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+        }
+
+        .dev-role {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .divider {
+            height: 1px;
+            background: var(--border-color);
+            margin: 20px 0;
+        }
+
+        .contacts-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            background: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            padding: 12px 16px;
+            border-radius: var(--radius-md);
+            text-decoration: none;
+            color: var(--text-primary);
+            transition: var(--transition-smooth);
+        }
+
+        .contact-item:hover {
+            border-color: var(--gold-primary);
+            background: rgba(160, 137, 101, 0.04);
+            transform: translateY(-2px);
+        }
+
+        .contact-icon {
+            color: var(--gold-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .contact-icon i {
+            width: 20px;
+            height: 20px;
+        }
+
+        .contact-info {
+            text-align: left;
+            flex: 1;
+        }
+
+        .contact-info span {
+            display: block;
+            font-size: 10px;
+            color: var(--text-secondary);
+            margin-bottom: 2px;
+        }
+
+        .contact-info p {
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background: var(--gold-secondary);
+            color: #ffffff;
+            border: none;
+            border-radius: var(--radius-sm);
+            padding: 12px 20px;
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            text-decoration: none;
+            transition: var(--transition-smooth);
+        }
+
+        .btn-primary:hover {
+            background: var(--gold-primary);
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+    <!-- Developer Profile Card -->
+    <div class="card-developer">
+        <div class="dev-avatar">
+            <i data-lucide="code-2"></i>
+        </div>
+        <h1 class="dev-name">Omar Adel</h1>
+        <p class="dev-role">Full Stack Developer</p>
+        
+        <div class="divider"></div>
+        
+        <div class="contacts-list">
+            <!-- Phone 1 -->
+            <div class="contact-item">
+                <div class="contact-icon">
+                    <i data-lucide="phone"></i>
+                </div>
+                <div class="contact-info">
+                    <span>Primary Mobile Number</span>
+                    <p>01050442007</p>
+                </div>
+            </div>
+
+            <!-- Phone 2 -->
+            <div class="contact-item">
+                <div class="contact-icon">
+                    <i data-lucide="message-square"></i>
+                </div>
+                <div class="contact-info">
+                    <span>Secondary Mobile Number</span>
+                    <p>01099675196</p>
+                </div>
+            </div>
+
+            <!-- Instagram -->
+            <a href="https://www.instagram.com/jj3_xx?igsh=MWVkaGI5ZjNsb3Nreg%3D%3D&utm_source=qr" target="_blank" class="contact-item">
+                <div class="contact-icon">
+                    <i data-lucide="instagram"></i>
+                </div>
+                <div class="contact-info">
+                    <span>Instagram Account</span>
+                    <p>@jj3_xx</p>
+                </div>
+                <i data-lucide="external-link" style="width: 14px; height: 14px; color: var(--text-secondary);"></i>
+            </a>
+        </div>
+
+        <!-- Back Button -->
+        <a href="index.html" class="btn-primary">
+            <i data-lucide="arrow-left" style="width: 16px; height: 16px;"></i> Back to Qirat Platform
+        </a>
+    </div>
+
+    <script>
+        // Initialize Lucide Icons
+        if (window.lucide) {
+            window.lucide.createIcons();
+        }
+    </script>
+</body>
+</html>

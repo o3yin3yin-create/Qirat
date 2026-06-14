@@ -1,0 +1,24 @@
+{
+  "name": "قيراط | حاسبة ومستشار الذهب",
+  "short_name": "قيراط",
+  "description": "قيراط (Qirat) - تطبيق ذكي لحساب أسعار الذهب لحظيًا وإدارة استثماراتك بمصر بكل أمان",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#070a13",
+  "theme_color": "#d4af37",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "https://assets.gold-price-today.com/favicon/favicon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://assets.gold-price-today.com/favicon/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
