@@ -64,6 +64,7 @@ if (isPg) {
 
             pool.query(convertedSql, params, (err, res) => {
                 if (err) {
+                    console.error("PostgreSQL run query error:", err.message, "SQL:", convertedSql, "Params:", params);
                     if (cb) cb(err);
                     return;
                 }
@@ -83,6 +84,7 @@ if (isPg) {
             const convertedSql = sql.replace(/\?/g, () => `$${index++}`);
             pool.query(convertedSql, params, (err, res) => {
                 if (err) {
+                    console.error("PostgreSQL get query error:", err.message, "SQL:", convertedSql, "Params:", params);
                     if (cb) cb(err);
                     return;
                 }
@@ -99,6 +101,7 @@ if (isPg) {
             const convertedSql = sql.replace(/\?/g, () => `$${index++}`);
             pool.query(convertedSql, params, (err, res) => {
                 if (err) {
+                    console.error("PostgreSQL all query error:", err.message, "SQL:", convertedSql, "Params:", params);
                     if (cb) cb(err);
                     return;
                 }
@@ -239,13 +242,13 @@ app.post('/api/auth/register', (req, res) => {
     const pwdHash = hashPassword(password);
     
     db.get('SELECT id FROM users WHERE phone = ? OR national_id = ?', [phoneClean, nationalIdClean], (err, row) => {
-        if (err) return res.status(500).json({ error: 'خطأ في قاعدة البيانات' });
+        if (err) return res.status(500).json({ error: 'خطأ في قاعدة البيانات: ' + err.message });
         if (row) {
             return res.status(400).json({ error: 'رقم الهاتف أو الرقم القومي مسجل بالفعل' });
         }
         
         db.run('INSERT INTO users (name, phone, national_id, password_hash) VALUES (?, ?, ?, ?)', [nameClean, phoneClean, nationalIdClean, pwdHash], function(err) {
-            if (err) return res.status(500).json({ error: 'خطأ أثناء إنشاء الحساب' });
+            if (err) return res.status(500).json({ error: 'خطأ أثناء إنشاء الحساب: ' + err.message });
             
             const userId = this.lastID;
             
@@ -270,7 +273,7 @@ app.post('/api/auth/login', (req, res) => {
     const phoneClean = phone.trim();
     
     db.get('SELECT id, name, password_hash FROM users WHERE phone = ?', [phoneClean], (err, user) => {
-        if (err) return res.status(500).json({ error: 'خطأ في قاعدة البيانات' });
+        if (err) return res.status(500).json({ error: 'خطأ في قاعدة البيانات: ' + err.message });
         if (!user || !verifyPassword(password, user.password_hash)) {
             return res.status(401).json({ error: 'رقم الهاتف أو كلمة المرور غير صحيحة' });
         }
@@ -297,7 +300,7 @@ app.post('/api/auth/reset-password-forgot', (req, res) => {
     }
     
     db.get('SELECT id, password_hash FROM users WHERE phone = ? AND national_id = ?', [phoneClean, nationalIdClean], (err, user) => {
-        if (err) return res.status(500).json({ error: 'خطأ في قاعدة البيانات' });
+        if (err) return res.status(500).json({ error: 'خطأ في قاعدة البيانات: ' + err.message });
         if (!user) {
             return res.status(400).json({ error: 'رقم الهاتف أو الرقم القومي غير متطابق مع بياناتنا' });
         }
