@@ -1171,16 +1171,25 @@ function setupPortfolioListeners() {
             const weightLabel = document.querySelector('label[for="tx-weight"]');
             const weightInput = document.getElementById('tx-weight');
 
+            const workGroup = document.getElementById('workmanship-group');
             if (type === 'bar' || type === 'coin') {
                 brandGroup.style.display = 'flex';
                 karatSelect.value = type === 'bar' ? '24k' : '21k';
-                workInput.value = type === 'bar' ? '75' : '100';
+                if (type === 'bar') {
+                    if (workGroup) workGroup.style.display = 'none';
+                    workInput.value = '0';
+                } else {
+                    if (workGroup) workGroup.style.display = 'block';
+                    workInput.value = '100';
+                }
             } else {
                 brandGroup.style.display = 'none';
                 if (type === 'jewelry') {
+                    if (workGroup) workGroup.style.display = 'block';
                     karatSelect.value = '21k';
                     workInput.value = '160';
                 } else {
+                    if (workGroup) workGroup.style.display = 'none';
                     karatSelect.value = '21k';
                     workInput.value = '0';
                 }

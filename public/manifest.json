@@ -9,14 +9,8 @@
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "https://assets.gold-price-today.com/favicon/favicon-96x96.png",
-      "sizes": "96x96",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "https://assets.gold-price-today.com/favicon/apple-touch-icon.png",
-      "sizes": "180x180",
+      "src": "/icon.png",
+      "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
     }

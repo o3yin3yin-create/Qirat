@@ -347,6 +347,7 @@ h1, h2, h3, h4, h5, h6 {
     .page-grid { grid-template-columns: 1fr; gap: 20px; }
     .calc-zakat-grid { grid-template-columns: 1fr; gap: 15px; }
     .portfolio-analytics-grid { grid-template-columns: 1fr; }
+    input, select, textarea { font-size: 16px !important; }
 }
 
 /* --- CARDS & PANELS --- */
