@@ -48,6 +48,7 @@ const TRANSLATIONS = {
     'breakdown-18k': { ar: 'عيار 18:', en: '18K:' },
     'breakdown-14k': { ar: 'عيار 14:', en: '14K:' },
     'breakdown-coins': { ar: 'جنيهات الذهب (عدد):', en: 'Gold Coins (count):' },
+    'breakdown-bars-title': { ar: 'تفصيل فئات السبائك:', en: 'Bullion Bars Breakdown:' },
     'breakdown-eq24': { ar: 'الوزن الإجمالي (معادل ع24):', en: 'Total Weight (24K equiv):' },
     'breakdown-eq21': { ar: 'الوزن الإجمالي (معادل ع21):', en: 'Total Weight (21K equiv):' },
     'calc-b-amount-label': { ar: 'الميزانية المتوفرة بالجنيه', en: 'Available Budget' },
@@ -1305,7 +1306,7 @@ function renderPortfolio() {
 
     if (holdingsList.length === 0) {
         list.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-muted">${currentLanguage === 'en' ? 'Portfolio is empty, record a purchase to track your savings.' : 'المحفظة خالية، سجل عملية شراء لتتبع مدخراتك.'}</td></tr>`;
-        updatePortfolioSummary(0, 0, 0, { bar: 0, coin: 0, jewelry: 0, scrap: 0 }, 0, 0, { '24k': 0, '21k': 0, '18k': 0, '14k': 0, 'coin': 0 });
+        updatePortfolioSummary(0, 0, 0, { bar: 0, coin: 0, jewelry: 0, scrap: 0 }, 0, 0, { '24k': 0, '21k': 0, '18k': 0, '14k': 0, 'coin': 0 }, {});
         return;
     }
 
@@ -1316,6 +1317,7 @@ function renderPortfolio() {
     let totalWeight21ForDCA = 0;
     let typeBreakdown = { bar: 0, coin: 0, jewelry: 0, scrap: 0 };
     let rawWeights = { '24k': 0, '21k': 0, '18k': 0, '14k': 0, 'coin': 0 };
+    let barWeightsCount = {};
 
     holdingsList.forEach(item => {
         const w = parseFloat(item.weight) || 0;
@@ -1325,6 +1327,12 @@ function renderPortfolio() {
             const karat = item.karat;
             if (rawWeights[karat] !== undefined) {
                 rawWeights[karat] += w;
+            }
+        }
+        if (item.type === 'bar') {
+            const barW = parseFloat(item.weight) || 0;
+            if (barW > 0) {
+                barWeightsCount[barW] = (barWeightsCount[barW] || 0) + 1;
             }
         }
         const karatPriceBuy = getKaratPrice(item.karat, 'buy');
@@ -1403,7 +1411,7 @@ function renderPortfolio() {
     });
 
     if (window.lucide) window.lucide.createIcons();
-    updatePortfolioSummary(totalWeight21, totalCurrentValue, totalCost, typeBreakdown, totalCurrentValueForProfit, totalWeight21ForDCA, rawWeights);
+    updatePortfolioSummary(totalWeight21, totalCurrentValue, totalCost, typeBreakdown, totalCurrentValueForProfit, totalWeight21ForDCA, rawWeights, barWeightsCount);
 }
 
 function getKaratMultiplier(karat) {
@@ -1416,7 +1424,7 @@ function getKaratMultiplier(karat) {
 
 let currentPortfolioRawWeights = { '24k': 0, '21k': 0, '18k': 0, '14k': 0, 'coin': 0 };
 
-function updatePortfolioSummary(totalWeight21, totalCurrentValue, totalCost, typeBreakdown, totalCurrentValueForProfit = 0, totalWeight21ForDCA = 0, rawWeights = null) {
+function updatePortfolioSummary(totalWeight21, totalCurrentValue, totalCost, typeBreakdown, totalCurrentValueForProfit = 0, totalWeight21ForDCA = 0, rawWeights = null, barWeightsCount = {}) {
     const egpLabel = currentLanguage === 'en' ? 'EGP' : 'ج.م';
     document.getElementById('port-total-value').textContent = `${formatNumber(Math.round(totalCurrentValue))} ${egpLabel}`;
     
@@ -1449,6 +1457,40 @@ function updatePortfolioSummary(totalWeight21, totalCurrentValue, totalCost, typ
     
     document.getElementById('breakdown-total-24k').textContent = `${totalWeight24.toFixed(2)} ${unit}`;
     document.getElementById('breakdown-total-21k').textContent = `${totalWeight21.toFixed(2)} ${unit}`;
+
+    // Render bullion bars breakdown by weight class
+    const barContainer = document.getElementById('breakdown-bars-container');
+    const barListEl = document.getElementById('breakdown-bars-list');
+    if (barContainer && barListEl) {
+        const barWKeys = Object.keys(barWeightsCount).map(Number).sort((a, b) => b - a); // sort desc
+        if (barWKeys.length > 0) {
+            barListEl.innerHTML = '';
+            barWKeys.forEach(wKey => {
+                const count = barWeightsCount[wKey];
+                const div = document.createElement('div');
+                div.style.display = 'flex';
+                div.style.justifyContent = 'space-between';
+                div.style.fontSize = '12px';
+                div.style.padding = '4px 0';
+                div.style.borderBottom = '1px dashed rgba(255,255,255,0.06)';
+                
+                const labelText = currentLanguage === 'en'
+                    ? `${count} × ${wKey}g bar${count > 1 ? 's' : ''}`
+                    : `عدد ${count} سبيكة فئة ${wKey} جرام`;
+                
+                const totalText = `${(count * wKey).toFixed(2)} ${unit}`;
+                
+                div.innerHTML = `
+                    <span class="text-muted">${labelText}</span>
+                    <span class="font-bold">${totalText}</span>
+                `;
+                barListEl.appendChild(div);
+            });
+            barContainer.style.display = 'flex';
+        } else {
+            barContainer.style.display = 'none';
+        }
+    }
 
     // DCA Avg: compute using only items with known costs
     const dcaEl = document.getElementById('port-dca-average');
