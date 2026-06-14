@@ -21,6 +21,7 @@ const TRANSLATIONS = {
     'auth-forgot-weight-label': { ar: 'إجمالي جرامات الذهب في حسابك (تقريباً)', en: 'Total Gold Weight in Account' },
     'auth-fullname-label': { ar: 'الاسم بالكامل', en: 'Full Name' },
     'auth-login-btn': { ar: 'تسجيل الدخول', en: 'Sign In' },
+    'auth-guest-btn': { ar: 'الدخول كـ زائر (بدون حساب)', en: 'Enter as Guest (No Account)' },
     'auth-login-desc': { ar: 'سجل دخولك لمزامنة محفظتك وحفظ ممتلكاتك بشكل آمن وتلقائي.', en: 'Sign in to your account to securely sync and backup your portfolio.' },
     'auth-login-title': { ar: 'مرحباً بك في قيراط', en: 'Welcome back' },
     'auth-logout-btn': { ar: 'تسجيل الخروج', en: 'Sign Out' },
@@ -132,7 +133,7 @@ const TRANSLATIONS = {
     'guide-sec3-bullet3': { ar: '<b>إدخال سعر الشراء:</b> يمكنك إدخال المبلغ الإجمالي الذي دفعته، أو تركه فارغاً للذهب القديم الذي لا تتذكر سعره، وسيقوم البرنامج بحساب إحصائياتك بذكاء.', en: '<b>Optional Cost Input:</b> Leave the purchase price empty for old gold of unknown cost, and the system adjusts stats automatically.' },
     'guide-sec3-bullet4': { ar: '<b>محاكي الأهداف الادخارية:</b> حدد هدفاً بالجرامات وسيقوم البرنامج بحساب الوقت اللازم للوصول إليه بناءً على قدرتك الادخارية الشهرية.', en: '<b>Goal Simulator:</b> Set a target weight, and the app calculates the time to reach it based on your monthly savings capacity.' },
     'guide-sec3-title': { ar: '💼 2. إدارة المحفظة الاستثمارية', en: '💼 2. Portfolio Management' },
-    'guide-sec4-bullet1': { ar: '<b>حاسبة الشراء:</b> لحساب التكلفة الإجمالية لشراء ذهب جديد شاملة سعر الذهب الخام، المصنعية للجرام، ونسبة الضريبة والدمغة.', en: '<b>Purchase Calculator:</b> Calculate final cost including raw price, workmanship, and stamps/taxes.' },
+    'guide-sec4-bullet1': { ar: '<b>حاسبة الشراء:</b> لحساب التكلفة الإجمالية لشراء ذهب جديد شاملة سعر الذهب الخام، والمصنعية للجرام.', en: '<b>Purchase Calculator:</b> Calculate final cost including raw price and workmanship.' },
     'guide-sec4-bullet2': { ar: '<b>حاسبة البيع والتصفية:</b> لحساب المبلغ المستلم عند البيع للصائغ مع احتساب استرداد الكاش باك للسبائك والجنيهات المغلفة.', en: '<b>Selling Calculator:</b> Calculate exact payout when selling gold, including cashback refunds.' },
     'guide-sec4-bullet3': { ar: '<b>حاسبة المبادلة:</b> لمبادلة ذهب قديم بآخر جديد ومعرفة الفارق المالي الواجب دفعه أو استلامه بدقة.', en: '<b>Gold Swap Calculator:</b> Swap old gold for new pieces with accurate cost difference calculations.' },
     'guide-sec4-bullet4': { ar: '<b>حاسبة الزكاة والصدقة:</b> لحساب النصاب الشرعي لذهبك (ما يعادل 85 جرام عيار 24) وتحديد قيمة زكاة المال الواجبة (2.5%) مع إمكانية حساب صدقة طوعية مخصصة.', en: '<b>Zakat Calculator:</b> Find if your gold reaches the Shariah Nisab (85g 24K) and calculate the 2.5% due Zakat and charity.' },
@@ -334,11 +335,12 @@ async function deriveKey(passcode, salt) {
 // --- CLOUD AUTHENTICATION HELPERS ---
 async function checkAuthStatus() {
     const token = localStorage.getItem('dahaby_jwt');
+    const isGuest = localStorage.getItem('dahaby_is_guest') === 'true';
     const authOverlay = document.getElementById('auth-overlay');
     const userBadge = document.getElementById('user-badge');
     const userPhoneDisplay = document.getElementById('user-phone-display');
 
-    if (!token) {
+    if (!token && !isGuest) {
         if (authOverlay) authOverlay.classList.add('active');
         if (userBadge) userBadge.style.display = 'none';
         const adminTabBtn = document.getElementById('admin-tab-btn');
@@ -349,8 +351,55 @@ async function checkAuthStatus() {
     if (authOverlay) authOverlay.classList.remove('active');
     if (userBadge) userBadge.style.display = 'flex';
     
+    if (isGuest) {
+        const guestName = currentLanguage === 'en' ? 'Guest' : 'زائر';
+        if (userPhoneDisplay) userPhoneDisplay.textContent = guestName;
+        const adminTabBtn = document.getElementById('admin-tab-btn');
+        if (adminTabBtn) adminTabBtn.style.display = 'none';
+        
+        // Load cache or default
+        const cache = localStorage.getItem('dahaby_portfolio_cache');
+        if (cache) {
+            try {
+                portfoliosData = JSON.parse(cache);
+            } catch (e) {
+                portfoliosData = {
+                    activePortfolioId: 'default',
+                    portfolios: {
+                        'default': {
+                            name: currentLanguage === 'en' ? 'Basic Savings Portfolio' : 'حقيبة الادخار الأساسية',
+                            holdings: [],
+                            goalWeight: 50,
+                            monthlySavings: 5000
+                        }
+                    }
+                };
+            }
+        } else {
+            portfoliosData = {
+                activePortfolioId: 'default',
+                portfolios: {
+                    'default': {
+                        name: currentLanguage === 'en' ? 'Basic Savings Portfolio' : 'حقيبة الادخار الأساسية',
+                        holdings: [],
+                        goalWeight: 50,
+                        monthlySavings: 5000
+                    }
+                }
+            };
+        }
+        activePortfolioId = portfoliosData.activePortfolioId || 'default';
+        renderPortfolioSelector();
+        renderPortfolio();
+        return;
+    }
+
     const savedName = localStorage.getItem('dahaby_user_name') || localStorage.getItem('dahaby_user_phone') || 'مستثمر';
-    if (userPhoneDisplay) userPhoneDisplay.textContent = savedName;
+    let displayName = savedName;
+    if (displayName && !/^\d+$/.test(displayName.trim())) {
+        displayName = displayName.trim().split(/\s+/)[0];
+    }
+    if (userPhoneDisplay) userPhoneDisplay.textContent = displayName;
 
     const userPhone = localStorage.getItem('dahaby_user_phone');
     const adminTabBtn = document.getElementById('admin-tab-btn');
@@ -659,6 +708,12 @@ function setupAuthListeners() {
         }
     });
 
+    // Guest login click
+    document.getElementById('btn-login-guest')?.addEventListener('click', async () => {
+        localStorage.setItem('dahaby_is_guest', 'true');
+        await checkAuthStatus();
+    });
+
     // Logout button click
     document.getElementById('btn-logout')?.addEventListener('click', () => {
         if (confirm(TRANSLATIONS['confirm-logout'][currentLanguage])) {
@@ -666,6 +721,7 @@ function setupAuthListeners() {
             localStorage.removeItem('dahaby_user_phone');
             localStorage.removeItem('dahaby_user_name');
             localStorage.removeItem('dahaby_portfolio_cache');
+            localStorage.removeItem('dahaby_is_guest');
             
             portfoliosData = null;
             activePortfolioId = 'default';
@@ -1497,7 +1553,7 @@ function calculateGoalSimulation() {
     }
 
     const p21Sell = getKaratPrice('21k', 'sell');
-    const estimatedCost = remainingGrams * p21Sell * 1.015; // 1.5% tax
+    const estimatedCost = remainingGrams * p21Sell; // raw price without tax
     const months = Math.ceil(estimatedCost / monthlySavings);
 
     resultTextEl.innerHTML = currentLanguage === 'en'
@@ -1726,7 +1782,7 @@ function renderBudget() {
         return;
     }
 
-    const taxFactor = 1.015;
+    const taxFactor = 1.0;
 
     const karats = [
         { key: '24k', name: isEn ? '24K (Bullion)' : 'عيار 24 (سبائك)' },
@@ -2219,7 +2275,46 @@ async function openUserProfileModal() {
     if (!modal) return;
     
     const token = localStorage.getItem('dahaby_jwt');
-    if (!token) return;
+    const isGuest = localStorage.getItem('dahaby_is_guest') === 'true';
+    if (!token && !isGuest) return;
+    
+    // Set weights helper function
+    const setWeights = () => {
+        let rawWeight = 0;
+        let eq21Weight = 0;
+        if (portfoliosData && portfoliosData.portfolios && portfoliosData.portfolios[activePortfolioId]) {
+            const p = portfoliosData.portfolios[activePortfolioId];
+            (p.holdings || []).forEach(item => {
+                const w = parseFloat(item.weight) || 0;
+                rawWeight += w;
+                
+                let mult = 1;
+                if (item.type === 'coin') {
+                    eq21Weight += w * 8;
+                } else {
+                    const karat = item.karat;
+                    if (karat === '24k') mult = 24 / 21;
+                    else if (karat === '22k') mult = 22 / 21;
+                    else if (karat === '18k') mult = 18 / 21;
+                    else if (karat === '14k') mult = 14 / 21;
+                    eq21Weight += w * mult;
+                }
+            });
+        }
+        const unit = currentLanguage === 'en' ? 'g' : 'جرام';
+        document.getElementById('prof-gold').textContent = `${rawWeight.toFixed(2)} ${unit}`;
+        document.getElementById('prof-eq21').textContent = `${eq21Weight.toFixed(2)} ${unit}`;
+    };
+
+    if (isGuest) {
+        document.getElementById('prof-name').textContent = currentLanguage === 'en' ? 'Guest' : 'زائر';
+        document.getElementById('prof-phone').textContent = currentLanguage === 'en' ? 'N/A (Local)' : 'غير متوفر (محلي)';
+        document.getElementById('prof-national-id').textContent = currentLanguage === 'en' ? 'N/A' : 'غير متوفر';
+        setWeights();
+        modal.classList.add('active');
+        if (window.lucide) window.lucide.createIcons();
+        return;
+    }
     
     try {
         const response = await fetch('/api/user/profile', {
@@ -2231,31 +2326,7 @@ async function openUserProfileModal() {
             document.getElementById('prof-phone').textContent = user.phone;
             document.getElementById('prof-national-id').textContent = user.national_id;
             
-            // Calculate weights from portfoliosData
-            let rawWeight = 0;
-            let eq21Weight = 0;
-            if (portfoliosData && portfoliosData.portfolios[activePortfolioId]) {
-                const p = portfoliosData.portfolios[activePortfolioId];
-                (p.holdings || []).forEach(item => {
-                    const w = parseFloat(item.weight) || 0;
-                    rawWeight += w;
-                    
-                    let mult = 1;
-                    if (item.type === 'coin') {
-                        eq21Weight += w * 8;
-                    } else {
-                        const karat = item.karat;
-                        if (karat === '24k') mult = 24 / 21;
-                        else if (karat === '22k') mult = 22 / 21;
-                        else if (karat === '18k') mult = 18 / 21;
-                        else if (karat === '14k') mult = 14 / 21;
-                        eq21Weight += w * mult;
-                    }
-                });
-            }
-            const unit = currentLanguage === 'en' ? 'g' : 'جرام';
-            document.getElementById('prof-gold').textContent = `${rawWeight.toFixed(2)} ${unit}`;
-            document.getElementById('prof-eq21').textContent = `${eq21Weight.toFixed(2)} ${unit}`;
+            setWeights();
             
             modal.classList.add('active');
             if (window.lucide) window.lucide.createIcons();
