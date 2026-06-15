@@ -1055,7 +1055,17 @@ input[type="range"]::-webkit-slider-thumb {
 
 @media (max-width: 600px) {
     .header-container { flex-direction: column; height: auto; padding: 12px 0; gap: 10px; }
-    .status-badge { width: 100%; justify-content: center; }
+    .header-actions {
+        width: 100%;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 8px;
+    }
+    .status-badge {
+        width: 100%;
+        justify-content: center;
+        margin-bottom: 4px;
+    }
     .tabs-nav { 
         width: calc(100% - 32px);
         bottom: 16px;
