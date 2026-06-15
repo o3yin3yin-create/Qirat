@@ -182,7 +182,7 @@ const TRANSLATIONS = {
     'quick-guide-tip4-desc': { ar: 'اختر دائماً الشركات والورش المعتمدة لضمان العيار والوزن والدقة.', en: 'Always choose certified brands to ensure correct karat, weight, and precision.' },
     'quick-guide-tip4-title': { ar: 'الشركات المعتمدة:', en: 'Certified Brands:' },
     'quick-guide-title': { ar: 'نصائح استثمارية هامة للمدخرين', en: 'Practical Tips for Gold Savers' },
-    'status-live': { ar: 'تحديث لحظي', en: 'Live Update' },
+    'status-live': { ar: 'مباشر', en: 'Live' },
     'tab-admin': { ar: 'التحكم', en: 'IT Dashboard' },
     'tab-calculators': { ar: 'الحاسبة', en: 'Calculator' },
     'tab-portfolio': { ar: 'المحفظة', en: 'Portfolio' },

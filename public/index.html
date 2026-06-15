@@ -404,7 +404,7 @@
             <div class="header-actions">
                 <div class="status-badge" id="network-status">
                     <span class="pulse-dot"></span>
-                    <span class="status-text" id="network-status-text" data-i18n="status-live">تحديث لحظي</span>
+                    <span class="status-text" id="network-status-text" data-i18n="status-live">مباشر</span>
                 </div>
                 <button class="icon-btn" id="btn-lang-toggle" title="English / عربي" style="font-weight: 700; font-size: 13px;">EN</button>
                 <button class="icon-btn" id="btn-theme-toggle" title="تبديل المظهر">
@@ -961,9 +961,13 @@
                                 
                                 <div class="result-divider" style="margin: 8px 0;"></div>
                                 
-                                <span class="result-title" data-i18n="calc-z-res-due-label">الزكاة المستحقة (2.5%):</span>
-                                <div class="value font-extrabold text-xl text-emerald" id="z-res-due" style="font-size: 22px;">0 ج.م</div>
-                                <span class="sub" id="z-res-due-grams" style="font-size: 10px; color: var(--text-secondary);">ما يعادل 0.00 جم عيار 24</span>
+                                <div class="detail-row highlight" id="zakat-due-box">
+                                    <div style="display: flex; flex-direction: column; gap: 2px; text-align: start;">
+                                        <span class="font-extrabold text-lg" data-i18n="calc-z-res-due-label">الزكاة المستحقة (2.5%):</span>
+                                        <span class="sub" id="z-res-due-grams" style="font-size: 10px; color: var(--text-secondary); margin-top: 2px;">ما يعادل 0.00 جم عيار 24</span>
+                                    </div>
+                                    <span class="font-extrabold text-xl text-emerald" id="z-res-due" style="font-size: 22px; white-space: nowrap;">0 ج.م</span>
+                                </div>
 
                                 <div class="info-alert" id="z-res-notice" style="margin-top: 10px; font-size: 9px; padding: 6px; margin-bottom: 10px;">
                                     <i data-lucide="info" style="width:12px; height:12px;"></i>
@@ -972,9 +976,13 @@
 
                                 <div class="result-divider" style="margin: 8px 0;"></div>
                                 
-                                <span class="result-title" data-i18n="calc-z-res-charity-label">الصدقة الطوعية المخصصة:</span>
-                                <div class="value font-extrabold text-xl text-emerald" id="z-res-charity-due" style="font-size: 22px;">0 ج.م</div>
-                                <span class="sub" id="z-res-charity-grams" style="font-size: 10px; color: var(--text-secondary);">ما يعادل 0.00 جم عيار 21</span>
+                                <div class="detail-row highlight" id="charity-due-box">
+                                    <div style="display: flex; flex-direction: column; gap: 2px; text-align: start;">
+                                        <span class="font-extrabold text-lg" data-i18n="calc-z-res-charity-label">الصدقة الطوعية المخصصة:</span>
+                                        <span class="sub" id="z-res-charity-grams" style="font-size: 10px; color: var(--text-secondary); margin-top: 2px;">ما يعادل 0.00 جم عيار 21</span>
+                                    </div>
+                                    <span class="font-extrabold text-xl text-emerald" id="z-res-charity-due" style="font-size: 22px; white-space: nowrap;">0 ج.م</span>
+                                </div>
 
                                 <!-- Motivational Quranic/Hadith Quotes -->
                                 <div class="charity-quote-box" id="charity-quote-box">

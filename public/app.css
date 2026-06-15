@@ -1057,14 +1057,12 @@ input[type="range"]::-webkit-slider-thumb {
     .header-container { flex-direction: column; height: auto; padding: 12px 0; gap: 10px; }
     .header-actions {
         width: 100%;
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
         justify-content: center;
         gap: 8px;
     }
-    .status-badge {
-        width: 100%;
-        justify-content: center;
-        margin-bottom: 4px;
+    .main-content {
+        padding-bottom: 120px;
     }
     .tabs-nav { 
         width: calc(100% - 32px);
