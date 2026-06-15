@@ -877,118 +877,118 @@
 
                     <!-- SUB-VIEW 4: ZAKAT & CHARITY (حساب زكاة الذهب والصدقات الطوعية) -->
                     <div class="calc-panel-view" id="calc-view-zakat">
-                        <div class="page-grid calc-zakat-grid">
-                            <div class="inputs-layout">
-                                <div class="input-group">
-                                    <label data-i18n="calc-z-purpose-label">الغرض من اقتناء الذهب:</label>
-                                    <div class="radio-group">
-                                        <label class="radio-label">
-                                            <input type="radio" name="z-purpose" value="investment" checked>
-                                            <span class="radio-custom"></span>
-                                            <span data-i18n="calc-z-opt-invest"><b>للاستثمار والادخار:</b> (سبائك، جنيهات، كسر) - <i>تجب فيه الزكاة إجماعاً متى بلغ النصاب.</i></span>
-                                        </label>
-                                        <label class="radio-label">
-                                            <input type="radio" name="z-purpose" value="jewelry">
-                                            <span class="radio-custom"></span>
-                                            <span data-i18n="calc-z-opt-jewelry"><b>للزينة والاستخدام الشخصي:</b> (حلي نسائية للارتداء) - <i>خلافية، والأحوط وجوب زكاتها.</i></span>
-                                        </label>
-                                    </div>
-                                </div>
-
-                                <div class="divider" style="margin: 6px 0;"></div>
-
-                                <div class="input-row-flex">
-                                    <div class="input-group">
-                                        <label for="z-w24" data-i18n="calc-z-w24-label">عيار 24 (جم)</label>
-                                        <input type="number" id="z-w24" min="0" value="0">
-                                    </div>
-                                    <div class="input-group">
-                                        <label for="z-w21" data-i18n="calc-z-w21-label">عيار 21 (جم)</label>
-                                        <input type="number" id="z-w21" min="0" value="0">
-                                    </div>
-                                </div>
-                                <div class="input-row-flex">
-                                    <div class="input-group">
-                                        <label for="z-w18" data-i18n="calc-z-w18-label">عيار 18 (جم)</label>
-                                        <input type="number" id="z-w18" min="0" value="0">
-                                    </div>
-                                    <div class="input-group">
-                                        <label for="z-w14" data-i18n="calc-z-w14-label">عيار 14 (جم)</label>
-                                        <input type="number" id="z-w14" min="0" value="0">
-                                    </div>
-                                </div>
-                                <button id="btn-sync-z-weights" class="btn-secondary btn-sm" style="margin-top: 5px;">
-                                    <i data-lucide="refresh-cw"></i> <span data-i18n="calc-z-import-btn">استيراد الأوزان تلقائيًا من محفظتي</span>
-                                </button>
-
-                                <div class="divider" style="margin: 10px 0;"></div>
-
-                                <div class="input-row-flex">
-                                    <div class="input-group">
-                                        <label for="z-charity-base" data-i18n="calc-z-charity-base-label">حساب الصدقة الطوعية من:</label>
-                                        <select id="z-charity-base">
-                                            <option value="total" data-i18n="calc-z-charity-total">إجمالي قيمة الذهب</option>
-                                            <option value="profit" data-i18n="calc-z-charity-profit">صافي أرباح المحفظة</option>
-                                        </select>
-                                    </div>
-                                    <div class="input-group">
-                                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                                            <label for="z-charity-slider" data-i18n="calc-z-charity-pct-label">نسبة الصدقة:</label>
-                                            <span class="font-bold text-emerald" id="z-charity-pct-text" style="font-size: 11px;">0%</span>
-                                        </div>
-                                        <input type="range" id="z-charity-slider" min="0" max="10" step="1" value="0">
-                                    </div>
+                        <div class="inputs-layout">
+                            <div class="input-group">
+                                <label data-i18n="calc-z-purpose-label">الغرض من اقتناء الذهب:</label>
+                                <div class="radio-group">
+                                    <label class="radio-label">
+                                        <input type="radio" name="z-purpose" value="investment" checked>
+                                        <span class="radio-custom"></span>
+                                        <span data-i18n="calc-z-opt-invest"><b>للاستثمار والادخار:</b> (سبائك، جنيهات، كسر) - <i>تجب فيه الزكاة إجماعاً متى بلغ النصاب.</i></span>
+                                    </label>
+                                    <label class="radio-label">
+                                        <input type="radio" name="z-purpose" value="jewelry">
+                                        <span class="radio-custom"></span>
+                                        <span data-i18n="calc-z-opt-jewelry"><b>للزينة والاستخدام الشخصي:</b> (حلي نسائية للارتداء) - <i>خلافية، والأحوط وجوب زكاتها.</i></span>
+                                    </label>
                                 </div>
                             </div>
 
-                            <div class="result-details" style="justify-content: center;">
-                                <div class="detail-row">
-                                    <span data-i18n="calc-z-res-total-label">إجمالي القيمة الخاضعة للزكاة:</span>
-                                    <span class="font-bold" id="z-res-total-value">0 ج.م</span>
+                            <div class="divider" style="margin: 6px 0;"></div>
+
+                            <div class="input-row-flex">
+                                <div class="input-group">
+                                    <label for="z-w24" data-i18n="calc-z-w24-label">عيار 24 (جم)</label>
+                                    <input type="number" id="z-w24" min="0" value="0">
                                 </div>
-                                <div class="detail-row">
-                                    <span data-i18n="calc-z-res-nisab-label">النصاب الشرعي (85 جم ع24):</span>
-                                    <span class="font-bold" id="z-res-nisab-val">0 ج.م</span>
+                                <div class="input-group">
+                                    <label for="z-w21" data-i18n="calc-z-w21-label">عيار 21 (جم)</label>
+                                    <input type="number" id="z-w21" min="0" value="0">
                                 </div>
-                                <div class="detail-row">
-                                    <span data-i18n="calc-z-res-equiv-label">الوزن المعادل لعيار 24:</span>
-                                    <span class="font-bold" id="z-res-equiv-weight">0.00 جرام</span>
+                            </div>
+                            <div class="input-row-flex">
+                                <div class="input-group">
+                                    <label for="z-w18" data-i18n="calc-z-w18-label">عيار 18 (جم)</label>
+                                    <input type="number" id="z-w18" min="0" value="0">
                                 </div>
-                                <div class="detail-row">
-                                    <span data-i18n="calc-z-res-status-label">حالة بلوغ النصاب:</span>
-                                    <span class="badge" id="z-res-status" data-i18n="calc-z-status-false">لم يبلغ النصاب</span>
+                                <div class="input-group">
+                                    <label for="z-w14" data-i18n="calc-z-w14-label">عيار 14 (جم)</label>
+                                    <input type="number" id="z-w14" min="0" value="0">
                                 </div>
-                                
-                                <div class="result-divider" style="margin: 8px 0;"></div>
-                                
-                                <div class="detail-row highlight" id="zakat-due-box">
-                                    <div style="display: flex; flex-direction: column; gap: 2px; text-align: start;">
-                                        <span class="font-extrabold text-lg" data-i18n="calc-z-res-due-label">الزكاة المستحقة (2.5%):</span>
-                                        <span class="sub" id="z-res-due-grams" style="font-size: 10px; color: var(--text-secondary); margin-top: 2px;">ما يعادل 0.00 جم عيار 24</span>
+                            </div>
+                            <button id="btn-sync-z-weights" class="btn-secondary btn-sm" style="margin-top: 5px;">
+                                <i data-lucide="refresh-cw"></i> <span data-i18n="calc-z-import-btn">استيراد الأوزان تلقائيًا من محفظتي</span>
+                            </button>
+
+                            <div class="divider" style="margin: 10px 0;"></div>
+
+                            <div class="input-row-flex">
+                                <div class="input-group">
+                                    <label for="z-charity-base" data-i18n="calc-z-charity-base-label">حساب الصدقة الطوعية من:</label>
+                                    <select id="z-charity-base">
+                                        <option value="total" data-i18n="calc-z-charity-total">إجمالي قيمة الذهب</option>
+                                        <option value="profit" data-i18n="calc-z-charity-profit">صافي أرباح المحفظة</option>
+                                    </select>
+                                </div>
+                                <div class="input-group">
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <label for="z-charity-slider" data-i18n="calc-z-charity-pct-label">نسبة الصدقة:</label>
+                                        <span class="font-bold text-emerald" id="z-charity-pct-text" style="font-size: 11px;">0%</span>
                                     </div>
-                                    <span class="font-extrabold text-xl text-emerald" id="z-res-due" style="font-size: 22px; white-space: nowrap;">0 ج.م</span>
+                                    <input type="range" id="z-charity-slider" min="0" max="10" step="1" value="0">
                                 </div>
+                            </div>
+                        </div>
 
-                                <div class="info-alert" id="z-res-notice" style="margin-top: 10px; font-size: 9px; padding: 6px; margin-bottom: 10px;">
-                                    <i data-lucide="info" style="width:12px; height:12px;"></i>
-                                    <p id="z-res-desc" data-i18n="calc-z-res-desc">تجب الزكاة بمقدار 2.5% على الذهب الادخاري متى بلغ النصاب وحال عليه الحول.</p>
-                                </div>
+                        <hr class="result-divider">
 
-                                <div class="result-divider" style="margin: 8px 0;"></div>
-                                
-                                <div class="detail-row highlight" id="charity-due-box">
-                                    <div style="display: flex; flex-direction: column; gap: 2px; text-align: start;">
-                                        <span class="font-extrabold text-lg" data-i18n="calc-z-res-charity-label">الصدقة الطوعية المخصصة:</span>
-                                        <span class="sub" id="z-res-charity-grams" style="font-size: 10px; color: var(--text-secondary); margin-top: 2px;">ما يعادل 0.00 جم عيار 21</span>
-                                    </div>
-                                    <span class="font-extrabold text-xl text-emerald" id="z-res-charity-due" style="font-size: 22px; white-space: nowrap;">0 ج.م</span>
+                        <div class="result-details">
+                            <div class="detail-row">
+                                <span data-i18n="calc-z-res-total-label">إجمالي القيمة الخاضعة للزكاة:</span>
+                                <span class="font-bold" id="z-res-total-value">0 ج.م</span>
+                            </div>
+                            <div class="detail-row">
+                                <span data-i18n="calc-z-res-nisab-label">النصاب الشرعي (85 جم ع24):</span>
+                                <span class="font-bold" id="z-res-nisab-val">0 ج.م</span>
+                            </div>
+                            <div class="detail-row">
+                                <span data-i18n="calc-z-res-equiv-label">الوزن المعادل لعيار 24:</span>
+                                <span class="font-bold" id="z-res-equiv-weight">0.00 جرام</span>
+                            </div>
+                            <div class="detail-row">
+                                <span data-i18n="calc-z-res-status-label">حالة بلوغ النصاب:</span>
+                                <span class="badge" id="z-res-status" data-i18n="calc-z-status-false">لم يبلغ النصاب</span>
+                            </div>
+                            
+                            <div class="result-divider" style="margin: 8px 0;"></div>
+                            
+                            <div class="detail-row highlight" id="zakat-due-box">
+                                <div style="display: flex; flex-direction: column; gap: 2px; text-align: start;">
+                                    <span class="font-extrabold text-lg" data-i18n="calc-z-res-due-label">الزكاة المستحقة (2.5%):</span>
+                                    <span class="sub" id="z-res-due-grams" style="font-size: 10px; color: var(--text-secondary); margin-top: 2px;">ما يعادل 0.00 جم عيار 24</span>
                                 </div>
+                                <span class="font-extrabold text-xl text-emerald" id="z-res-due" style="font-size: 22px; white-space: nowrap;">0 ج.م</span>
+                            </div>
 
-                                <!-- Motivational Quranic/Hadith Quotes -->
-                                <div class="charity-quote-box" id="charity-quote-box">
-                                    <blockquote id="charity-quote-text" data-i18n="calc-z-quote-text">"مَّن ذَا الَّذِي يُقْرِضُ اللَّهَ قَرْضًا حَسَنًا فَيُضَاعِفَهُ لَهُ أَضْعَافًا كَثِيرَةً ۚ وَاللَّهُ يَقْبِضُ وَيَبْسُطُ وَإِليْهِ تُرْجَعُونَ"</blockquote>
-                                    <cite id="charity-quote-cite" data-i18n="calc-z-quote-cite">سورة البقرة - الآية 245</cite>
+                            <div class="info-alert" id="z-res-notice" style="margin-top: 10px; font-size: 9px; padding: 6px; margin-bottom: 10px;">
+                                <i data-lucide="info" style="width:12px; height:12px;"></i>
+                                <p id="z-res-desc" data-i18n="calc-z-res-desc">تجب الزكاة بمقدار 2.5% على الذهب الادخاري متى بلغ النصاب وحال عليه الحول.</p>
+                            </div>
+
+                            <div class="result-divider" style="margin: 8px 0;"></div>
+                            
+                            <div class="detail-row highlight" id="charity-due-box">
+                                <div style="display: flex; flex-direction: column; gap: 2px; text-align: start;">
+                                    <span class="font-extrabold text-lg" data-i18n="calc-z-res-charity-label">الصدقة الطوعية المخصصة:</span>
+                                    <span class="sub" id="z-res-charity-grams" style="font-size: 10px; color: var(--text-secondary); margin-top: 2px;">ما يعادل 0.00 جم عيار 21</span>
                                 </div>
+                                <span class="font-extrabold text-xl text-emerald" id="z-res-charity-due" style="font-size: 22px; white-space: nowrap;">0 ج.م</span>
+                            </div>
+
+                            <!-- Motivational Quranic/Hadith Quotes -->
+                            <div class="charity-quote-box" id="charity-quote-box">
+                                <blockquote id="charity-quote-text" data-i18n="calc-z-quote-text">"مَّن ذَا الَّذِي يُقْرِضُ اللَّهَ قَرْضًا حَسَنًا فَيُضَاعِفَهُ لَهُ أَضْعَافًا كَثِيرَةً ۚ وَاللَّهُ يَقْبِضُ وَيَبْسُطُ وَإِليْهِ تُرْجَعُونَ"</blockquote>
+                                <cite id="charity-quote-cite" data-i18n="calc-z-quote-cite">سورة البقرة - الآية 245</cite>
                             </div>
                         </div>
                     </div>

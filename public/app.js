@@ -528,8 +528,9 @@ function registerPWA() {
 }
 
 // --- NETWORK OFFLINE BADGE ---
+let updateNetworkStatus = null;
 function initNetworkStatus() {
-    const updateStatus = () => {
+    updateNetworkStatus = () => {
         const badge = document.getElementById('network-status');
         const text = document.getElementById('network-status-text');
         if (!badge || !text) return;
@@ -537,17 +538,17 @@ function initNetworkStatus() {
         if (navigator.onLine) {
             badge.style.borderColor = 'rgba(0, 230, 118, 0.2)';
             badge.querySelector('.pulse-dot').style.backgroundColor = 'var(--success)';
-            text.textContent = currentLanguage === 'en' ? 'Live Update' : 'تحديث لحظي';
+            text.textContent = currentLanguage === 'en' ? 'Live' : 'مباشر';
         } else {
             badge.style.borderColor = 'rgba(255, 23, 68, 0.3)';
             badge.querySelector('.pulse-dot').style.backgroundColor = 'var(--danger)';
-            text.textContent = currentLanguage === 'en' ? 'Offline Mode' : 'وضع الأوفلاين';
+            text.textContent = currentLanguage === 'en' ? 'Offline' : 'غير متصل';
         }
     };
 
-    window.addEventListener('online', updateStatus);
-    window.addEventListener('offline', updateStatus);
-    updateStatus();
+    window.addEventListener('online', updateNetworkStatus);
+    window.addEventListener('offline', updateNetworkStatus);
+    updateNetworkStatus();
 }
 
 // --- THEME MANAGEMENT ---
@@ -2427,6 +2428,10 @@ function applyLanguage(lang) {
 
     if (goldPrices) {
         renderAllData();
+    }
+
+    if (typeof updateNetworkStatus === 'function') {
+        updateNetworkStatus();
     }
 }
 

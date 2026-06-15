@@ -1054,12 +1054,21 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 @media (max-width: 600px) {
+    .container { padding: 0 12px; }
     .header-container { flex-direction: column; height: auto; padding: 12px 0; gap: 10px; }
     .header-actions {
         width: 100%;
         flex-wrap: nowrap;
         justify-content: center;
-        gap: 8px;
+        gap: 6px;
+    }
+    .status-badge {
+        padding: 0 8px;
+        gap: 4px;
+        font-size: 11px;
+    }
+    .user-profile-badge {
+        padding: 0 8px;
     }
     .main-content {
         padding-bottom: 120px;
