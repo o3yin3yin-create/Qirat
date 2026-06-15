@@ -244,7 +244,8 @@ const TRANSLATIONS = {
     'alert-admin-reset-success': { ar: 'تم تغيير كلمة المرور للمستخدم بنجاح!', en: 'User password updated successfully!' },
     'alert-admin-reset-error': { ar: 'فشل تغيير كلمة المرور', en: 'Failed to reset password' },
     'confirm-logout': { ar: 'هل أنت متأكد من تسجيل الخروج؟', en: 'Are you sure you want to sign out?' },
-    'confirm-delete-portfolio': { ar: 'هل أنت متأكد من حذف محفظة "{name}"؟', en: 'Are you sure you want to delete portfolio "{name}"?' }
+    'confirm-delete-portfolio': { ar: 'هل أنت متأكد من حذف محفظة "{name}"؟', en: 'Are you sure you want to delete portfolio "{name}"?' },
+    'confirm-delete-transaction': { ar: 'هل أنت متأكد من حذف هذا الذهب/المعاملة من المحفظة؟', en: 'Are you sure you want to delete this gold item/transaction from your portfolio?' }
 };
 
 const CHARITY_QUOTES_EN = [
@@ -1122,6 +1123,24 @@ function setupPortfolioListeners() {
         renderPortfolio();
     });
 
+    // Edit portfolio name
+    document.getElementById('btn-edit-portfolio')?.addEventListener('click', async () => {
+        if (!portfoliosData || !portfoliosData.portfolios || !portfoliosData.portfolios[activePortfolioId]) return;
+        const p = portfoliosData.portfolios[activePortfolioId];
+        const oldName = p.name;
+        const name = prompt(
+            currentLanguage === 'en' ? 'Enter new portfolio name:' : 'أدخل الاسم الجديد للمحفظة:',
+            oldName
+        );
+        if (!name || name.trim() === '' || name.trim() === oldName) return;
+
+        p.name = name.trim();
+        
+        await saveEncryptedData();
+        renderPortfolioSelector();
+        renderPortfolio();
+    });
+
     // Goal simulator savings slider
     const slider = document.getElementById('save-monthly-slider');
     const sliderText = document.getElementById('save-monthly-text');
@@ -1654,6 +1673,7 @@ function calculateGoalSimulation() {
 
 window.deleteTransaction = async function(id) {
     if (!portfoliosData || !portfoliosData.portfolios || !portfoliosData.portfolios[activePortfolioId]) return;
+    if (!confirm(TRANSLATIONS['confirm-delete-transaction'][currentLanguage])) return;
     const p = portfoliosData.portfolios[activePortfolioId];
     p.holdings = p.holdings.filter(h => h.id !== id);
     await saveEncryptedData();
