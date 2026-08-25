@@ -4,6 +4,12 @@ const cheerio = require('cheerio');
 // sqlite3 required dynamically for local sqlite development only
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
+let nodemailer;
+try {
+    nodemailer = require('nodemailer');
+} catch (e) {
+    console.warn("nodemailer is not installed. OTP emails will be logged to console instead.");
+}
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -28,10 +34,17 @@ if (isPg) {
             name TEXT,
             phone TEXT UNIQUE,
             national_id TEXT UNIQUE,
+            email TEXT UNIQUE,
             password_hash TEXT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
-    `).catch(err => console.error("Error creating users table in PG:", err));
+    `).then(() => {
+        pool.query(`
+            ALTER TABLE users ADD COLUMN IF NOT EXISTS email TEXT UNIQUE
+        `).catch(err => {
+            // Ignore if column already exists
+        });
+    }).catch(err => console.error("Error creating users table in PG:", err));
 
     pool.query(`
         CREATE TABLE IF NOT EXISTS portfolios (
@@ -146,10 +159,19 @@ if (isPg) {
                     name TEXT,
                     phone TEXT UNIQUE,
                     national_id TEXT UNIQUE,
+                    email TEXT UNIQUE,
                     password_hash TEXT,
                     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
                 )
             `);
+            // SQLite migration to add email column if missing
+            db.run(`
+                ALTER TABLE users ADD COLUMN email TEXT
+            `, (err) => {
+                if (!err) {
+                    db.run(`CREATE UNIQUE INDEX IF NOT EXISTS idx_users_email ON users(email)`);
+                }
+            });
             db.run(`
                 CREATE TABLE IF NOT EXISTS portfolios (
                     user_id INTEGER PRIMARY KEY,
@@ -220,15 +242,15 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Register
 app.post('/api/auth/register', (req, res) => {
-    const { name, phone, nationalId, password } = req.body;
+    const { name, phone, email, password } = req.body;
     
-    if (!name || !phone || !nationalId || !password) {
-        return res.status(400).json({ error: 'يرجى إدخال جميع البيانات المطلوبة بما فيها الاسم' });
+    if (!name || !phone || !email || !password) {
+        return res.status(400).json({ error: 'يرجى إدخال جميع البيانات المطلوبة بما فيها البريد الإلكتروني' });
     }
     
     const nameClean = name.trim();
     const phoneClean = phone.trim();
-    const nationalIdClean = nationalId.trim();
+    const emailClean = email.trim().toLowerCase();
     
     if (nameClean.length < 2) {
         return res.status(400).json({ error: 'الاسم يجب أن يتكون من حرفين على الأقل' });
@@ -236,8 +258,8 @@ app.post('/api/auth/register', (req, res) => {
     if (!/^\d{11}$/.test(phoneClean)) {
         return res.status(400).json({ error: 'رقم الهاتف يجب أن يتكون من 11 رقماً' });
     }
-    if (!/^\d{14}$/.test(nationalIdClean)) {
-        return res.status(400).json({ error: 'الرقم القومي يجب أن يتكون من 14 رقماً' });
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailClean)) {
+        return res.status(400).json({ error: 'يرجى إدخال بريد إلكتروني صحيح' });
     }
     if (password.length < 6) {
         return res.status(400).json({ error: 'كلمة المرور يجب أن تكون 6 أحرف أو أرقام على الأقل' });
@@ -245,13 +267,13 @@ app.post('/api/auth/register', (req, res) => {
     
     const pwdHash = hashPassword(password);
     
-    db.get('SELECT id FROM users WHERE phone = ? OR national_id = ?', [phoneClean, nationalIdClean], (err, row) => {
+    db.get('SELECT id FROM users WHERE phone = ? OR email = ?', [phoneClean, emailClean], (err, row) => {
         if (err) return res.status(500).json({ error: 'خطأ في قاعدة البيانات: ' + err.message });
         if (row) {
-            return res.status(400).json({ error: 'رقم الهاتف أو الرقم القومي مسجل بالفعل' });
+            return res.status(400).json({ error: 'رقم الهاتف أو البريد الإلكتروني مسجل بالفعل' });
         }
         
-        db.run('INSERT INTO users (name, phone, national_id, password_hash) VALUES (?, ?, ?, ?)', [nameClean, phoneClean, nationalIdClean, pwdHash], function(err) {
+        db.run('INSERT INTO users (name, phone, email, password_hash) VALUES (?, ?, ?, ?)', [nameClean, phoneClean, emailClean, pwdHash], function(err) {
             if (err) return res.status(500).json({ error: 'خطأ أثناء إنشاء الحساب: ' + err.message });
             
             const userId = this.lastID;
@@ -287,81 +309,144 @@ app.post('/api/auth/login', (req, res) => {
     });
 });
 
-// Forgot Password Reset
-app.post('/api/auth/reset-password-forgot', (req, res) => {
-    const { phone, nationalId, goldWeight, newPassword } = req.body;
-    
-    if (!phone || !nationalId || goldWeight === undefined || !newPassword) {
-        return res.status(400).json({ error: 'يرجى إدخال جميع البيانات المطلوبة للتحقق وتعيين كلمة المرور الجديدة' });
+// Memory store for OTPs: key = email, value = { otp, expires, userId }
+const otpStore = new Map();
+
+// Send OTP for Forgot Password
+app.post('/api/auth/forgot-password-send-otp', (req, res) => {
+    const { phone, email } = req.body;
+    if (!phone || !email) {
+        return res.status(400).json({ error: 'يرجى إدخال رقم الهاتف والبريد الإلكتروني' });
     }
     
     const phoneClean = phone.trim();
-    const nationalIdClean = nationalId.trim();
-    const enteredWeight = parseFloat(goldWeight);
+    const emailClean = email.trim().toLowerCase();
     
+    db.get('SELECT id, name FROM users WHERE phone = ? AND email = ?', [phoneClean, emailClean], (err, user) => {
+        if (err) return res.status(500).json({ error: 'خطأ في قاعدة البيانات: ' + err.message });
+        if (!user) {
+            return res.status(400).json({ error: 'رقم الهاتف أو البريد الإلكتروني غير متطابق مع بياناتنا' });
+        }
+        
+        // Generate 6-digit OTP
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        const expires = Date.now() + 5 * 60 * 1000; // 5 minutes
+        
+        otpStore.set(emailClean, { otp, expires, userId: user.id });
+        
+        // Send Email
+        const mailOptions = {
+            from: process.env.SMTP_USER || 'qirat.app@gmail.com',
+            to: emailClean,
+            subject: 'كود التحقق لإعادة تعيين كلمة المرور - قيراط',
+            text: `مرحباً ${user.name}،\n\nكود التحقق الخاص بك لإعادة تعيين كلمة المرور في تطبيق قيراط هو: ${otp}\n\nهذا الكود صالح لمدة 5 دقائق فقط.\n\nمنصة قيراط للذهب`
+        };
+        
+        if (nodemailer && process.env.SMTP_HOST) {
+            const transporter = nodemailer.createTransport({
+                host: process.env.SMTP_HOST,
+                port: parseInt(process.env.SMTP_PORT) || 587,
+                secure: process.env.SMTP_PORT === '465',
+                auth: {
+                    user: process.env.SMTP_USER,
+                    pass: process.env.SMTP_PASS
+                }
+            });
+            
+            transporter.sendMail(mailOptions, (mailErr, info) => {
+                if (mailErr) {
+                    console.error('Error sending OTP email:', mailErr);
+                    return res.status(500).json({ error: 'فشل إرسال كود التحقق للبريد الإلكتروني' });
+                }
+                res.json({ success: true, message: 'تم إرسال كود التحقق بنجاح إلى بريدك الإلكتروني' });
+            });
+        } else {
+            console.log(`[TEST MODE] OTP for ${emailClean} is: ${otp}`);
+            res.json({ 
+                success: true,
+                message: 'تم إرسال كود التحقق بنجاح (وضع الاختبار: الكود مطبوع في سجلات السيرفر)', 
+                isTest: true,
+                testOtp: otp
+            });
+        }
+    });
+});
+
+// Verify OTP and Reset Password
+app.post('/api/auth/forgot-password-verify-otp', (req, res) => {
+    const { email, otp, newPassword } = req.body;
+    if (!email || !otp || !newPassword) {
+        return res.status(400).json({ error: 'يرجى إدخال جميع البيانات المطلوبة للتحقق وإعادة التعيين' });
+    }
+    
+    const emailClean = email.trim().toLowerCase();
+    const stored = otpStore.get(emailClean);
+    
+    if (!stored) {
+        return res.status(400).json({ error: 'كود التحقق غير صالح أو منتهي الصلاحية' });
+    }
+    if (Date.now() > stored.expires) {
+        otpStore.delete(emailClean);
+        return res.status(400).json({ error: 'كود التحقق منتهي الصلاحية، يرجى طلب كود جديد' });
+    }
+    if (stored.otp !== otp.trim()) {
+        return res.status(400).json({ error: 'كود التحقق غير صحيح، يرجى التحقق وإعادة الإدخال' });
+    }
     if (newPassword.length < 6) {
         return res.status(400).json({ error: 'كلمة المرور الجديدة يجب أن تكون 6 أحرف أو أرقام على الأقل' });
     }
     
-    db.get('SELECT id, password_hash FROM users WHERE phone = ? AND national_id = ?', [phoneClean, nationalIdClean], (err, user) => {
-        if (err) return res.status(500).json({ error: 'خطأ في قاعدة البيانات: ' + err.message });
-        if (!user) {
-            return res.status(400).json({ error: 'رقم الهاتف أو الرقم القومي غير متطابق مع بياناتنا' });
-        }
+    const pwdHash = hashPassword(newPassword);
+    
+    db.run('UPDATE users SET password_hash = ? WHERE id = ?', [pwdHash, stored.userId], function(err) {
+        if (err) return res.status(500).json({ error: 'خطأ أثناء إعادة تعيين كلمة المرور: ' + err.message });
         
-        // Fetch user's portfolio to calculate gold weight
-        db.get('SELECT data FROM portfolios WHERE user_id = ?', [user.id], (err, portRow) => {
-            let rawWeight = 0;
-            let eq21Weight = 0;
-            if (portRow) {
-                try {
-                    const data = JSON.parse(portRow.data);
-                    const activeId = data.activePortfolioId || 'default';
-                    const p = data.portfolios && data.portfolios[activeId];
-                    if (p && Array.isArray(p.holdings)) {
-                        p.holdings.forEach(item => {
-                            const w = parseFloat(item.weight) || 0;
-                            rawWeight += w;
-                            
-                            let mult = 1;
-                            if (item.type === 'coin') {
-                                eq21Weight += w * 8;
-                            } else {
-                                const karat = item.karat;
-                                if (karat === '24k') mult = 24 / 21;
-                                else if (karat === '22k') mult = 22 / 21;
-                                else if (karat === '18k') mult = 18 / 21;
-                                else if (karat === '14k') mult = 14 / 21;
-                                eq21Weight += w * mult;
-                            }
-                        });
-                    }
-                } catch (e) {}
-            }
-            
-            // Validate weight: must match raw weight or eq21Weight within 0.05 margin
-            const diffRaw = Math.abs(rawWeight - enteredWeight);
-            const diffEq = Math.abs(eq21Weight - enteredWeight);
-            
-            if (diffRaw > 0.05 && diffEq > 0.05) {
-                return res.status(400).json({ error: 'جرامات الذهب المدخلة غير صحيحة، يرجى كتابة الوزن الفعلي للمحفظة للتحقق' });
-            }
-            
-            // Verification succeeded! Update password
-            const pwdHash = hashPassword(newPassword);
-            db.run('UPDATE users SET password_hash = ? WHERE id = ?', [pwdHash, user.id], (err) => {
-                if (err) return res.status(500).json({ error: 'خطأ أثناء تحديث كلمة المرور الجديدة' });
-                res.json({ success: true, message: 'تم تعيين كلمة المرور الجديدة بنجاح، يمكنك تسجيل الدخول بها الآن' });
-            });
-        });
+        otpStore.delete(emailClean);
+        res.json({ success: true, message: 'تم تغيير كلمة المرور بنجاح، يمكنك تسجيل الدخول بها الآن' });
     });
 });
 
 // Get User Profile
 app.get('/api/user/profile', authenticateToken, (req, res) => {
-    db.get('SELECT name, phone, national_id FROM users WHERE id = ?', [req.userId], (err, user) => {
+    db.get('SELECT name, phone, national_id, email FROM users WHERE id = ?', [req.userId], (err, user) => {
         if (err || !user) return res.status(404).json({ error: 'المستخدم غير موجود' });
         res.json(user);
+    });
+});
+
+// Update Email and Wipe National ID
+app.post('/api/user/update-email', authenticateToken, (req, res) => {
+    const { email } = req.body;
+    if (!email) {
+        return res.status(400).json({ error: 'يرجى إدخال البريد الإلكتروني' });
+    }
+    
+    const emailClean = email.trim().toLowerCase();
+    
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailClean)) {
+        return res.status(400).json({ error: 'يرجى إدخال بريد إلكتروني صحيح' });
+    }
+    
+    db.get('SELECT id FROM users WHERE email = ? AND id != ?', [emailClean, req.userId], (err, row) => {
+        if (err) return res.status(500).json({ error: 'خطأ في قاعدة البيانات: ' + err.message });
+        if (row) {
+            return res.status(400).json({ error: 'البريد الإلكتروني مستخدم بالفعل من قبل حساب آخر' });
+        }
+        
+        // Update user email and wipe national_id to comply with privacy laws
+        db.run('UPDATE users SET email = ?, national_id = NULL WHERE id = ?', [emailClean, req.userId], function(err) {
+            if (err) return res.status(500).json({ error: 'خطأ أثناء تحديث البريد الإلكتروني: ' + err.message });
+            
+            res.json({ success: true, message: 'تم تحديث البريد الإلكتروني بنجاح وحذف الرقم القومي لخصوصيتك' });
+        });
+    });
+});
+
+// Delete Account
+app.post('/api/user/delete-account', authenticateToken, (req, res) => {
+    db.run('DELETE FROM users WHERE id = ?', [req.userId], function(err) {
+        if (err) return res.status(500).json({ error: 'خطأ أثناء حذف الحساب: ' + err.message });
+        res.json({ success: true, message: 'تم حذف حسابك وكل بياناتك نهائياً بنجاح' });
     });
 });
 
@@ -625,7 +710,7 @@ app.get('/api/admin/users/search', authenticateAdmin, (req, res) => {
         return res.status(400).json({ error: 'يرجى إدخال رقم الهاتف للبحث' });
     }
     
-    db.get('SELECT id, name, phone, national_id, created_at FROM users WHERE phone = ?', [phone.trim()], (err, user) => {
+    db.get('SELECT id, name, phone, email, created_at FROM users WHERE phone = ?', [phone.trim()], (err, user) => {
         if (err) return res.status(500).json({ error: 'خطأ أثناء البحث عن المستخدم' });
         if (!user) return res.status(404).json({ error: 'المستخدم غير موجود' });
         
@@ -662,7 +747,7 @@ app.get('/api/admin/users/search', authenticateAdmin, (req, res) => {
                 id: user.id,
                 name: user.name,
                 phone: user.phone,
-                nationalId: user.national_id,
+                email: user.email,
                 createdAt: user.created_at,
                 goldWeight: parseFloat(goldWeight.toFixed(2)),
                 eq21Weight: parseFloat(eq21Weight.toFixed(2))

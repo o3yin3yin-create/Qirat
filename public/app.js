@@ -25,7 +25,17 @@ const TRANSLATIONS = {
     'auth-login-desc': { ar: 'سجل دخولك لمزامنة محفظتك وحفظ ممتلكاتك بشكل آمن وتلقائي.', en: 'Sign in to your account to securely sync and backup your portfolio.' },
     'auth-login-title': { ar: 'مرحباً بك في قيراط', en: 'Welcome back' },
     'auth-logout-btn': { ar: 'تسجيل الخروج', en: 'Sign Out' },
+    'auth-email-label': { ar: 'البريد الإلكتروني', en: 'Email Address' },
+    'auth-email-placeholder': { ar: 'مثال: user@example.com', en: 'e.g. user@example.com' },
+    'auth-consent-text': { ar: 'أوافق على معالجة بريدي الإلكتروني ورقم هاتفي لتأمين الحساب واستعادة كلمة المرور طبقاً لسياسة الخصوصية.', en: 'I agree to the processing of my email and phone number to secure my account and recover password under the Privacy Policy.' },
+    'auth-send-otp-btn': { ar: 'إرسال كود التحقق', en: 'Send Code (OTP)' },
+    'auth-otp-label': { ar: 'كود التحقق (OTP)', en: 'Verification Code (OTP)' },
+    'auth-otp-placeholder': { ar: 'أدخل الكود المكون من 6 أرقام', en: 'Enter the 6-digit code' },
     'auth-national-id-label': { ar: 'الرقم القومي', en: 'National ID' },
+    'prof-email-label': { ar: '✉️ البريد الإلكتروني:', en: '✉️ Email Address:' },
+    'migration-warning-banner': { ar: 'تنبيه هام: التزاماً بخصوصية البيانات، سيتم حذف بيانات الرقم القومي قريباً. يرجى تحديث الملف الشخصي وإضافة بريدك الإلكتروني لتنشيط ميزة استعادة الحساب ذاتياً.', en: 'Important: To comply with data privacy, National ID data will be deleted soon. Please update your profile to add an email and enable self-service password recovery.' },
+    'migration-banner-action': { ar: 'تحديث الآن', en: 'Update Now' },
+    'auth-delete-account-btn': { ar: 'حذف الحساب نهائياً', en: 'Permanently Delete Account' },
     'auth-no-account-span': { ar: 'ليس لديك حساب؟', en: 'Don\'t have an account?' },
     'auth-password-label': { ar: 'كلمة المرور', en: 'Password' },
     'auth-phone-label': { ar: 'رقم الهاتف المحمول', en: 'Mobile Number' },
@@ -420,6 +430,31 @@ async function checkAuthStatus() {
         if (adminTabBtn) adminTabBtn.style.display = 'none';
     }
 
+    // Check email for GDPR migration banner
+    if (token) {
+        try {
+            const profileResponse = await fetch('/api/user/profile', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (profileResponse.ok) {
+                const user = await profileResponse.json();
+                const banner = document.getElementById('migration-banner');
+                if (banner) {
+                    if (!user.email) {
+                        banner.style.display = 'flex';
+                    } else {
+                        banner.style.display = 'none';
+                    }
+                }
+            }
+        } catch (err) {
+            console.error('Error checking user email for banner:', err);
+        }
+    } else {
+        const banner = document.getElementById('migration-banner');
+        if (banner) banner.style.display = 'none';
+    }
+
     // Fetch cloud portfolio
     await fetchPortfolio();
 }
@@ -472,6 +507,11 @@ window.toggleAuthForms = function(event, type) {
         if (registerBox) registerBox.style.display = 'block';
     } else if (type === 'forgot') {
         if (forgotBox) forgotBox.style.display = 'block';
+        const step1 = document.getElementById('forgot-step-1-fields');
+        const step2 = document.getElementById('forgot-step-2-fields');
+        if (step1) step1.style.display = 'block';
+        if (step2) step2.style.display = 'none';
+        document.getElementById('auth-forgot-form')?.reset();
         const supportInfo = document.getElementById('support-info-box');
         if (supportInfo) supportInfo.style.display = 'none';
     } else {
@@ -692,14 +732,20 @@ function setupAuthListeners() {
         e.preventDefault();
         const name = document.getElementById('reg-name').value;
         const phone = document.getElementById('reg-phone').value;
-        const nationalId = document.getElementById('reg-national-id').value;
+        const email = document.getElementById('reg-email').value;
         const password = document.getElementById('reg-password').value;
+        const consentChecked = document.getElementById('reg-consent')?.checked;
+        
+        if (!consentChecked) {
+            alert(currentLanguage === 'en' ? 'You must agree to the privacy policy.' : 'يجب الموافقة على معالجة البيانات لإنشاء الحساب.');
+            return;
+        }
         
         try {
             const response = await fetch('/api/auth/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, phone, nationalId, password })
+                body: JSON.stringify({ name, phone, email, password })
             });
             const data = await response.json();
             
@@ -769,25 +815,67 @@ function setupAuthListeners() {
         }
     });
 
-    // Forgot password form submit
-    document.getElementById('auth-forgot-form')?.addEventListener('submit', async (e) => {
+    // Send OTP code click handler
+    document.getElementById('btn-forgot-send-otp')?.addEventListener('click', async (e) => {
         e.preventDefault();
         const phone = document.getElementById('forgot-phone').value;
-        const nationalId = document.getElementById('forgot-national-id').value;
-        const goldWeight = document.getElementById('forgot-gold-weight').value;
-        const newPassword = document.getElementById('forgot-new-password').value;
+        const email = document.getElementById('forgot-email').value;
+        
+        if (!phone || !email) {
+            alert(currentLanguage === 'en' ? 'Please fill in phone and email.' : 'يرجى إدخال الهاتف والبريد الإلكتروني.');
+            return;
+        }
         
         try {
-            const response = await fetch('/api/auth/reset-password-forgot', {
+            const response = await fetch('/api/auth/forgot-password-send-otp', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ phone, nationalId, goldWeight, newPassword })
+                body: JSON.stringify({ phone, email })
+            });
+            const data = await response.json();
+            
+            if (response.ok) {
+                document.getElementById('forgot-step-1-fields').style.display = 'none';
+                document.getElementById('forgot-step-2-fields').style.display = 'block';
+                
+                let successMsg = data.message;
+                if (data.isTest && data.testOtp) {
+                    successMsg += `\n[وضع الاختبار] كود التحقق هو: ${data.testOtp}`;
+                }
+                alert(successMsg);
+            } else {
+                alert(data.error || (currentLanguage === 'en' ? 'Failed to send OTP code.' : 'فشل إرسال كود التحقق.'));
+            }
+        } catch (err) {
+            alert(TRANSLATIONS['alert-server-error'][currentLanguage]);
+        }
+    });
+
+    // Forgot password form submit (Step 2: Verify and Reset)
+    document.getElementById('auth-forgot-form')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('forgot-email').value;
+        const otp = document.getElementById('forgot-otp').value;
+        const newPassword = document.getElementById('forgot-new-password').value;
+        
+        if (!otp || !newPassword) {
+            alert(currentLanguage === 'en' ? 'Please enter the OTP and your new password.' : 'يرجى إدخال كود التحقق وكلمة المرور الجديدة.');
+            return;
+        }
+        
+        try {
+            const response = await fetch('/api/auth/forgot-password-verify-otp', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, otp, newPassword })
             });
             const data = await response.json();
             
             if (response.ok) {
                 alert(data.message || TRANSLATIONS['alert-reset-success'][currentLanguage]);
                 document.getElementById('auth-forgot-form').reset();
+                document.getElementById('forgot-step-1-fields').style.display = 'block';
+                document.getElementById('forgot-step-2-fields').style.display = 'none';
                 toggleAuthForms(null, 'login');
             } else {
                 alert(data.error || TRANSLATIONS['alert-reset-error'][currentLanguage]);
@@ -808,6 +896,77 @@ function setupAuthListeners() {
     // Admin tab click to refresh stats
     document.getElementById('admin-tab-btn')?.addEventListener('click', () => {
         fetchAdminStats();
+    });
+
+    // Migration banner action
+    document.getElementById('btn-migration-banner-action')?.addEventListener('click', () => {
+        openUserProfileModal();
+    });
+
+    // Save profile email action
+    document.getElementById('btn-save-profile-email')?.addEventListener('click', async () => {
+        const emailInput = document.getElementById('prof-email-input');
+        const email = emailInput ? emailInput.value.trim() : '';
+        
+        if (!email) {
+            alert(currentLanguage === 'en' ? 'Please enter a valid email.' : 'يرجى إدخال بريد إلكتروني صحيح.');
+            return;
+        }
+        
+        const token = localStorage.getItem('dahaby_jwt');
+        if (!token) return;
+        
+        try {
+            const response = await fetch('/api/user/update-email', {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ email })
+            });
+            const data = await response.json();
+            if (response.ok) {
+                alert(data.message);
+                await openUserProfileModal();
+                await checkAuthStatus();
+            } else {
+                alert(data.error || 'Failed to update email.');
+            }
+        } catch (err) {
+            alert('Error updating email.');
+        }
+    });
+
+    // Delete account action
+    document.getElementById('btn-delete-account')?.addEventListener('click', async () => {
+        const confirmMsg = currentLanguage === 'en' 
+            ? 'Are you absolutely sure you want to permanently delete your account and all portfolio data? This action CANNOT be undone!' 
+            : 'هل أنت متأكد تماماً أنك تريد حذف حسابك وكل بيانات محفظتك نهائياً؟ لا يمكن التراجع عن هذا الإجراء!';
+        
+        if (!confirm(confirmMsg)) return;
+        
+        const token = localStorage.getItem('dahaby_jwt');
+        if (!token) return;
+        
+        try {
+            const response = await fetch('/api/user/delete-account', {
+                method: 'POST',
+                headers: { 
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            const data = await response.json();
+            if (response.ok) {
+                alert(data.message);
+                // Trigger logout visual reset
+                document.getElementById('btn-logout')?.click();
+            } else {
+                alert(data.error || 'Failed to delete account.');
+            }
+        } catch (err) {
+            alert('Error deleting account.');
+        }
     });
 }
 
@@ -2386,7 +2545,14 @@ async function openUserProfileModal() {
     if (isGuest) {
         document.getElementById('prof-name').textContent = currentLanguage === 'en' ? 'Guest' : 'زائر';
         document.getElementById('prof-phone').textContent = currentLanguage === 'en' ? 'N/A (Local)' : 'غير متوفر (محلي)';
-        document.getElementById('prof-national-id').textContent = currentLanguage === 'en' ? 'N/A' : 'غير متوفر';
+        const emailSpan = document.getElementById('prof-email');
+        if (emailSpan) {
+            emailSpan.textContent = currentLanguage === 'en' ? 'N/A' : 'غير متوفر';
+            emailSpan.style.color = '';
+        }
+        const emailEditBox = document.getElementById('prof-email-edit-box');
+        if (emailEditBox) emailEditBox.style.display = 'none';
+        
         setWeights();
         modal.classList.add('active');
         if (window.lucide) window.lucide.createIcons();
@@ -2401,7 +2567,25 @@ async function openUserProfileModal() {
             const user = await response.json();
             document.getElementById('prof-name').textContent = user.name;
             document.getElementById('prof-phone').textContent = user.phone;
-            document.getElementById('prof-national-id').textContent = user.national_id;
+            
+            const emailSpan = document.getElementById('prof-email');
+            const emailEditBox = document.getElementById('prof-email-edit-box');
+            const emailInput = document.getElementById('prof-email-input');
+            
+            if (user.email) {
+                if (emailSpan) {
+                    emailSpan.textContent = user.email;
+                    emailSpan.style.color = '';
+                }
+                if (emailEditBox) emailEditBox.style.display = 'none';
+            } else {
+                if (emailSpan) {
+                    emailSpan.textContent = currentLanguage === 'en' ? 'Not Registered (Required)' : 'غير مسجل (مطلوب)';
+                    emailSpan.style.color = '#EF4444';
+                }
+                if (emailEditBox) emailEditBox.style.display = 'flex';
+                if (emailInput) emailInput.value = '';
+            }
             
             setWeights();
             

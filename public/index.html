@@ -28,7 +28,7 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     
     <!-- Main Stylesheet -->
-    <link rel="stylesheet" href="app.css?v=2.1">
+    <link rel="stylesheet" href="app.css?v=2.2">
 </head>
 <body class="dark-theme">
 
@@ -88,12 +88,19 @@
                     <input type="text" id="reg-phone" placeholder="يتكون من 11 رقماً" data-i18n-placeholder="auth-phone-reg-placeholder" autocomplete="username" required>
                 </div>
                 <div class="input-group">
-                    <label for="reg-national-id" data-i18n="auth-national-id-label">الرقم القومي</label>
-                    <input type="text" id="reg-national-id" placeholder="يتكون من 14 رقماً" data-i18n-placeholder="auth-national-id-placeholder" autocomplete="off" required>
+                    <label for="reg-email" data-i18n="auth-email-label">البريد الإلكتروني</label>
+                    <input type="email" id="reg-email" placeholder="مثال: user@example.com" data-i18n-placeholder="auth-email-placeholder" autocomplete="email" required>
                 </div>
                 <div class="input-group">
                     <label for="reg-password" data-i18n="auth-password-label">كلمة المرور</label>
                     <input type="password" id="reg-password" placeholder="6 أحرف أو أرقام كحد أدنى" data-i18n-placeholder="auth-password-reg-placeholder" autocomplete="new-password" required>
+                </div>
+                
+                <div style="display: flex; align-items: flex-start; gap: 8px; margin-top: 10px; font-size: 11px;">
+                    <input type="checkbox" id="reg-consent" required style="width: auto; margin-top: 2px;">
+                    <label for="reg-consent" class="text-muted" style="line-height: 1.4; cursor: pointer;">
+                        <span data-i18n="auth-consent-text">أوافق على معالجة بريدي الإلكتروني ورقم هاتفي لتأمين الحساب واستعادة كلمة المرور طبقاً لسياسة الخصوصية.</span>
+                    </label>
                 </div>
                 
                 <button type="submit" class="btn-primary" style="margin-top: 15px; width: 100%;">
@@ -116,26 +123,35 @@
             <p data-i18n="auth-forgot-desc">أدخل البيانات المطلوبة بدقة لتأكيد هويتك وتعيين كلمة مرور جديدة.</p>
             
             <form id="auth-forgot-form" class="inputs-layout" style="text-align: start; width: 100%; margin-top: 10px;">
-                <div class="input-group">
-                    <label for="forgot-phone" data-i18n="auth-forgot-phone-label">رقم الهاتف المسجل</label>
-                    <input type="text" id="forgot-phone" placeholder="مثال: 01050442007" data-i18n-placeholder="auth-phone-placeholder" required>
-                </div>
-                <div class="input-group">
-                    <label for="forgot-national-id" data-i18n="auth-national-id-label">الرقم القومي</label>
-                    <input type="text" id="forgot-national-id" placeholder="14 رقم" data-i18n-placeholder="auth-national-id-forgot-placeholder" required>
-                </div>
-                <div class="input-group">
-                    <label for="forgot-gold-weight" data-i18n="auth-forgot-weight-label">إجمالي ذهب المحفظة (بالجرام)</label>
-                    <input type="number" step="any" id="forgot-gold-weight" placeholder="اكتب إجمالي وزن محفظتك للتأكيد" data-i18n-placeholder="auth-forgot-weight-placeholder" required>
-                </div>
-                <div class="input-group">
-                    <label for="forgot-new-password" data-i18n="auth-forgot-newpw-label">كلمة المرور الجديدة</label>
-                    <input type="password" id="forgot-new-password" placeholder="كلمة المرور الجديدة (6 أحرف/أرقام كحد أدنى)" data-i18n-placeholder="auth-forgot-newpw-placeholder" required>
+                <!-- Step 1 Fields -->
+                <div id="forgot-step-1-fields">
+                    <div class="input-group">
+                        <label for="forgot-phone" data-i18n="auth-forgot-phone-label">رقم الهاتف المسجل</label>
+                        <input type="text" id="forgot-phone" placeholder="مثال: 01050442007" data-i18n-placeholder="auth-phone-placeholder" required>
+                    </div>
+                    <div class="input-group" style="margin-top: 10px;">
+                        <label for="forgot-email" data-i18n="auth-email-label">البريد الإلكتروني المسجل</label>
+                        <input type="email" id="forgot-email" placeholder="مثال: user@example.com" data-i18n-placeholder="auth-email-placeholder" required>
+                    </div>
+                    <button type="button" id="btn-forgot-send-otp" class="btn-primary" style="margin-top: 15px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        <span data-i18n="auth-send-otp-btn">إرسال كود التحقق</span> <i data-lucide="send"></i>
+                    </button>
                 </div>
                 
-                <button type="submit" class="btn-primary" style="margin-top: 15px; width: 100%;">
-                    <span data-i18n="auth-forgot-submit-btn">تحديث كلمة المرور والدخول</span> <i data-lucide="check-check"></i>
-                </button>
+                <!-- Step 2 Fields (Hidden Initially) -->
+                <div id="forgot-step-2-fields" style="display: none;">
+                    <div class="input-group">
+                        <label for="forgot-otp" data-i18n="auth-otp-label">كود التحقق (OTP)</label>
+                        <input type="text" id="forgot-otp" placeholder="أدخل الكود المكون من 6 أرقام" data-i18n-placeholder="auth-otp-placeholder" maxlength="6" autocomplete="one-time-code">
+                    </div>
+                    <div class="input-group" style="margin-top: 10px;">
+                        <label for="forgot-new-password" data-i18n="auth-forgot-newpw-label">كلمة المرور الجديدة</label>
+                        <input type="password" id="forgot-new-password" placeholder="كلمة المرور الجديدة (6 أحرف/أرقام كحد أدنى)" data-i18n-placeholder="auth-forgot-newpw-placeholder">
+                    </div>
+                    <button type="submit" id="btn-forgot-submit" class="btn-primary" style="margin-top: 15px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        <span data-i18n="auth-forgot-submit-btn">تحديث كلمة المرور والدخول</span> <i data-lucide="check-check"></i>
+                    </button>
+                </div>
             </form>
             
             <button class="btn-secondary" id="btn-show-support-info" style="margin-top: 10px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;">
@@ -269,9 +285,17 @@
                     <span class="text-muted" data-i18n="prof-phone-label">📞 رقم الهاتف:</span>
                     <span id="prof-phone" class="font-bold">--</span>
                 </div>
-                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
-                    <span class="text-muted" data-i18n="prof-natid-label">💳 الرقم القومي:</span>
-                    <span id="prof-national-id" class="font-bold">--</span>
+                <div style="border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span class="text-muted" data-i18n="prof-email-label">✉️ البريد الإلكتروني:</span>
+                        <span id="prof-email" class="font-bold">--</span>
+                    </div>
+                    <div id="prof-email-edit-box" style="display: none; margin-top: 8px; display: flex; gap: 8px; align-items: center;">
+                        <input type="email" id="prof-email-input" placeholder="أدخل بريدك الإلكتروني" style="font-size: 12px; padding: 6px 10px; flex: 1;">
+                        <button type="button" id="btn-save-profile-email" class="btn-primary" style="font-size: 12px; padding: 6px 12px; width: auto; margin-top: 0; white-space: nowrap;">
+                            <span data-i18n="btn-save">حفظ</span>
+                        </button>
+                    </div>
                 </div>
                 <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
                     <span class="text-muted" data-i18n="prof-gold-label">⚖️ إجمالي الذهب المخزن:</span>
@@ -285,6 +309,9 @@
             
             <button class="btn-primary" id="btn-logout" style="margin-top: 24px; width: 100%; background: #EF4444; border-color: #EF4444; color: white; display: flex; align-items: center; justify-content: center; gap: 8px;">
                 <span data-i18n="auth-logout-btn">تسجيل الخروج</span> <i data-lucide="log-out"></i>
+            </button>
+            <button class="btn-secondary" id="btn-delete-account" style="margin-top: 10px; width: 100%; background: transparent; border-color: #EF4444; color: #EF4444; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <span data-i18n="auth-delete-account-btn">حذف الحساب نهائياً</span> <i data-lucide="trash-2"></i>
             </button>
         </div>
     </div>
@@ -416,6 +443,17 @@
             </div>
         </div>
     </header>
+
+    <!-- Migration/Warning Banner for GDPR Compliance -->
+    <div id="migration-banner" style="display: none; background: rgba(217, 119, 6, 0.1); border: 1px solid rgba(217, 119, 6, 0.3); color: #D97706; padding: 12px 16px; border-radius: 12px; margin: 15px auto 0 auto; max-width: 1200px; width: calc(100% - 30px); font-size: 13px; font-weight: 500; align-items: center; justify-content: space-between; gap: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); box-sizing: border-box;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <i data-lucide="alert-triangle" style="flex-shrink: 0; width: 18px; height: 18px;"></i>
+            <span id="migration-banner-text" data-i18n="migration-warning-banner">تنبيه هام: التزاماً بخصوصية البيانات، سيتم حذف بيانات الرقم القومي قريباً. يرجى تحديث الملف الشخصي وإضافة بريدك الإلكتروني لتنشيط ميزة استعادة الحساب ذاتياً.</span>
+        </div>
+        <button id="btn-migration-banner-action" class="btn-primary" style="font-size: 11px; padding: 6px 12px; width: auto; margin-top: 0; background: #D97706; border-color: #D97706; color: white; white-space: nowrap; cursor: pointer;">
+            <span data-i18n="migration-banner-action">تحديث الآن</span>
+        </button>
+    </div>
 
     <!-- Main Content -->
     <main class="container main-content">
@@ -1094,7 +1132,7 @@
                         <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 20px; font-size: 12px;">
                             <div>👤 الاسم: <span id="admin-res-name" class="font-bold">--</span></div>
                             <div>📞 رقم الموبايل: <span id="admin-res-phone" class="font-bold">--</span></div>
-                            <div>💳 الرقم القومي: <span id="admin-res-national-id" class="font-bold">--</span></div>
+                            <div>✉️ البريد الإلكتروني: <span id="admin-res-email" class="font-bold">--</span></div>
                             <div>📅 تاريخ التسجيل: <span id="admin-res-date" class="font-bold">--</span></div>
                             <div>⚖️ إجمالي الذهب الفعلي: <span id="admin-res-gold" class="font-bold text-amber-500">-- جرام</span></div>
                             <div>🏆 إجمالي وزن مكافئ (عيار 21): <span id="admin-res-eq21" class="font-bold text-emerald-500">-- جرام</span></div>
@@ -1143,6 +1181,6 @@
     </footer>
 
     <!-- Scripts -->
-    <script src="app.js?v=2.1"></script>
+    <script src="app.js?v=2.2"></script>
 </body>
 </html>
