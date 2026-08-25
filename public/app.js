@@ -36,6 +36,10 @@ const TRANSLATIONS = {
     'migration-warning-banner': { ar: 'تنبيه هام: التزاماً بخصوصية البيانات، سيتم حذف بيانات الرقم القومي قريباً. يرجى تحديث الملف الشخصي وإضافة بريدك الإلكتروني لتنشيط ميزة استعادة الحساب ذاتياً.', en: 'Important: To comply with data privacy, National ID data will be deleted soon. Please update your profile to add an email and enable self-service password recovery.' },
     'migration-banner-action': { ar: 'تحديث الآن', en: 'Update Now' },
     'auth-delete-account-btn': { ar: 'حذف الحساب نهائياً', en: 'Permanently Delete Account' },
+    'privacy-modal-title': { ar: 'تحديث أمني وقانوني هام', en: 'Important Security & Legal Update' },
+    'privacy-modal-desc': { ar: 'التزاماً بخصوصية البيانات وقوانين حماية البيانات الشخصية (PDPL)، قمنا بإلغاء جمع وحفظ الرقم القومي نهائياً من سيرفراتنا وحذف البيانات السابقة. يرجى تأكيد موافقتك على معالجة البريد الإلكتروني ورقم الهاتف لأغراض الأمان واستعادة الحساب ذاتياً طبقاً لسياسة الخصوصية الجديدة.', en: 'In compliance with data privacy regulations (PDPL), we have completely eliminated the collection of National ID numbers and permanently deleted all past records. Please confirm your consent to the processing of your email and phone number solely for account security and recovery under the new Privacy Policy.' },
+    'privacy-modal-consent': { ar: 'أوافق على سياسة الخصوصية الجديدة وأوافق على معالجة رقم هاتفي وبريدي الإلكتروني لتأمين الحساب واستعادة كلمة المرور ذاتياً.', en: 'I agree to the new Privacy Policy and consent to the processing of my phone number and email for account security and self-service password recovery.' },
+    'privacy-modal-accept': { ar: 'لقد قرأت ووافقت ومتابعة', en: 'I have read, agreed, and continue' },
     'auth-no-account-span': { ar: 'ليس لديك حساب؟', en: 'Don\'t have an account?' },
     'auth-password-label': { ar: 'كلمة المرور', en: 'Password' },
     'auth-phone-label': { ar: 'رقم الهاتف المحمول', en: 'Mobile Number' },
@@ -544,6 +548,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // 6. Check Auth status
     checkAuthStatus();
 
+    // 6.5 Initialize Privacy Blocker Consent
+    initPrivacyCompliance();
+
     // 7. Fetch Prices
     fetchPrices();
 
@@ -556,6 +563,29 @@ document.addEventListener('DOMContentLoaded', () => {
     setupAdminListeners();
     setupTickerToggle();
 });
+
+// --- PRIVACY COMPLIANCE BLOCKER ---
+function initPrivacyCompliance() {
+    const privacyAgreed = localStorage.getItem('dahaby_privacy_agreed');
+    const blockerModal = document.getElementById('modal-privacy-blocker');
+    const consentCheck = document.getElementById('privacy-consent-check');
+    const acceptBtn = document.getElementById('btn-accept-privacy');
+    
+    if (privacyAgreed !== 'true') {
+        if (blockerModal) blockerModal.classList.add('active');
+    } else {
+        if (blockerModal) blockerModal.classList.remove('active');
+    }
+    
+    consentCheck?.addEventListener('change', (e) => {
+        if (acceptBtn) acceptBtn.disabled = !e.target.checked;
+    });
+    
+    acceptBtn?.addEventListener('click', () => {
+        localStorage.setItem('dahaby_privacy_agreed', 'true');
+        if (blockerModal) blockerModal.classList.remove('active');
+    });
+}
 
 // --- PWA REGISTRATION ---
 function registerPWA() {

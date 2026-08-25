@@ -28,7 +28,7 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     
     <!-- Main Stylesheet -->
-    <link rel="stylesheet" href="app.css?v=2.2">
+    <link rel="stylesheet" href="app.css?v=2.3">
 </head>
 <body class="dark-theme">
 
@@ -1180,7 +1180,32 @@
         </div>
     </footer>
 
+    <!-- Blocker Modal: Privacy Compliance Blocker -->
+    <div class="modal-overlay" id="modal-privacy-blocker" style="z-index: 2000; background: rgba(0, 0, 0, 0.9);">
+        <div class="modal-content" style="max-width: 440px; padding: 28px; text-align: center;">
+            <div style="background: rgba(217, 119, 6, 0.1); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px auto;">
+                <i data-lucide="shield-alert" class="gold-text" style="width: 32px; height: 32px;"></i>
+            </div>
+            <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 12px;" data-i18n="privacy-modal-title">تحديث أمني وقانوني هام</h3>
+            
+            <p style="font-size: 13px; line-height: 1.6; text-align: justify; margin-bottom: 20px; color: var(--text-secondary);" data-i18n="privacy-modal-desc">
+                التزاماً بخصوصية البيانات وقوانين حماية البيانات الشخصية (PDPL)، قمنا بإلغاء جمع وحفظ الرقم القومي نهائياً من سيرفراتنا وحذف البيانات السابقة. يرجى تأكيد موافقتك على معالجة البريد الإلكتروني ورقم الهاتف لأغراض الأمان واستعادة الحساب ذاتياً طبقاً لسياسة الخصوصية الجديدة.
+            </p>
+            
+            <div style="display: flex; align-items: flex-start; gap: 8px; text-align: start; background: var(--bg-dark); padding: 12px; border-radius: 8px; margin-bottom: 20px; border: 1px solid var(--border-color);">
+                <input type="checkbox" id="privacy-consent-check" style="width: auto; margin-top: 2px; cursor: pointer;">
+                <label for="privacy-consent-check" style="font-size: 12px; line-height: 1.4; color: var(--text-primary); cursor: pointer;" data-i18n="privacy-modal-consent">
+                    أوافق على سياسة الخصوصية الجديدة وأوافق على معالجة رقم هاتفي وبريدي الإلكتروني لتأمين الحساب واستعادة كلمة المرور ذاتياً.
+                </label>
+            </div>
+            
+            <button type="button" id="btn-accept-privacy" class="btn-primary" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;" disabled>
+                <span data-i18n="privacy-modal-accept">لقد قرأت ووافقت ومتابعة</span> <i data-lucide="check"></i>
+            </button>
+        </div>
+    </div>
+
     <!-- Scripts -->
-    <script src="app.js?v=2.2"></script>
+    <script src="app.js?v=2.3"></script>
 </body>
 </html>
