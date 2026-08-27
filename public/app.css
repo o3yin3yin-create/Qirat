@@ -405,17 +405,18 @@ h1, h2, h3, h4, h5, h6 {
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     gap: 8px;
     margin-bottom: 12px;
+    padding-top: 10px;
 }
 
 .price-box-card {
     background: var(--bg-surface);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-md);
-    padding: 12px 8px;
+    padding: 14px 8px 12px;
     text-align: center;
     position: relative;
     transition: var(--transition-smooth);
-    overflow: hidden;
+    overflow: visible;
 }
 
 .price-box-card:hover {
@@ -430,16 +431,17 @@ h1, h2, h3, h4, h5, h6 {
 
 .popular-badge {
     position: absolute;
-    top: -8px;
+    top: -10px;
     left: 50%;
     transform: translateX(-50%);
     background: var(--gold-primary);
     color: #ffffff;
-    font-size: 8px;
+    font-size: 9px;
     font-weight: 700;
-    padding: 2px 8px;
+    padding: 2px 10px;
     border-radius: 50px;
     white-space: nowrap;
+    z-index: 5;
 }
 
 .price-box-card h5 {
