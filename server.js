@@ -471,6 +471,97 @@ app.post('/api/user/update-email', authenticateToken, (req, res) => {
     });
 });
 
+// Send OTP code to verify legacy user email
+app.post('/api/user/send-verification-otp', authenticateToken, (req, res) => {
+    const { email } = req.body;
+    if (!email) {
+        return res.status(400).json({ error: 'يرجى إدخال البريد الإلكتروني للتفعيل' });
+    }
+    
+    const emailClean = email.trim().toLowerCase();
+    
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailClean)) {
+        return res.status(400).json({ error: 'يرجى إدخال بريد إلكتروني صحيح' });
+    }
+    
+    db.get('SELECT id FROM users WHERE email = ? AND id != ?', [emailClean, req.userId], (err, row) => {
+        if (err) return res.status(500).json({ error: 'خطأ في قاعدة البيانات: ' + err.message });
+        if (row) {
+            return res.status(400).json({ error: 'البريد الإلكتروني مستخدم بالفعل من قبل حساب آخر' });
+        }
+        
+        // Generate 6-digit OTP
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        const expires = Date.now() + 5 * 60 * 1000; // 5 minutes
+        
+        otpStore.set(`verify_${req.userId}`, { otp, expires, email: emailClean });
+        
+        // Send Email
+        const mailOptions = {
+            from: process.env.SMTP_USER || 'qirat.app@gmail.com',
+            to: emailClean,
+            subject: 'كود تفعيل الحساب - قيراط',
+            text: `كود التفعيل الخاص بك لتأكيد بريدك الإلكتروني في تطبيق قيراط هو: ${otp}\n\nهذا الكود صالح لمدة 5 دقائق.\n\nمنصة قيراط للذهب`
+        };
+        
+        if (nodemailer && process.env.SMTP_HOST) {
+            const transporter = nodemailer.createTransport({
+                host: process.env.SMTP_HOST,
+                port: parseInt(process.env.SMTP_PORT) || 587,
+                secure: process.env.SMTP_PORT === '465',
+                auth: {
+                    user: process.env.SMTP_USER,
+                    pass: process.env.SMTP_PASS
+                }
+            });
+            
+            transporter.sendMail(mailOptions, (mailErr, info) => {
+                if (mailErr) {
+                    console.error('Error sending verification OTP email:', mailErr);
+                    return res.status(500).json({ error: 'فشل إرسال كود التفعيل للبريد الإلكتروني' });
+                }
+                res.json({ success: true, message: 'تم إرسال كود التفعيل بنجاح إلى بريدك الإلكتروني' });
+            });
+        } else {
+            console.log(`[TEST MODE] Verification OTP for user ${req.userId} to ${emailClean} is: ${otp}`);
+            res.json({ 
+                success: true, 
+                message: 'تم إرسال كود التفعيل بنجاح (وضع الاختبار: الكود مطبوع في سجلات السيرفر)', 
+                isTest: true,
+                testOtp: otp
+            });
+        }
+    });
+});
+
+// Verify OTP and Activate legacy account
+app.post('/api/user/verify-verification-otp', authenticateToken, (req, res) => {
+    const { otp } = req.body;
+    if (!otp) {
+        return res.status(400).json({ error: 'يرجى إدخال كود التفعيل المرسل' });
+    }
+    
+    const stored = otpStore.get(`verify_${req.userId}`);
+    if (!stored) {
+        return res.status(400).json({ error: 'كود التفعيل غير صالح أو منتهي الصلاحية' });
+    }
+    if (Date.now() > stored.expires) {
+        otpStore.delete(`verify_${req.userId}`);
+        return res.status(400).json({ error: 'كود التفعيل منتهي الصلاحية، يرجى طلب كود جديد' });
+    }
+    if (stored.otp !== otp.trim()) {
+        return res.status(400).json({ error: 'كود التفعيل غير صحيح' });
+    }
+    
+    // Update email and wipe national_id for privacy
+    db.run('UPDATE users SET email = ?, national_id = NULL WHERE id = ?', [stored.email, req.userId], function(err) {
+        if (err) return res.status(500).json({ error: 'خطأ أثناء تفعيل الحساب: ' + err.message });
+        
+        otpStore.delete(`verify_${req.userId}`);
+        res.json({ success: true, message: 'تم تفعيل حسابك بنجاح وحذف الرقم القومي لخصوصيتك، يمكنك استخدام التطبيق الآن!' });
+    });
+});
+
 // Delete Account
 app.post('/api/user/delete-account', authenticateToken, (req, res) => {
     db.run('DELETE FROM users WHERE id = ?', [req.userId], function(err) {

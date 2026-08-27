@@ -36,6 +36,9 @@ const TRANSLATIONS = {
     'migration-warning-banner': { ar: 'تنبيه هام: التزاماً بخصوصية البيانات، سيتم حذف بيانات الرقم القومي قريباً. يرجى تحديث الملف الشخصي وإضافة بريدك الإلكتروني لتنشيط ميزة استعادة الحساب ذاتياً.', en: 'Important: To comply with data privacy, National ID data will be deleted soon. Please update your profile to add an email and enable self-service password recovery.' },
     'migration-banner-action': { ar: 'تحديث الآن', en: 'Update Now' },
     'auth-delete-account-btn': { ar: 'حذف الحساب نهائياً', en: 'Permanently Delete Account' },
+    'legacy-verify-title': { ar: 'تفعيل الحساب بالبريد الإلكتروني', en: 'Verify Account with Email' },
+    'legacy-verify-desc': { ar: 'التزاماً بخصوصية البيانات وحذف الرقم القومي، يرجى إدخال وتفعيل بريدك الإلكتروني لتنشيط ميزة استعادة الحساب ذاتياً ومتابعة استخدام التطبيق.', en: 'To comply with data privacy regulations and the deletion of National IDs, please input and verify your email to enable self-service password resets and continue using the app.' },
+    'auth-confirm-btn': { ar: 'تأكيد وتفعيل الحساب', en: 'Verify & Activate Account' },
     'privacy-modal-title': { ar: 'تحديث أمني وقانوني هام', en: 'Important Security & Legal Update' },
     'privacy-modal-desc': { ar: 'التزاماً بخصوصية البيانات وقوانين حماية البيانات الشخصية (PDPL)، قمنا بإلغاء جمع وحفظ الرقم القومي نهائياً من سيرفراتنا وحذف البيانات السابقة. يرجى تأكيد موافقتك على معالجة البريد الإلكتروني ورقم الهاتف لأغراض الأمان واستعادة الحساب ذاتياً طبقاً لسياسة الخصوصية الجديدة.', en: 'In compliance with data privacy regulations (PDPL), we have completely eliminated the collection of National ID numbers and permanently deleted all past records. Please confirm your consent to the processing of your email and phone number solely for account security and recovery under the new Privacy Policy.' },
     'privacy-modal-consent': { ar: 'أوافق على سياسة الخصوصية الجديدة وأوافق على معالجة رقم هاتفي وبريدي الإلكتروني لتأمين الحساب واستعادة كلمة المرور ذاتياً.', en: 'I agree to the new Privacy Policy and consent to the processing of my phone number and email for account security and self-service password recovery.' },
@@ -434,7 +437,7 @@ async function checkAuthStatus() {
         if (adminTabBtn) adminTabBtn.style.display = 'none';
     }
 
-    // Check email for GDPR migration banner
+    // Check email for legacy account activation blocker
     if (token) {
         try {
             const profileResponse = await fetch('/api/user/profile', {
@@ -442,21 +445,27 @@ async function checkAuthStatus() {
             });
             if (profileResponse.ok) {
                 const user = await profileResponse.json();
-                const banner = document.getElementById('migration-banner');
-                if (banner) {
+                const blocker = document.getElementById('modal-legacy-verify-blocker');
+                if (blocker) {
                     if (!user.email) {
-                        banner.style.display = 'flex';
+                        blocker.classList.add('active');
+                        // Reset steps
+                        const step1 = document.getElementById('legacy-verify-step-1');
+                        const step2 = document.getElementById('legacy-verify-step-2');
+                        if (step1) step1.style.display = 'block';
+                        if (step2) step2.style.display = 'none';
+                        document.getElementById('legacy-verify-form')?.reset();
                     } else {
-                        banner.style.display = 'none';
+                        blocker.classList.remove('active');
                     }
                 }
             }
         } catch (err) {
-            console.error('Error checking user email for banner:', err);
+            console.error('Error checking user email for blocker:', err);
         }
     } else {
-        const banner = document.getElementById('migration-banner');
-        if (banner) banner.style.display = 'none';
+        const blocker = document.getElementById('modal-legacy-verify-blocker');
+        if (blocker) blocker.classList.remove('active');
     }
 
     // Fetch cloud portfolio
@@ -928,9 +937,86 @@ function setupAuthListeners() {
         fetchAdminStats();
     });
 
-    // Migration banner action
-    document.getElementById('btn-migration-banner-action')?.addEventListener('click', () => {
-        openUserProfileModal();
+    // Blocker: Send OTP to legacy user email
+    document.getElementById('btn-legacy-send-otp')?.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const emailInput = document.getElementById('legacy-verify-email');
+        const email = emailInput ? emailInput.value.trim() : '';
+        
+        if (!email) {
+            alert(currentLanguage === 'en' ? 'Please enter a valid email.' : 'يرجى إدخال بريد إلكتروني صحيح.');
+            return;
+        }
+        
+        const token = localStorage.getItem('dahaby_jwt');
+        if (!token) return;
+        
+        try {
+            const response = await fetch('/api/user/send-verification-otp', {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ email })
+            });
+            const data = await response.json();
+            if (response.ok) {
+                document.getElementById('legacy-verify-step-1').style.display = 'none';
+                document.getElementById('legacy-verify-step-2').style.display = 'block';
+                
+                let successMsg = data.message;
+                if (data.isTest && data.testOtp) {
+                    successMsg += `\n[وضع الاختبار] كود التفعيل هو: ${data.testOtp}`;
+                }
+                alert(successMsg);
+            } else {
+                alert(data.error || 'Failed to send verification code.');
+            }
+        } catch (err) {
+            alert(TRANSLATIONS['alert-server-error'][currentLanguage]);
+        }
+    });
+
+    // Blocker: Submit Verification Code
+    document.getElementById('legacy-verify-form')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const otpInput = document.getElementById('legacy-verify-otp');
+        const otp = otpInput ? otpInput.value.trim() : '';
+        
+        if (!otp) {
+            alert(currentLanguage === 'en' ? 'Please enter the verification code.' : 'يرجى إدخال كود التفعيل.');
+            return;
+        }
+        
+        const token = localStorage.getItem('dahaby_jwt');
+        if (!token) return;
+        
+        try {
+            const response = await fetch('/api/user/verify-verification-otp', {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ otp })
+            });
+            const data = await response.json();
+            if (response.ok) {
+                alert(data.message);
+                document.getElementById('modal-legacy-verify-blocker').classList.remove('active');
+                await checkAuthStatus();
+            } else {
+                alert(data.error || 'Verification failed.');
+            }
+        } catch (err) {
+            alert(TRANSLATIONS['alert-server-error'][currentLanguage]);
+        }
+    });
+
+    // Blocker: Logout Option
+    document.getElementById('btn-legacy-logout')?.addEventListener('click', () => {
+        document.getElementById('btn-logout')?.click();
     });
 
     // Save profile email action

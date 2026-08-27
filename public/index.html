@@ -28,7 +28,7 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     
     <!-- Main Stylesheet -->
-    <link rel="stylesheet" href="app.css?v=2.3">
+    <link rel="stylesheet" href="app.css?v=2.4">
 </head>
 <body class="dark-theme">
 
@@ -443,17 +443,6 @@
             </div>
         </div>
     </header>
-
-    <!-- Migration/Warning Banner for GDPR Compliance -->
-    <div id="migration-banner" style="display: none; background: rgba(217, 119, 6, 0.1); border: 1px solid rgba(217, 119, 6, 0.3); color: #D97706; padding: 12px 16px; border-radius: 12px; margin: 15px auto 0 auto; max-width: 1200px; width: calc(100% - 30px); font-size: 13px; font-weight: 500; align-items: center; justify-content: space-between; gap: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); box-sizing: border-box;">
-        <div style="display: flex; align-items: center; gap: 8px;">
-            <i data-lucide="alert-triangle" style="flex-shrink: 0; width: 18px; height: 18px;"></i>
-            <span id="migration-banner-text" data-i18n="migration-warning-banner">تنبيه هام: التزاماً بخصوصية البيانات، سيتم حذف بيانات الرقم القومي قريباً. يرجى تحديث الملف الشخصي وإضافة بريدك الإلكتروني لتنشيط ميزة استعادة الحساب ذاتياً.</span>
-        </div>
-        <button id="btn-migration-banner-action" class="btn-primary" style="font-size: 11px; padding: 6px 12px; width: auto; margin-top: 0; background: #D97706; border-color: #D97706; color: white; white-space: nowrap; cursor: pointer;">
-            <span data-i18n="migration-banner-action">تحديث الآن</span>
-        </button>
-    </div>
 
     <!-- Main Content -->
     <main class="container main-content">
@@ -1205,7 +1194,49 @@
         </div>
     </div>
 
+    <!-- Blocker Modal: Legacy User Email Verification Blocker -->
+    <div class="modal-overlay" id="modal-legacy-verify-blocker" style="z-index: 2100; background: rgba(0, 0, 0, 0.95);">
+        <div class="modal-content" style="max-width: 440px; padding: 28px; text-align: center;">
+            <div style="background: rgba(16, 185, 129, 0.1); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px auto;">
+                <i data-lucide="alert-circle" class="gold-text" style="width: 32px; height: 32px; color: #10B981;"></i>
+            </div>
+            <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 12px;" data-i18n="legacy-verify-title">تفعيل الحساب بالبريد الإلكتروني</h3>
+            
+            <p style="font-size: 13px; line-height: 1.6; text-align: justify; margin-bottom: 20px; color: var(--text-secondary);" data-i18n="legacy-verify-desc">
+                التزاماً بخصوصية البيانات وحذف الرقم القومي، يرجى إدخال وتفعيل بريدك الإلكتروني لتنشيط ميزة استعادة الحساب ذاتياً ومتابعة استخدام التطبيق.
+            </p>
+            
+            <form id="legacy-verify-form" class="inputs-layout" style="text-align: start; width: 100%;">
+                <!-- Step 1: Input Email & Request OTP -->
+                <div id="legacy-verify-step-1">
+                    <div class="input-group">
+                        <label for="legacy-verify-email" data-i18n="auth-email-label">البريد الإلكتروني</label>
+                        <input type="email" id="legacy-verify-email" placeholder="مثال: user@example.com" data-i18n-placeholder="auth-email-placeholder" required>
+                    </div>
+                    <button type="button" id="btn-legacy-send-otp" class="btn-primary" style="margin-top: 15px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        <span data-i18n="auth-send-otp-btn">إرسال كود التحقق</span> <i data-lucide="send"></i>
+                    </button>
+                </div>
+                
+                <!-- Step 2: Input OTP (Hidden initially) -->
+                <div id="legacy-verify-step-2" style="display: none;">
+                    <div class="input-group">
+                        <label for="legacy-verify-otp" data-i18n="auth-otp-label">كود التحقق (OTP)</label>
+                        <input type="text" id="legacy-verify-otp" placeholder="أدخل الكود المكون من 6 أرقام" data-i18n-placeholder="auth-otp-placeholder" maxlength="6" autocomplete="one-time-code">
+                    </div>
+                    <button type="submit" id="btn-legacy-verify-submit" class="btn-primary" style="margin-top: 15px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        <span data-i18n="auth-confirm-btn">تأكيد وتفعيل الحساب</span> <i data-lucide="check-check"></i>
+                    </button>
+                </div>
+            </form>
+            
+            <button type="button" class="btn-secondary" id="btn-legacy-logout" style="margin-top: 15px; width: 100%; border-color: #EF4444; color: #EF4444; background: transparent; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <span data-i18n="auth-logout-btn">تسجيل الخروج</span> <i data-lucide="log-out"></i>
+            </button>
+        </div>
+    </div>
+
     <!-- Scripts -->
-    <script src="app.js?v=2.3"></script>
+    <script src="app.js?v=2.4"></script>
 </body>
 </html>
