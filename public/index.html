@@ -28,7 +28,7 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     
     <!-- Main Stylesheet -->
-    <link rel="stylesheet" href="app.css?v=3.2">
+    <link rel="stylesheet" href="app.css?v=3.3">
 </head>
 <body class="dark-theme">
 
@@ -37,10 +37,11 @@
     <div class="locker-overlay" id="auth-overlay">
         <!-- Form 1: Login -->
         <div class="locker-modal auth-form-container" id="login-form-box">
-            <div class="locker-icon">
-                <i data-lucide="log-in" class="gold-text"></i>
+            <div class="auth-brand-logo" style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 20px;">
+                <img src="logo.png" alt="Qirat" style="height: 48px; width: auto;">
+                <span style="font-size: 26px; font-weight: 800; color: #FFF; font-family: 'Tajawal', sans-serif;">قيراط</span>
             </div>
-            <h3 data-i18n="auth-login-title">تسجيل الدخول لموقع قيراط</h3>
+            <h3 data-i18n="auth-login-title" style="margin-top: 10px;">تسجيل الدخول لموقع قيراط</h3>
             <p data-i18n="auth-login-desc">أدخل بياناتك للوصول ومزامنة محفظتك الذهبية سحابياً.</p>
             
             <form id="auth-login-form" class="inputs-layout" style="text-align: start; width: 100%; margin-top: 10px;">
@@ -72,10 +73,11 @@
 
         <!-- Form 2: Register -->
         <div class="locker-modal auth-form-container" id="register-form-box" style="display: none;">
-            <div class="locker-icon">
-                <i data-lucide="user-plus" class="gold-text"></i>
+            <div class="auth-brand-logo" style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 20px;">
+                <img src="logo.png" alt="Qirat" style="height: 48px; width: auto;">
+                <span style="font-size: 26px; font-weight: 800; color: #FFF; font-family: 'Tajawal', sans-serif;">قيراط</span>
             </div>
-            <h3 data-i18n="auth-reg-title">إنشاء حساب استثماري جديد</h3>
+            <h3 data-i18n="auth-reg-title" style="margin-top: 10px;">إنشاء حساب استثماري جديد</h3>
             <p data-i18n="auth-reg-desc">سجل حسابك لحفظ ممتلكاتك ومزامنتها بأمان.</p>
             
             <form id="auth-register-form" class="inputs-layout" style="text-align: start; width: 100%; margin-top: 10px;">
@@ -116,10 +118,11 @@
 
         <!-- Form 3: Forgot Password -->
         <div class="locker-modal auth-form-container" id="forgot-form-box" style="display: none;">
-            <div class="locker-icon">
-                <i data-lucide="key-round" class="gold-text"></i>
+            <div class="auth-brand-logo" style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 20px;">
+                <img src="logo.png" alt="Qirat" style="height: 48px; width: auto;">
+                <span style="font-size: 26px; font-weight: 800; color: #FFF; font-family: 'Tajawal', sans-serif;">قيراط</span>
             </div>
-            <h3 data-i18n="auth-forgot-title">استعادة كلمة المرور</h3>
+            <h3 data-i18n="auth-forgot-title" style="margin-top: 10px;">استعادة كلمة المرور</h3>
             <p data-i18n="auth-forgot-desc">أدخل البيانات المطلوبة بدقة لتأكيد هويتك وتعيين كلمة مرور جديدة.</p>
             
             <form id="auth-forgot-form" class="inputs-layout" style="text-align: start; width: 100%; margin-top: 10px;">
@@ -1173,8 +1176,9 @@
     <!-- Blocker Modal: Legacy User Email Verification Blocker -->
     <div class="modal-overlay" id="modal-legacy-verify-blocker" style="z-index: 2100; background: rgba(0, 0, 0, 0.85);">
         <div class="modal-content" style="max-width: 420px; padding: 28px; text-align: center;">
-            <div style="background: transparent; width: 60px; height: 60px; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px auto; border: 1px solid var(--gold-primary);">
-                <i data-lucide="shield-check" class="gold-text" style="width: 28px; height: 28px;"></i>
+            <div class="auth-brand-logo" style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 20px;">
+                <img src="logo.png" alt="Qirat" style="height: 48px; width: auto;">
+                <span style="font-size: 26px; font-weight: 800; color: #FFF; font-family: 'Tajawal', sans-serif;">قيراط</span>
             </div>
             <h3 style="font-size: 18px; font-weight: 800; color: #FFF; margin-bottom: 8px;" data-i18n="legacy-verify-title">تفعيل الحساب بالبريد الإلكتروني</h3>
             
@@ -1244,6 +1248,6 @@
     </div>
 
     <!-- Scripts -->
-    <script src="app.js?v=3.2"></script>
+    <script src="app.js?v=3.3"></script>
 </body>
 </html>
