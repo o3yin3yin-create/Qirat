@@ -60,7 +60,7 @@ body {
     display: flex;
     flex-direction: column;
     transition: background-color 0.25s ease, color 0.25s ease;
-    padding-bottom: 90px;
+    padding-bottom: 20px;
 }
 
 .container {
@@ -954,7 +954,7 @@ input[type="range"]::-webkit-slider-thumb {
     border-radius: var(--radius-lg);
     padding: 20px;
     max-width: var(--container-width);
-    margin: 16px auto;
+    margin: 16px auto 100px;
     width: calc(100% - 40px);
 }
 
@@ -1087,11 +1087,12 @@ input[type="range"]::-webkit-slider-thumb {
         padding: 0 8px;
     }
     .main-content {
-        padding-bottom: 120px;
+        padding-bottom: 0;
+        margin-bottom: 12px;
     }
     .main-footer {
         width: calc(100% - 24px);
-        margin: 12px auto 20px;
+        margin: 12px auto 90px;
         padding: 16px;
     }
     .input-row-flex {
