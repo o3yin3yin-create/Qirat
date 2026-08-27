@@ -1192,9 +1192,6 @@ input[type="range"]::-webkit-slider-thumb {
         border: none !important;
         border-radius: 0 !important;
         padding: 48px 24px !important;
-        display: flex !important;
-        flex-direction: column !important;
-        justify-content: flex-start !important;
         background: var(--bg-dark) !important;
         box-shadow: none !important;
         box-sizing: border-box !important;
@@ -1214,9 +1211,6 @@ input[type="range"]::-webkit-slider-thumb {
         border: none !important;
         border-radius: 0 !important;
         padding: 48px 24px !important;
-        display: flex !important;
-        flex-direction: column !important;
-        justify-content: flex-start !important;
         box-shadow: none !important;
         box-sizing: border-box !important;
         overflow-y: visible !important;
