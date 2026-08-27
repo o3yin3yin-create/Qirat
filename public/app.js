@@ -27,7 +27,17 @@ const TRANSLATIONS = {
     'auth-logout-btn': { ar: 'تسجيل الخروج', en: 'Sign Out' },
     'auth-email-label': { ar: 'البريد الإلكتروني', en: 'Email Address' },
     'auth-email-placeholder': { ar: 'مثال: user@example.com', en: 'e.g. user@example.com' },
-    'auth-consent-text': { ar: 'أوافق على معالجة بريدي الإلكتروني ورقم هاتفي لتأمين الحساب واستعادة كلمة المرور طبقاً لسياسة الخصوصية.', en: 'I agree to the processing of my email and phone number to secure my account and recover password under the Privacy Policy.' },
+    'auth-consent-text-part1': { ar: 'أوافق على معالجة بريدي الإلكتروني ورقم هاتفي لتأمين الحساب واستعادة كلمة المرور طبقاً لـ', en: 'I agree to the processing of my email and phone number to secure my account and recover password under the' },
+    'auth-consent-link': { ar: 'سياسة الخصوصية', en: 'Privacy Policy' },
+    'policy-title': { ar: 'سياسة خصوصية منصة قيراط', en: 'Qirat Privacy Policy' },
+    'policy-intro': { ar: 'نحن في منصة قيراط نلتزم تماماً بحماية خصوصيتك وبياناتك الشخصية بما يتوافق مع القوانين المحلية والعالمية لحماية البيانات.', en: 'At Qirat, we are fully committed to protecting your privacy and personal data in compliance with local and global data protection regulations.' },
+    'policy-sec1-title': { ar: '١. البيانات التي نجمعها:', en: '1. Data We Collect:' },
+    'policy-sec1-desc': { ar: 'البريد الإلكتروني ورقم الهاتف المحمول فقط (لتأمين الحساب واستعادة كلمة المرور ذاتياً)، بالإضافة إلى بيانات محفظة الذهب ومدخراتك التي تقوم بإدخالها ليقوم التطبيق بحسابها وحفظها لك.', en: 'Only your email address and mobile phone number (solely for account security and self-service password recovery), alongside your gold assets and savings data that you manually input for calculation.' },
+    'policy-sec2-title': { ar: '٢. سرية وأمان البيانات:', en: '2. Data Security & Confidentiality:' },
+    'policy-sec2-desc': { ar: 'نحن لا نطلب الرقم القومي أو أي بيانات شخصية حكومية حساسة. جميع بياناتك يتم تخزينها وتشفيرها بشكل آمن على سيرفراتنا لحمايتها من أي وصول غير مصرح به، ولا يتم مشاركتها أو بيعها لأي طرف ثالث نهائياً.', en: 'We do NOT collect National IDs or any sensitive government credentials. All your data is securely stored and encrypted on our servers to prevent unauthorized access, and is never shared or sold to any third party.' },
+    'policy-sec3-title': { ar: '٣. حق حذف البيانات (حق النسيان):', en: '3. Right to be Forgotten:' },
+    'policy-sec3-desc': { ar: 'يمكنك في أي وقت حذف حسابك وكل بياناتك المسجلة لدينا بشكل نهائي ولا رجعة فيه بكبسة زر واحدة من خلال الملف الشخصي للتطبيق.', en: 'You have the right to request the permanent deletion of your account and all associated data at any time with a single click from your user profile settings.' },
+    'policy-close-btn': { ar: 'فهمت وموافق', en: 'I Understand & Agree' },
     'auth-send-otp-btn': { ar: 'إرسال كود التحقق', en: 'Send Code (OTP)' },
     'auth-otp-label': { ar: 'كود التحقق (OTP)', en: 'Verification Code (OTP)' },
     'auth-otp-placeholder': { ar: 'أدخل الكود المكون من 6 أرقام', en: 'Enter the 6-digit code' },
@@ -1131,11 +1141,25 @@ function setupModals() {
         userGuideModal?.classList.remove('active');
     });
 
+    // Privacy Policy Modal
+    const privacyPolicyModal = document.getElementById('modal-privacy-policy');
+    document.getElementById('link-open-privacy-policy')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        privacyPolicyModal?.classList.add('active');
+    });
+    document.getElementById('btn-close-privacy-policy')?.addEventListener('click', () => {
+        privacyPolicyModal?.classList.remove('active');
+    });
+    document.getElementById('btn-close-policy-ok')?.addEventListener('click', () => {
+        privacyPolicyModal?.classList.remove('active');
+    });
+
     // Close on overlay click
     window.addEventListener('click', (e) => {
         if (e.target === addTxModal) addTxModal?.classList.remove('active');
         if (e.target === editGoalModal) editGoalModal?.classList.remove('active');
         if (e.target === userGuideModal) userGuideModal?.classList.remove('active');
+        if (e.target === privacyPolicyModal) privacyPolicyModal?.classList.remove('active');
     });
 }
 

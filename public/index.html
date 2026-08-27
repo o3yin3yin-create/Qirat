@@ -28,7 +28,7 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     
     <!-- Main Stylesheet -->
-    <link rel="stylesheet" href="app.css?v=2.9">
+    <link rel="stylesheet" href="app.css?v=3.0">
 </head>
 <body class="dark-theme">
 
@@ -99,7 +99,7 @@
                 <div style="display: flex; align-items: flex-start; gap: 8px; margin-top: 10px; font-size: 11px;">
                     <input type="checkbox" id="reg-consent" required style="width: auto; margin-top: 2px;">
                     <label for="reg-consent" class="text-muted" style="line-height: 1.4; cursor: pointer;">
-                        <span data-i18n="auth-consent-text">أوافق على معالجة بريدي الإلكتروني ورقم هاتفي لتأمين الحساب واستعادة كلمة المرور طبقاً لسياسة الخصوصية.</span>
+                        <span data-i18n="auth-consent-text-part1">أوافق على معالجة بريدي الإلكتروني ورقم هاتفي لتأمين الحساب واستعادة كلمة المرور طبقاً لـ</span> <a href="#" id="link-open-privacy-policy" class="gold-text font-bold" style="text-decoration: underline;" data-i18n="auth-consent-link">سياسة الخصوصية</a>.
                     </label>
                 </div>
                 
@@ -1212,7 +1212,38 @@
         </div>
     </div>
 
+    <!-- Modal: Privacy Policy (سياسة الخصوصية) -->
+    <div class="modal-overlay" id="modal-privacy-policy" style="z-index: 3000;">
+        <div class="modal-content" style="max-width: 500px; padding: 28px; text-align: start; max-height: 80vh; overflow-y: auto;">
+            <button class="modal-close-btn" id="btn-close-privacy-policy">
+                <i data-lucide="x"></i>
+            </button>
+            <h3 style="font-size: 18px; font-weight: 800; color: var(--gold-primary); margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;" data-i18n="policy-title">سياسة خصوصية منصة قيراط</h3>
+            
+            <div style="font-size: 12px; line-height: 1.6; color: var(--text-primary); display: flex; flex-direction: column; gap: 12px;">
+                <p style="font-weight: bold;" data-i18n="policy-intro">نحن في منصة قيراط نلتزم تماماً بحماية خصوصيتك وبياناتك الشخصية بما يتوافق مع القوانين المحلية والعالمية لحماية البيانات.</p>
+                
+                <div>
+                    <h4 style="color: var(--gold-primary); font-weight: bold; margin-bottom: 4px;" data-i18n="policy-sec1-title">١. البيانات التي نجمعها:</h4>
+                    <p data-i18n="policy-sec1-desc">البريد الإلكتروني ورقم الهاتف المحمول فقط (لتأمين الحساب واستعادة كلمة المرور ذاتياً)، بالإضافة إلى بيانات محفظة الذهب ومدخراتك التي تقوم بإدخالها ليقوم التطبيق بحسابها وحفظها لك.</p>
+                </div>
+                
+                <div>
+                    <h4 style="color: var(--gold-primary); font-weight: bold; margin-bottom: 4px;" data-i18n="policy-sec2-title">٢. سرية وأمان البيانات:</h4>
+                    <p data-i18n="policy-sec2-desc">نحن لا نطلب الرقم القومي أو أي بيانات شخصية حكومية حساسة. جميع بياناتك يتم تخزينها وتشفيرها بشكل آمن على سيرفراتنا لحمايتها من أي وصول غير مصرح به، ولا يتم مشاركتها أو بيعها لأي طرف ثالث نهائياً.</p>
+                </div>
+
+                <div>
+                    <h4 style="color: var(--gold-primary); font-weight: bold; margin-bottom: 4px;" data-i18n="policy-sec3-title">٣. حق حذف البيانات (حق النسيان):</h4>
+                    <p data-i18n="policy-sec3-desc">يمكنك في أي وقت حذف حسابك وكل بياناتك المسجلة لدينا بشكل نهائي ولا رجعة فيه بكبسة زر واحدة من خلال الملف الشخصي للتطبيق.</p>
+                </div>
+            </div>
+            
+            <button type="button" class="btn-primary" id="btn-close-policy-ok" style="margin-top: 20px; width: 100%;" data-i18n="policy-close-btn">فهمت وموافق</button>
+        </div>
+    </div>
+
     <!-- Scripts -->
-    <script src="app.js?v=2.9"></script>
+    <script src="app.js?v=3.0"></script>
 </body>
 </html>
