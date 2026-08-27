@@ -1,4 +1,4 @@
-const CACHE_NAME = 'qirat-cache-v20';
+const CACHE_NAME = 'qirat-cache-v21';
 const ASSETS = [
   '/',
   '/index.html',
