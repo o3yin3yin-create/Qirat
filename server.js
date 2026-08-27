@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
+// Vercel deployment trigger with new environment variables
 
 // Load .env manually if exists
 try {
