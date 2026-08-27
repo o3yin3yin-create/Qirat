@@ -98,7 +98,7 @@ h1, h2, h3, h4, h5, h6 {
     position: sticky;
     top: 0;
     z-index: 100;
-    padding: 8px 0;
+    padding: 8px 20px;
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
 }
@@ -1065,6 +1065,7 @@ input[type="range"]::-webkit-slider-thumb {
 
 @media (max-width: 600px) {
     .container { padding: 0 12px; }
+    .main-header { padding: 8px 12px !important; }
     .header-container { flex-direction: column; height: auto; padding: 16px !important; gap: 14px; }
     .header-actions {
         width: 100%;
