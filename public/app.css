@@ -95,12 +95,9 @@ h1, h2, h3, h4, h5, h6 {
 .main-header {
     background: transparent;
     border-bottom: none;
-    position: sticky;
-    top: 0;
+    position: relative;
     z-index: 100;
     padding: 8px 20px;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
 }
 
 .header-container {
@@ -1067,6 +1064,7 @@ input[type="range"]::-webkit-slider-thumb {
     .container { padding: 0 12px; }
     .main-header { padding: 8px 12px !important; }
     .header-container { flex-direction: column; height: auto; padding: 16px !important; gap: 14px; }
+    .price-cards-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; }
     .header-actions {
         width: 100%;
         flex-wrap: nowrap;
