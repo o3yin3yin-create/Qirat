@@ -1,5 +1,33 @@
 const express = require('express');
 const path = require('path');
+const fs = require('fs');
+
+// Load .env manually if exists
+try {
+    const envPath = path.join(__dirname, '.env');
+    if (fs.existsSync(envPath)) {
+        const envConfig = fs.readFileSync(envPath, 'utf8');
+        envConfig.split('\n').forEach(line => {
+            const match = line.match(/^\s*([\w.-]+)\s*=\s*(.*)?\s*$/);
+            if (match) {
+                const key = match[1];
+                let value = match[2] || '';
+                value = value.trim();
+                // Remove quotes if present
+                if (value.length > 0 && value.charAt(0) === '"' && value.charAt(value.length - 1) === '"') {
+                    value = value.substring(1, value.length - 1);
+                } else if (value.length > 0 && value.charAt(0) === "'" && value.charAt(value.length - 1) === "'") {
+                    value = value.substring(1, value.length - 1);
+                }
+                process.env[key] = value;
+            }
+        });
+        console.log('Loaded environment variables from local .env file');
+    }
+} catch (e) {
+    console.warn("Could not load .env file manually:", e.message);
+}
+
 const cheerio = require('cheerio');
 // sqlite3 required dynamically for local sqlite development only
 const crypto = require('crypto');
