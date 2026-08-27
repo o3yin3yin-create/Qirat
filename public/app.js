@@ -1182,58 +1182,62 @@ function setupModals() {
     });
 }
 
+// Static emergency fallback prices
+const EMERGENCY_FALLBACK = {
+    isOffline: true,
+    updatedAtText: 'أسعار استرشادية',
+    updatedAtTime: new Date().toISOString(),
+    usdGoldDollar: 50.5,
+    usdBankDollar: 50.2,
+    nisabZakat: 628150,
+    prices: {
+        '24k': { sell: 7415, buy: 7360 },
+        '21k': { sell: 6490, buy: 6440 },
+        '22k': { sell: 6797, buy: 6747 },
+        '18k': { sell: 5565, buy: 5520 },
+        '14k': { sell: 4325, buy: 4295 },
+        'coin': { sell: 51920, buy: 51520 },
+        'ounce_usd': 3320
+    }
+};
+
 // --- FETCH LIVE PRICES OR FALLBACKS ---
 async function fetchPrices() {
     const updateTimeEl = document.getElementById('tick-update-time');
     try {
         const response = await fetch('/api/gold-prices', { cache: 'no-store' });
-        if (!response.ok) throw new Error('API server unreachable');
         
         const data = await response.json();
-        goldPrices = data;
         
+        // If SW returned offline marker or API returned error, use cached or fallback
+        if (data.isOffline || !data.prices) {
+            throw new Error('API returned offline/empty response');
+        }
+        
+        goldPrices = data;
         localStorage.setItem('dahaby_cached_prices', JSON.stringify(data));
         renderAllData();
+
     } catch (e) {
-        console.warn('Network issue, attempting cached offline values:', e.message);
+        console.warn('Fetch failed:', e.message);
         
         const cached = localStorage.getItem('dahaby_cached_prices');
         if (cached) {
-            goldPrices = JSON.parse(cached);
-            goldPrices.isOffline = true;
-            renderAllData();
-            
-            if (updateTimeEl) {
-                const age = Math.round((Date.now() - new Date(goldPrices.updatedAtTime).getTime()) / 1000 / 60);
-                updateTimeEl.textContent = currentLanguage === 'en'
-                    ? `Cached copy (${age} min ago)`
-                    : `نسخة مخبأة (منذ ${age} دقيقة)`;
-                updateTimeEl.classList.add('text-rose');
+            try {
+                goldPrices = JSON.parse(cached);
+                goldPrices.isOffline = true;
+            } catch(pe) {
+                goldPrices = EMERGENCY_FALLBACK;
             }
         } else {
-            // Static fallback so cards always display something
-            goldPrices = {
-                isOffline: true,
-                updatedAtText: 'أسعار استرشادية',
-                updatedAtTime: new Date().toISOString(),
-                usdGoldDollar: 0,
-                usdBankDollar: 0,
-                nisabZakat: 0,
-                prices: {
-                    '24k': { sell: 7415, buy: 7360 },
-                    '21k': { sell: 6490, buy: 6440 },
-                    '22k': { sell: 6797, buy: 6747 },
-                    '18k': { sell: 5565, buy: 5520 },
-                    '14k': { sell: 4325, buy: 4295 },
-                    'coin': { sell: 51920, buy: 51520 },
-                    'ounce_usd': 3320
-                }
-            };
-            renderAllData();
-            if (updateTimeEl) {
-                updateTimeEl.textContent = currentLanguage === 'en' ? 'Indicative prices (offline)' : 'أسعار استرشادية (غير متصل)';
-                updateTimeEl.classList.add('text-rose');
-            }
+            goldPrices = EMERGENCY_FALLBACK;
+        }
+        
+        renderAllData();
+        
+        if (updateTimeEl) {
+            updateTimeEl.textContent = currentLanguage === 'en' ? 'Indicative prices' : 'أسعار استرشادية';
+            updateTimeEl.classList.add('text-rose');
         }
     }
 }
@@ -2510,9 +2514,6 @@ function formatNumber(num) {
     if (num === null || num === undefined || isNaN(num)) return '--';
     // Format with two decimal places (قروش) and thousand separators
     return new Intl.NumberFormat('ar-EG', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num);
-}
-    if (num === null || num === undefined || isNaN(num)) return '--';
-    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
 // Admin stats fetching
