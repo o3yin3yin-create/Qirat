@@ -411,10 +411,11 @@ h1, h2, h3, h4, h5, h6 {
     background: var(--bg-surface);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-md);
-    padding: 16px;
+    padding: 12px 8px;
     text-align: center;
     position: relative;
     transition: var(--transition-smooth);
+    overflow: hidden;
 }
 
 .price-box-card:hover {
@@ -449,18 +450,21 @@ h1, h2, h3, h4, h5, h6 {
 
 .price-box-values {
     display: flex;
-    justify-content: space-around;
-    gap: 6px;
+    justify-content: space-between;
+    align-items: center;
+    gap: 4px;
     margin-bottom: 6px;
 }
 
 .price-box-val {
     display: flex;
     flex-direction: column;
+    flex: 1;
+    min-width: 0;
 }
 
-.price-box-val span:first-child { font-size: 9px; color: var(--text-muted); }
-.price-box-val span:last-child { font-size: 15px; font-weight: 700; font-family: monospace; }
+.price-box-val span:first-child { font-size: 9px; color: var(--text-muted); white-space: nowrap; }
+.price-box-val span:last-child { font-size: 13.5px; font-weight: 700; font-family: var(--font-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .price-box-change { display: inline-flex; align-items: center; gap: 2px; font-size: 10px; font-weight: 700; }
 
 .chart-wrapper {
@@ -949,7 +953,9 @@ input[type="range"]::-webkit-slider-thumb {
     border: 1px solid var(--border-color);
     border-radius: var(--radius-lg);
     padding: 20px;
-    margin: 10px 16px 16px;
+    max-width: var(--container-width);
+    margin: 16px auto;
+    width: calc(100% - 40px);
 }
 
 .footer-content { display: flex; flex-direction: column; gap: 12px; padding: 0; }
@@ -1082,6 +1088,11 @@ input[type="range"]::-webkit-slider-thumb {
     }
     .main-content {
         padding-bottom: 120px;
+    }
+    .main-footer {
+        width: calc(100% - 24px);
+        margin: 12px auto 20px;
+        padding: 16px;
     }
     .input-row-flex {
         grid-template-columns: 1fr;
