@@ -2512,8 +2512,13 @@ function initPriceChart() {
 // Helper formatting
 function formatNumber(num) {
     if (num === null || num === undefined || isNaN(num)) return '--';
-    // Format with two decimal places (قروش) and thousand separators
-    return new Intl.NumberFormat('ar-EG', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num);
+    // Use Western numerals with comma separator
+    // Show decimals only when the number has fractional part
+    const hasDecimal = num % 1 !== 0;
+    return new Intl.NumberFormat('en-US', {
+        minimumFractionDigits: hasDecimal ? 2 : 0,
+        maximumFractionDigits: 2
+    }).format(num);
 }
 
 // Admin stats fetching
