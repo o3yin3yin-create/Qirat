@@ -474,7 +474,7 @@ h1, h2, h3, h4, h5, h6 {
 .input-group label { font-size: 12px; font-weight: 700; color: var(--text-secondary); }
 .input-row-flex { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
-select, input[type="text"], input[type="number"], input[type="password"] {
+select, input[type="text"], input[type="number"], input[type="password"], input[type="email"] {
     background: var(--bg-dark);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-sm);
