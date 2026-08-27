@@ -1211,7 +1211,29 @@ async function fetchPrices() {
                 updateTimeEl.classList.add('text-rose');
             }
         } else {
-            if (updateTimeEl) updateTimeEl.textContent = currentLanguage === 'en' ? 'Offline' : 'غير متصل بالإنترنت';
+            // Static fallback so cards always display something
+            goldPrices = {
+                isOffline: true,
+                updatedAtText: 'أسعار استرشادية',
+                updatedAtTime: new Date().toISOString(),
+                usdGoldDollar: 0,
+                usdBankDollar: 0,
+                nisabZakat: 0,
+                prices: {
+                    '24k': { sell: 7415, buy: 7360 },
+                    '21k': { sell: 6490, buy: 6440 },
+                    '22k': { sell: 6797, buy: 6747 },
+                    '18k': { sell: 5565, buy: 5520 },
+                    '14k': { sell: 4325, buy: 4295 },
+                    'coin': { sell: 51920, buy: 51520 },
+                    'ounce_usd': 3320
+                }
+            };
+            renderAllData();
+            if (updateTimeEl) {
+                updateTimeEl.textContent = currentLanguage === 'en' ? 'Indicative prices (offline)' : 'أسعار استرشادية (غير متصل)';
+                updateTimeEl.classList.add('text-rose');
+            }
         }
     }
 }
