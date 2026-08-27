@@ -455,6 +455,7 @@ async function checkAuthStatus() {
                         if (step1) step1.style.display = 'block';
                         if (step2) step2.style.display = 'none';
                         document.getElementById('legacy-verify-form')?.reset();
+                        if (window.lucide) window.lucide.createIcons();
                     } else {
                         blocker.classList.remove('active');
                     }

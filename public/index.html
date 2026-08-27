@@ -28,7 +28,7 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     
     <!-- Main Stylesheet -->
-    <link rel="stylesheet" href="app.css?v=2.4">
+    <link rel="stylesheet" href="app.css?v=2.5">
 </head>
 <body class="dark-theme">
 
@@ -1195,48 +1195,59 @@
     </div>
 
     <!-- Blocker Modal: Legacy User Email Verification Blocker -->
-    <div class="modal-overlay" id="modal-legacy-verify-blocker" style="z-index: 2100; background: rgba(0, 0, 0, 0.95);">
-        <div class="modal-content" style="max-width: 440px; padding: 28px; text-align: center;">
-            <div style="background: rgba(16, 185, 129, 0.1); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px auto;">
-                <i data-lucide="alert-circle" class="gold-text" style="width: 32px; height: 32px; color: #10B981;"></i>
+    <div class="modal-overlay" id="modal-legacy-verify-blocker" style="z-index: 2100; background: radial-gradient(circle, rgba(18, 18, 18, 0.98) 0%, rgba(10, 10, 10, 0.99) 100%); backdrop-filter: blur(10px);">
+        <div class="modal-content" style="max-width: 440px; padding: 32px; text-align: center; background: rgba(30, 30, 30, 0.7); border: 1px solid rgba(212, 175, 55, 0.3); box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 30px rgba(212, 175, 55, 0.05); border-radius: 20px;">
+            <div style="background: linear-gradient(135deg, rgba(212, 175, 55, 0.15), rgba(183, 129, 3, 0.05)); width: 68px; height: 68px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px auto; border: 1px solid rgba(212, 175, 55, 0.3); box-shadow: 0 0 20px rgba(212, 175, 55, 0.1);">
+                <i data-lucide="shield-check" class="gold-text" style="width: 36px; height: 36px;"></i>
             </div>
-            <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 12px;" data-i18n="legacy-verify-title">تفعيل الحساب بالبريد الإلكتروني</h3>
+            <h3 style="font-size: 20px; font-weight: 800; color: #FFF; margin-bottom: 12px; letter-spacing: -0.5px;" data-i18n="legacy-verify-title">تفعيل الحساب بالبريد الإلكتروني</h3>
             
-            <p style="font-size: 13px; line-height: 1.6; text-align: justify; margin-bottom: 20px; color: var(--text-secondary);" data-i18n="legacy-verify-desc">
+            <p style="font-size: 13px; line-height: 1.6; text-align: justify; margin-bottom: 24px; color: var(--text-secondary);" data-i18n="legacy-verify-desc">
                 التزاماً بخصوصية البيانات وحذف الرقم القومي، يرجى إدخال وتفعيل بريدك الإلكتروني لتنشيط ميزة استعادة الحساب ذاتياً ومتابعة استخدام التطبيق.
             </p>
             
-            <form id="legacy-verify-form" class="inputs-layout" style="text-align: start; width: 100%;">
+            <form id="legacy-verify-form" class="inputs-layout" style="text-align: start; width: 100%; gap: 18px;">
                 <!-- Step 1: Input Email & Request OTP -->
-                <div id="legacy-verify-step-1">
+                <div id="legacy-verify-step-1" style="width: 100%;">
                     <div class="input-group">
-                        <label for="legacy-verify-email" data-i18n="auth-email-label">البريد الإلكتروني</label>
-                        <input type="email" id="legacy-verify-email" placeholder="مثال: user@example.com" data-i18n-placeholder="auth-email-placeholder" required>
+                        <label for="legacy-verify-email" style="font-size: 12px; font-weight: 600; color: var(--gold-primary); margin-bottom: 8px; display: block;" data-i18n="auth-email-label">البريد الإلكتروني</label>
+                        <input type="email" id="legacy-verify-email" placeholder="مثال: user@example.com" data-i18n-placeholder="auth-email-placeholder" required 
+                               style="width: 100%; height: 46px; background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 10px; color: #FFF; padding: 0 16px; font-size: 14px; transition: all 0.3s ease; box-sizing: border-box;"
+                               onfocus="this.style.borderColor='var(--gold-primary)'; this.style.boxShadow='0 0 12px rgba(212, 175, 55, 0.25)';"
+                               onblur="this.style.borderColor='rgba(255, 255, 255, 0.1)'; this.style.boxShadow='none';">
                     </div>
-                    <button type="button" id="btn-legacy-send-otp" class="btn-primary" style="margin-top: 15px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                        <span data-i18n="auth-send-otp-btn">إرسال كود التحقق</span> <i data-lucide="send"></i>
+                    <button type="button" id="btn-legacy-send-otp" class="btn-primary" 
+                            style="margin-top: 20px; width: 100%; height: 46px; background: linear-gradient(135deg, var(--gold-primary), #B78103); border: none; color: #000; font-weight: 700; border-radius: 10px; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2); transition: all 0.2s ease;">
+                        <span data-i18n="auth-send-otp-btn">إرسال كود التحقق</span> <i data-lucide="send" style="width: 16px; height: 16px;"></i>
                     </button>
                 </div>
                 
                 <!-- Step 2: Input OTP (Hidden initially) -->
-                <div id="legacy-verify-step-2" style="display: none;">
+                <div id="legacy-verify-step-2" style="display: none; width: 100%;">
                     <div class="input-group">
-                        <label for="legacy-verify-otp" data-i18n="auth-otp-label">كود التحقق (OTP)</label>
-                        <input type="text" id="legacy-verify-otp" placeholder="أدخل الكود المكون من 6 أرقام" data-i18n-placeholder="auth-otp-placeholder" maxlength="6" autocomplete="one-time-code">
+                        <label for="legacy-verify-otp" style="font-size: 12px; font-weight: 600; color: var(--gold-primary); margin-bottom: 8px; display: block;" data-i18n="auth-otp-label">كود التحقق (OTP)</label>
+                        <input type="text" id="legacy-verify-otp" placeholder="أدخل الكود المكون من 6 أرقام" data-i18n-placeholder="auth-otp-placeholder" maxlength="6" autocomplete="one-time-code"
+                               style="width: 100%; height: 46px; background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 10px; color: #FFF; padding: 0 16px; font-size: 16px; text-align: center; letter-spacing: 4px; transition: all 0.3s ease; box-sizing: border-box;"
+                               onfocus="this.style.borderColor='var(--gold-primary)'; this.style.boxShadow='0 0 12px rgba(212, 175, 55, 0.25)';"
+                               onblur="this.style.borderColor='rgba(255, 255, 255, 0.1)'; this.style.boxShadow='none';">
                     </div>
-                    <button type="submit" id="btn-legacy-verify-submit" class="btn-primary" style="margin-top: 15px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                        <span data-i18n="auth-confirm-btn">تأكيد وتفعيل الحساب</span> <i data-lucide="check-check"></i>
+                    <button type="submit" id="btn-legacy-verify-submit" class="btn-primary" 
+                            style="margin-top: 20px; width: 100%; height: 46px; background: linear-gradient(135deg, var(--gold-primary), #B78103); border: none; color: #000; font-weight: 700; border-radius: 10px; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2); transition: all 0.2s ease;">
+                        <span data-i18n="auth-confirm-btn">تأكيد وتفعيل الحساب</span> <i data-lucide="check-check" style="width: 16px; height: 16px;"></i>
                     </button>
                 </div>
             </form>
             
-            <button type="button" class="btn-secondary" id="btn-legacy-logout" style="margin-top: 15px; width: 100%; border-color: #EF4444; color: #EF4444; background: transparent; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                <span data-i18n="auth-logout-btn">تسجيل الخروج</span> <i data-lucide="log-out"></i>
+            <button type="button" class="btn-secondary" id="btn-legacy-logout" 
+                    style="margin-top: 16px; width: 100%; height: 46px; border: 1px solid rgba(239, 68, 68, 0.4); color: #EF4444; background: rgba(239, 68, 68, 0.05); border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s ease;"
+                    onmouseover="this.style.background='rgba(239, 68, 68, 0.1)';"
+                    onmouseout="this.style.background='rgba(239, 68, 68, 0.05)';">
+                <span data-i18n="auth-logout-btn">تسجيل الخروج</span> <i data-lucide="log-out" style="width: 16px; height: 16px;"></i>
             </button>
         </div>
     </div>
 
     <!-- Scripts -->
-    <script src="app.js?v=2.4"></script>
+    <script src="app.js?v=2.5"></script>
 </body>
 </html>
