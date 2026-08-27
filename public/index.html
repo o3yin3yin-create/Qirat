@@ -28,18 +28,25 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     
     <!-- Main Stylesheet -->
-    <link rel="stylesheet" href="app.css?v=3.3">
+    <link rel="stylesheet" href="app.css?v=3.4">
 </head>
 <body class="dark-theme">
 
 
     <!-- Authentication Overlay -->
     <div class="locker-overlay" id="auth-overlay">
+        <!-- Outer Language Toggle Button -->
+        <button id="btn-auth-lang-toggle" style="position: absolute; top: 20px; inset-inline-end: 20px; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); color: #FFF; padding: 6px 14px; border-radius: var(--radius-sm); cursor: pointer; font-weight: 700; font-size: 12px; font-family: 'Tajawal', sans-serif; transition: var(--transition-smooth); z-index: 10000;">EN</button>
         <!-- Form 1: Login -->
         <div class="locker-modal auth-form-container" id="login-form-box">
-            <div class="auth-brand-logo" style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 20px;">
-                <img src="logo.png" alt="Qirat" style="height: 48px; width: auto;">
-                <span style="font-size: 26px; font-weight: 800; color: #FFF; font-family: 'Tajawal', sans-serif;">قيراط</span>
+            <div class="auth-brand-logo" style="display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 24px;">
+                <div class="auth-brand-text" style="display: flex; flex-direction: column;">
+                    <span style="font-size: 22px; font-weight: 800; color: #FFF; line-height: 1.1; font-family: 'Tajawal', sans-serif;" data-i18n="auth-brand-title">قيراط</span>
+                    <span style="font-size: 10px; color: var(--text-secondary); margin-top: 4px; font-family: 'Tajawal', sans-serif; font-weight: 500;" data-i18n="auth-brand-subtitle">المستشار الفني والادخاري للذهب</span>
+                </div>
+                <div style="width: 44px; height: 44px; border-radius: 10px; border: 1.5px solid var(--gold-primary); display: flex; align-items: center; justify-content: center; padding: 6px; box-sizing: border-box; background: transparent; flex-shrink: 0;">
+                    <img src="logo.png" alt="Qirat" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                </div>
             </div>
             <h3 data-i18n="auth-login-title" style="margin-top: 10px;">تسجيل الدخول لموقع قيراط</h3>
             <p data-i18n="auth-login-desc">أدخل بياناتك للوصول ومزامنة محفظتك الذهبية سحابياً.</p>
@@ -73,9 +80,14 @@
 
         <!-- Form 2: Register -->
         <div class="locker-modal auth-form-container" id="register-form-box" style="display: none;">
-            <div class="auth-brand-logo" style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 20px;">
-                <img src="logo.png" alt="Qirat" style="height: 48px; width: auto;">
-                <span style="font-size: 26px; font-weight: 800; color: #FFF; font-family: 'Tajawal', sans-serif;">قيراط</span>
+            <div class="auth-brand-logo" style="display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 24px;">
+                <div class="auth-brand-text" style="display: flex; flex-direction: column;">
+                    <span style="font-size: 22px; font-weight: 800; color: #FFF; line-height: 1.1; font-family: 'Tajawal', sans-serif;" data-i18n="auth-brand-title">قيراط</span>
+                    <span style="font-size: 10px; color: var(--text-secondary); margin-top: 4px; font-family: 'Tajawal', sans-serif; font-weight: 500;" data-i18n="auth-brand-subtitle">المستشار الفني والادخاري للذهب</span>
+                </div>
+                <div style="width: 44px; height: 44px; border-radius: 10px; border: 1.5px solid var(--gold-primary); display: flex; align-items: center; justify-content: center; padding: 6px; box-sizing: border-box; background: transparent; flex-shrink: 0;">
+                    <img src="logo.png" alt="Qirat" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                </div>
             </div>
             <h3 data-i18n="auth-reg-title" style="margin-top: 10px;">إنشاء حساب استثماري جديد</h3>
             <p data-i18n="auth-reg-desc">سجل حسابك لحفظ ممتلكاتك ومزامنتها بأمان.</p>
@@ -118,9 +130,14 @@
 
         <!-- Form 3: Forgot Password -->
         <div class="locker-modal auth-form-container" id="forgot-form-box" style="display: none;">
-            <div class="auth-brand-logo" style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 20px;">
-                <img src="logo.png" alt="Qirat" style="height: 48px; width: auto;">
-                <span style="font-size: 26px; font-weight: 800; color: #FFF; font-family: 'Tajawal', sans-serif;">قيراط</span>
+            <div class="auth-brand-logo" style="display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 24px;">
+                <div class="auth-brand-text" style="display: flex; flex-direction: column;">
+                    <span style="font-size: 22px; font-weight: 800; color: #FFF; line-height: 1.1; font-family: 'Tajawal', sans-serif;" data-i18n="auth-brand-title">قيراط</span>
+                    <span style="font-size: 10px; color: var(--text-secondary); margin-top: 4px; font-family: 'Tajawal', sans-serif; font-weight: 500;" data-i18n="auth-brand-subtitle">المستشار الفني والادخاري للذهب</span>
+                </div>
+                <div style="width: 44px; height: 44px; border-radius: 10px; border: 1.5px solid var(--gold-primary); display: flex; align-items: center; justify-content: center; padding: 6px; box-sizing: border-box; background: transparent; flex-shrink: 0;">
+                    <img src="logo.png" alt="Qirat" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                </div>
             </div>
             <h3 data-i18n="auth-forgot-title" style="margin-top: 10px;">استعادة كلمة المرور</h3>
             <p data-i18n="auth-forgot-desc">أدخل البيانات المطلوبة بدقة لتأكيد هويتك وتعيين كلمة مرور جديدة.</p>
@@ -1176,9 +1193,14 @@
     <!-- Blocker Modal: Legacy User Email Verification Blocker -->
     <div class="modal-overlay" id="modal-legacy-verify-blocker" style="z-index: 2100; background: rgba(0, 0, 0, 0.85);">
         <div class="modal-content" style="max-width: 420px; padding: 28px; text-align: center;">
-            <div class="auth-brand-logo" style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 20px;">
-                <img src="logo.png" alt="Qirat" style="height: 48px; width: auto;">
-                <span style="font-size: 26px; font-weight: 800; color: #FFF; font-family: 'Tajawal', sans-serif;">قيراط</span>
+            <div class="auth-brand-logo" style="display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 24px;">
+                <div class="auth-brand-text" style="display: flex; flex-direction: column;">
+                    <span style="font-size: 22px; font-weight: 800; color: #FFF; line-height: 1.1; font-family: 'Tajawal', sans-serif;" data-i18n="auth-brand-title">قيراط</span>
+                    <span style="font-size: 10px; color: var(--text-secondary); margin-top: 4px; font-family: 'Tajawal', sans-serif; font-weight: 500;" data-i18n="auth-brand-subtitle">المستشار الفني والادخاري للذهب</span>
+                </div>
+                <div style="width: 44px; height: 44px; border-radius: 10px; border: 1.5px solid var(--gold-primary); display: flex; align-items: center; justify-content: center; padding: 6px; box-sizing: border-box; background: transparent; flex-shrink: 0;">
+                    <img src="logo.png" alt="Qirat" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                </div>
             </div>
             <h3 style="font-size: 18px; font-weight: 800; color: #FFF; margin-bottom: 8px;" data-i18n="legacy-verify-title">تفعيل الحساب بالبريد الإلكتروني</h3>
             
@@ -1248,6 +1270,6 @@
     </div>
 
     <!-- Scripts -->
-    <script src="app.js?v=3.3"></script>
+    <script src="app.js?v=3.4"></script>
 </body>
 </html>

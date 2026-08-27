@@ -24,6 +24,8 @@ const TRANSLATIONS = {
     'auth-guest-btn': { ar: 'الدخول كـ زائر (بدون حساب)', en: 'Enter as Guest (No Account)' },
     'auth-login-desc': { ar: 'سجل دخولك لمزامنة محفظتك وحفظ ممتلكاتك بشكل آمن وتلقائي.', en: 'Sign in to your account to securely sync and backup your portfolio.' },
     'auth-login-title': { ar: 'مرحباً بك في قيراط', en: 'Welcome back' },
+    'auth-brand-title': { ar: 'قيراط', en: 'Qirat' },
+    'auth-brand-subtitle': { ar: 'المستشار الفني والادخاري للذهب', en: 'Your Gold Technical & Savings Advisor' },
     'auth-logout-btn': { ar: 'تسجيل الخروج', en: 'Sign Out' },
     'auth-email-label': { ar: 'البريد الإلكتروني', en: 'Email Address' },
     'auth-email-placeholder': { ar: 'مثال: user@example.com', en: 'e.g. user@example.com' },
@@ -2743,6 +2745,10 @@ function applyLanguage(lang) {
     if (langBtn) {
         langBtn.textContent = lang === 'ar' ? 'EN' : 'AR';
     }
+    const authLangBtn = document.getElementById('btn-auth-lang-toggle');
+    if (authLangBtn) {
+        authLangBtn.textContent = lang === 'ar' ? 'EN' : 'AR';
+    }
 
     if (goldPrices) {
         renderAllData();
@@ -2757,6 +2763,13 @@ function setupLanguageToggle() {
     const btn = document.getElementById('btn-lang-toggle');
     if (btn) {
         btn.addEventListener('click', () => {
+            const nextLang = currentLanguage === 'ar' ? 'en' : 'ar';
+            applyLanguage(nextLang);
+        });
+    }
+    const authBtn = document.getElementById('btn-auth-lang-toggle');
+    if (authBtn) {
+        authBtn.addEventListener('click', () => {
             const nextLang = currentLanguage === 'ar' ? 'en' : 'ar';
             applyLanguage(nextLang);
         });
