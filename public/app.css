@@ -1218,25 +1218,8 @@ input[type="range"]::-webkit-slider-thumb {
     }
 }
 
-/* --- Brand logo layout direction styles --- */
-html[dir="rtl"] .auth-brand-logo {
-    flex-direction: row;
-}
-html[dir="rtl"] .auth-brand-text {
-    align-items: flex-end;
-    text-align: right;
-}
-
-html[dir="ltr"] .auth-brand-logo {
-    flex-direction: row-reverse;
-}
-html[dir="ltr"] .auth-brand-text {
-    align-items: flex-start;
-    text-align: left;
-}
-
 /* Auth lang toggle hover style */
-#btn-auth-lang-toggle:hover {
+.btn-auth-lang-toggle-btn:hover {
     border-color: var(--gold-primary) !important;
     color: var(--gold-primary) !important;
     background: rgba(212, 175, 55, 0.08) !important;

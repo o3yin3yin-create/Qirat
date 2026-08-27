@@ -2745,10 +2745,9 @@ function applyLanguage(lang) {
     if (langBtn) {
         langBtn.textContent = lang === 'ar' ? 'EN' : 'AR';
     }
-    const authLangBtn = document.getElementById('btn-auth-lang-toggle');
-    if (authLangBtn) {
-        authLangBtn.textContent = lang === 'ar' ? 'EN' : 'AR';
-    }
+    document.querySelectorAll('.btn-auth-lang-toggle-btn').forEach(btn => {
+        btn.textContent = lang === 'ar' ? 'EN' : 'AR';
+    });
 
     if (goldPrices) {
         renderAllData();
@@ -2767,11 +2766,10 @@ function setupLanguageToggle() {
             applyLanguage(nextLang);
         });
     }
-    const authBtn = document.getElementById('btn-auth-lang-toggle');
-    if (authBtn) {
-        authBtn.addEventListener('click', () => {
+    document.querySelectorAll('.btn-auth-lang-toggle-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
             const nextLang = currentLanguage === 'ar' ? 'en' : 'ar';
             applyLanguage(nextLang);
         });
-    }
+    });
 }
