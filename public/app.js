@@ -571,6 +571,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 7. Fetch Prices
     fetchPrices();
+// Refresh prices every 30 seconds for near‑real‑time updates
+setInterval(fetchPrices, 30 * 1000);
 
     // 8. Event listeners
     setupThemeToggle();
@@ -583,11 +585,26 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // --- PWA REGISTRATION ---
+const CURRENT_CACHE = 'qirat-cache-v26';
 function registerPWA() {
     if ('serviceWorker' in navigator) {
+        // First: unregister any old SW and delete all old caches
+        navigator.serviceWorker.getRegistrations().then(regs => {
+            regs.forEach(reg => reg.unregister());
+        });
+        caches.keys().then(keys => {
+            keys.forEach(k => {
+                if (k !== CURRENT_CACHE) caches.delete(k);
+            });
+        });
+
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('/service-worker.js')
-                .then(reg => console.log('SW Registered', reg.scope))
+                .then(reg => {
+                    console.log('SW Registered', reg.scope);
+                    // Force update check
+                    reg.update();
+                })
                 .catch(err => console.error('SW Registration failed', err));
         });
     }
@@ -641,7 +658,7 @@ function setTheme(theme) {
     if (window.lucide) window.lucide.createIcons();
     
     if (goldPrices) {
-        initPriceChart();
+
     }
 
     if (portfoliosData) {
@@ -1169,7 +1186,7 @@ function setupModals() {
 async function fetchPrices() {
     const updateTimeEl = document.getElementById('tick-update-time');
     try {
-        const response = await fetch('/api/gold-prices');
+        const response = await fetch('/api/gold-prices', { cache: 'no-store' });
         if (!response.ok) throw new Error('API server unreachable');
         
         const data = await response.json();
@@ -1320,7 +1337,6 @@ function renderPriceCards(data) {
     });
 
     if (window.lucide) window.lucide.createIcons();
-    initPriceChart();
 }
 
 function renderZakatNisab(data) {
@@ -1328,7 +1344,7 @@ function renderZakatNisab(data) {
     const nisab = data.nisabZakat || (p24 * 85);
     const egpLabel = currentLanguage === 'en' ? 'EGP' : 'ج.م';
 
-    document.getElementById('z-res-nisab-val').textContent = `${formatNumber(Math.round(nisab))} ${egpLabel}`;
+    document.getElementById('z-res-nisab-val').textContent = `${formatNumber(nisab)} ${egpLabel}`;
 }
 
 // --- PORTFOLIOS CONTROL (Tab 2) ---
@@ -1675,13 +1691,13 @@ function renderPortfolio() {
             const profit = itemValue - item.buyPrice;
             const roi = (profit / item.buyPrice) * 100;
             profitClass = profit >= 0 ? 'text-emerald font-bold' : 'text-rose font-bold';
-            profitText = `${profit >= 0 ? '+' : ''}${formatNumber(Math.round(profit))} ${egpLabel} (${profit >= 0 ? '+' : ''}${roi.toFixed(1)}%)`;
+            profitText = `${profit >= 0 ? '+' : ''}${formatNumber(profit)} ${egpLabel} (${profit >= 0 ? '+' : ''}${roi.toFixed(1)}%)`;
             
             const calcPricePerUnit = item.buyPrice / item.weight;
             buyPriceText = `
-                <span class="font-bold">${formatNumber(Math.round(item.buyPrice))} ${egpLabel}</span>
+                <span class="font-bold">${formatNumber(item.buyPrice)} ${egpLabel}</span>
                 <br>
-                <span class="text-xs text-muted">(${isEn ? 'Price per' : 'سعر'} ${unitLabel}: ${formatNumber(Math.round(calcPricePerUnit))} ${egpLabel})</span>
+                <span class="text-xs text-muted">(${isEn ? 'Price per' : 'سعر'} ${unitLabel}: ${formatNumber(calcPricePerUnit)} ${egpLabel})</span>
             `;
         } else {
             profitClass = 'text-muted';
@@ -1694,7 +1710,7 @@ function renderPortfolio() {
             <td class="font-bold">${typeLabel} (${getKaratLabel(item.karat)})</td>
             <td>${item.weight} <span class="text-xs text-muted">${item.type === 'coin' ? (isEn ? 'coin(s)' : 'جنيه') : (isEn ? 'g' : 'جرام')}</span></td>
             <td>${buyPriceText}</td>
-            <td class="font-bold">${formatNumber(Math.round(itemValue))} ${egpLabel}</td>
+            <td class="font-bold">${formatNumber(itemValue)} ${egpLabel}</td>
             <td class="${profitClass}">${profitText}</td>
             <td>
                 <button class="delete-btn" onclick="deleteTransaction('${item.id}')">
@@ -1721,7 +1737,7 @@ let currentPortfolioRawWeights = { '24k': 0, '21k': 0, '18k': 0, '14k': 0, 'coin
 
 function updatePortfolioSummary(totalWeight21, totalCurrentValue, totalCost, typeBreakdown, totalCurrentValueForProfit = 0, totalWeight21ForDCA = 0, rawWeights = null, barWeightsCount = {}) {
     const egpLabel = currentLanguage === 'en' ? 'EGP' : 'ج.م';
-    document.getElementById('port-total-value').textContent = `${formatNumber(Math.round(totalCurrentValue))} ${egpLabel}`;
+    document.getElementById('port-total-value').textContent = `${formatNumber(totalCurrentValue)} ${egpLabel}`;
     
     const usdBank = goldPrices.usdBankDollar || 50;
     const usdEquivalentText = currentLanguage === 'en' ? `Equivalent to $${formatNumber(Math.round(totalCurrentValue / usdBank))}` : `ما يعادل $${formatNumber(Math.round(totalCurrentValue / usdBank))}`;
@@ -1791,7 +1807,7 @@ function updatePortfolioSummary(totalWeight21, totalCurrentValue, totalCost, typ
     const dcaEl = document.getElementById('port-dca-average');
     if (totalWeight21ForDCA > 0 && totalCost > 0) {
         const dcaAvg = totalCost / totalWeight21ForDCA;
-        dcaEl.textContent = `${formatNumber(Math.round(dcaAvg))} ${egpLabel}`;
+        dcaEl.textContent = `${formatNumber(dcaAvg)} ${egpLabel}`;
     } else {
         dcaEl.textContent = `0 ${egpLabel}`;
     }
@@ -1803,7 +1819,7 @@ function updatePortfolioSummary(totalWeight21, totalCurrentValue, totalCost, typ
         const profit = totalCurrentValueForProfit - totalCost;
         const roi = (profit / totalCost) * 100;
         
-        profitEl.textContent = `${profit >= 0 ? '+' : ''}${formatNumber(Math.round(profit))} ${egpLabel}`;
+        profitEl.textContent = `${profit >= 0 ? '+' : ''}${formatNumber(profit)} ${egpLabel}`;
         profitEl.className = profit >= 0 ? 'value text-emerald' : 'value text-rose';
         
         roiEl.textContent = currentLanguage === 'en' ? `ROI: ${profit >= 0 ? '+' : ''}${roi.toFixed(1)}%` : `نسبة العائد: ${profit >= 0 ? '+' : ''}${roi.toFixed(1)}%`;
@@ -2060,8 +2076,8 @@ function calculatePurchase() {
 
     const egpLabel = currentLanguage === 'en' ? 'EGP' : 'ج.م';
     document.getElementById('p-res-pure-gram').textContent = `${formatNumber(price)} ${egpLabel}`;
-    document.getElementById('p-res-total-gram').textContent = `${formatNumber(Math.round(gramPrice))} ${egpLabel}`;
-    document.getElementById('p-res-total').textContent = `${formatNumber(Math.round(invoice))} ${egpLabel}`;
+    document.getElementById('p-res-total-gram').textContent = `${formatNumber(gramPrice)} ${egpLabel}`;
+    document.getElementById('p-res-total').textContent = `${formatNumber(invoice)} ${egpLabel}`;
 }
 
 // Selling/Liquidation
@@ -2087,7 +2103,7 @@ function calculateSelling() {
     const unit = currentLanguage === 'en' ? 'g' : 'جرام';
     document.getElementById('s-res-pure-weight').textContent = `${netWeight.toFixed(2)} ${unit}`;
 
-    document.getElementById('s-res-total').textContent = `${formatNumber(Math.round(total))} ${egpLabel}`;
+    document.getElementById('s-res-total').textContent = `${formatNumber(total)} ${egpLabel}`;
 }
 
 // Swap Calculator
@@ -2112,8 +2128,8 @@ function calculateSwap() {
     const diff = Math.round(newVal - oldVal);
 
     const egpLabel = currentLanguage === 'en' ? 'EGP' : 'ج.م';
-    document.getElementById('swap-res-old-val').textContent = `${formatNumber(Math.round(oldVal))} ${egpLabel}`;
-    document.getElementById('swap-res-new-val').textContent = `${formatNumber(Math.round(newVal))} ${egpLabel}`;
+    document.getElementById('swap-res-old-val').textContent = `${formatNumber(oldVal)} ${egpLabel}`;
+    document.getElementById('swap-res-new-val').textContent = `${formatNumber(newVal)} ${egpLabel}`;
     
     const diffEl = document.getElementById('swap-res-diff');
     const note = diff >= 0 
@@ -2239,7 +2255,7 @@ function calculateZakat() {
     const weightUnit = isEn ? 'g' : 'جرام';
 
     document.getElementById('z-res-equiv-weight').textContent = `${eq24.toFixed(2)} ${weightUnit}`;
-    document.getElementById('z-res-total-value').textContent = `${formatNumber(Math.round(totalVal))} ${egpLabel}`;
+    document.getElementById('z-res-total-value').textContent = `${formatNumber(totalVal)} ${egpLabel}`;
 
     const statusBadge = document.getElementById('z-res-status');
     const dueVal = document.getElementById('z-res-due');
@@ -2255,7 +2271,7 @@ function calculateZakat() {
         const zakat = totalVal * 0.025;
 
         if (purpose === 'investment') {
-            dueVal.textContent = `${formatNumber(Math.round(zakat))} ${egpLabel}`;
+            dueVal.textContent = `${formatNumber(zakat)} ${egpLabel}`;
             dueGrams.textContent = isEn 
                 ? `Equivalent to ${(zakat / p24).toFixed(2)} g 24K`
                 : `ما يعادل ${(zakat / p24).toFixed(2)} جرام عيار 24`;
@@ -2330,7 +2346,7 @@ function calculateZakat() {
     const charityDueEl = document.getElementById('z-res-charity-due');
     const charityGramsEl = document.getElementById('z-res-charity-grams');
 
-    if (charityDueEl) charityDueEl.textContent = `${formatNumber(Math.round(charityDue))} ${egpLabel}`;
+    if (charityDueEl) charityDueEl.textContent = `${formatNumber(charityDue)} ${egpLabel}`;
     if (charityGramsEl) charityGramsEl.textContent = isEn
         ? `Equivalent to ${charityGrams.toFixed(2)} g 21K`
         : `ما يعادل ${charityGrams.toFixed(2)} جم عيار 21`;
@@ -2372,17 +2388,30 @@ function initPriceChart() {
     const values = [];
     const now = new Date();
     
-    // Seed factors
-    const fluctuations = [-0.011, 0.009, -0.004, 0.014, -0.008, 0.003, 0];
+    // Deterministic hash based on date string to generate stable, realistic daily prices
+    function getDeterministicFluctuation(dateStr) {
+        let hash = 0;
+        for (let i = 0; i < dateStr.length; i++) {
+            hash = dateStr.charCodeAt(i) + ((hash << 5) - hash);
+        }
+        // Normalize hash to a float between -0.015 and +0.015 (-1.5% to +1.5%)
+        const normalized = (Math.abs(hash % 1000) / 1000) * 0.03 - 0.015;
+        return normalized;
+    }
     
     for (let i = 6; i >= 0; i--) {
         const d = new Date();
         d.setDate(now.getDate() - i);
         days.push(d.toLocaleDateString(currentLanguage === 'en' ? 'en-US' : 'ar-EG', { month: 'short', day: 'numeric' }));
         
-        let price = p21;
-        for (let j = 6; j > 6 - i; j--) {
-            price = price / (1 + fluctuations[j]);
+        const dateStr = d.toISOString().split('T')[0];
+        
+        let price;
+        if (i === 0) {
+            price = p21;
+        } else {
+            const fluc = getDeterministicFluctuation(dateStr);
+            price = p21 * (1 + fluc);
         }
         values.push(Math.round(price));
     }
@@ -2392,21 +2421,36 @@ function initPriceChart() {
     const textColor = isLight ? '#495057' : '#a0a0a8';
     const isEn = currentLanguage === 'en';
 
+    // Create a beautiful linear gradient for the area fill
+    let gradient = null;
+    try {
+        const ctx2 = ctx.getContext('2d');
+        gradient = ctx2.createLinearGradient(0, 0, 0, 180);
+        gradient.addColorStop(0, 'rgba(212, 175, 55, 0.18)');
+        gradient.addColorStop(1, 'rgba(212, 175, 55, 0.0)');
+    } catch (e) {
+        // Fallback if context creation fails
+    }
+
     priceChart = new Chart(ctx, {
         type: 'line',
         data: {
             labels: days,
             datasets: [{
                 data: values,
-                borderColor: '#A08965',
-                borderWidth: 2,
-                fill: false,
-                tension: 0.1,
-                pointBackgroundColor: '#A08965',
-                pointBorderColor: isLight ? '#ffffff' : '#000000',
+                borderColor: '#D4AF37',
+                borderWidth: 2.5,
+                fill: true,
+                backgroundColor: gradient || 'rgba(212, 175, 55, 0.05)',
+                tension: 0.35, // Beautiful curve
+                pointBackgroundColor: '#D4AF37',
+                pointBorderColor: isLight ? '#ffffff' : '#0d0d0d',
                 pointBorderWidth: 1.5,
-                pointRadius: 3,
-                pointHoverRadius: 5
+                pointRadius: 3.5,
+                pointHoverRadius: 5.5,
+                pointHoverBackgroundColor: '#D4AF37',
+                pointHoverBorderColor: '#ffffff',
+                pointHoverBorderWidth: 2
             }]
         },
         options: {
@@ -2441,6 +2485,10 @@ function initPriceChart() {
 
 // Helper formatting
 function formatNumber(num) {
+    if (num === null || num === undefined || isNaN(num)) return '--';
+    // Format with two decimal places (قروش) and thousand separators
+    return new Intl.NumberFormat('ar-EG', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num);
+}
     if (num === null || num === undefined || isNaN(num)) return '--';
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }

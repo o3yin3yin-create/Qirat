@@ -9,7 +9,7 @@
     <meta name="description" content="احسب سعر الذهب الذي تملكه بالتحديث اللحظي المباشر لأسعار الصاغة في مصر. حاسبة المحفظة الاستثمارية، الزكاة، المبادلة، ومتوسط الشراء (DCA).">
     
     <!-- PWA Meta Tags -->
-    <meta name="theme-color" content="#d4af37">
+    <meta name="theme-color" content="#09090B">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="قيراط">
@@ -28,7 +28,7 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     
     <!-- Main Stylesheet -->
-    <link rel="stylesheet" href="app.css?v=4.2">
+    <link rel="stylesheet" href="app.css?v=4.4">
 </head>
 <body class="dark-theme">
 
@@ -529,40 +529,27 @@
                     <!-- Loaded dynamically -->
                 </div>
 
-                <div class="page-grid">
-                    <!-- Chart -->
-                    <div class="card-glass">
-                        <div class="card-header-clean">
-                            <h4><i data-lucide="trending-up" class="gold-text"></i> <span data-i18n="chart-title-main">اتجاه سعر عيار 21 في الصاغة</span></h4>
-                            <span class="chart-period text-muted" data-i18n="chart-period-text">آخر 7 أيام</span>
-                        </div>
-                        <div class="chart-wrapper">
-                            <canvas id="gold-price-chart"></canvas>
-                        </div>
+                <div class="card-glass">
+                    <div class="card-header-clean">
+                        <h4><i data-lucide="help-circle" class="gold-text"></i> <span data-i18n="quick-guide-title">دليل المستثمر السريع بمصر</span></h4>
                     </div>
-
-                    <!-- Guide (Cleaned & Spacious) -->
-                    <div class="card-glass">
-                        <div class="card-header-clean">
-                            <h4><i data-lucide="help-circle" class="gold-text"></i> <span data-i18n="quick-guide-title">دليل المستثمر السريع بمصر</span></h4>
-                        </div>
-                        <ul class="tips-list">
-                            <li>
-                                <strong data-i18n="quick-guide-tip1-title">السبائك أولاً:</strong> <span data-i18n="quick-guide-tip1-desc">احرص على شراء سبائك مغلفة (كاش باك) لأن مصنعيتها قليلة ويُرد جزء منها عند البيع.</span>
-                            </li>
-                            <li>
-                                <strong data-i18n="quick-guide-tip2-title">الجنيه الذهب:</strong> <span data-i18n="quick-guide-tip2-desc">يزن 8 جرامات عيار 21 وهو خيار رائع لحفظ المدخرات المتوسطة وتسييلها بسرعة.</span>
-                            </li>
-                            <li>
-                                <strong data-i18n="quick-guide-tip3-title">المصنعية الضائعة:</strong> <span data-i18n="quick-guide-tip3-desc">تجنب المشغولات الفنية لغرض الادخار، فالصائغ يشتريها بوزنها الصافي كـ "ذهب كسر".</span>
-                            </li>
-                            <li>
-                                <strong data-i18n="quick-guide-tip4-title">الشركات المضمونة:</strong> <span data-i18n="quick-guide-tip4-desc">شركات كـ BTC و سليمة تتميز بأعلى درجات المصداقية والتداول الكاش باك.</span>
-                            </li>
-                        </ul>
-                    </div>
+                    <ul class="tips-list">
+                        <li>
+                            <strong data-i18n="quick-guide-tip1-title">السبائك أولاً:</strong> <span data-i18n="quick-guide-tip1-desc">احرص على شراء سبائك مغلفة (كاش باك) لأن مصنعيتها قليلة ويُرد جزء منها عند البيع.</span>
+                        </li>
+                        <li>
+                            <strong data-i18n="quick-guide-tip2-title">الجنيه الذهب:</strong> <span data-i18n="quick-guide-tip2-desc">يزن 8 جرامات عيار 21 وهو خيار رائع لحفظ المدخرات المتوسطة وتسييلها بسرعة.</span>
+                        </li>
+                        <li>
+                            <strong data-i18n="quick-guide-tip3-title">المصنعية الضائعة:</strong> <span data-i18n="quick-guide-tip3-desc">تجنب المشغولات الفنية لغرض الادخار، فالصائغ يشتريها بوزنها الصافي كـ "ذهب كسر".</span>
+                        </li>
+                        <li>
+                            <strong data-i18n="quick-guide-tip4-title">الشركات المضمونة:</strong> <span data-i18n="quick-guide-tip4-desc">شركات كـ BTC و سليمة تتميز بأعلى درجات المصداقية والتداول الكاش باك.</span>
+                        </li>
+                    </ul>
                 </div>
             </div>
+
 
             <!-- TAB 2: PORTFOLIO & GOALS -->
             <div class="tab-panel" id="panel-portfolio" role="tabpanel">
@@ -1270,6 +1257,6 @@
     </div>
 
     <!-- Scripts -->
-    <script src="app.js?v=4.2"></script>
+    <script src="app.js?v=4.4"></script>
 </body>
 </html>

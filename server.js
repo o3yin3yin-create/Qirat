@@ -617,17 +617,18 @@ const CACHE_DURATION = 10 * 60 * 1000; // 10 minutes
 const getFallbackData = (errorReason) => {
     return {
         prices: {
-            "24k": { "sell": 7130, "buy": 7075 },
-            "21k": { "sell": 6240, "buy": 6190 },
-            "18k": { "sell": 5350, "buy": 5305 },
-            "14k": { "sell": 4160, "buy": 4125 },
-            "coin": { "sell": 49920, "buy": 49520 },
-            "ounce_egp": { "sell": 221810, "buy": 220035 },
-            "ounce_usd": 4218.34
+            "24k": { "sell": 7390, "buy": 7330 },
+            "22k": { "sell": 6775, "buy": 6705 },
+            "21k": { "sell": 6465, "buy": 6400 },
+            "18k": { "sell": 5540, "buy": 5485 },
+            "14k": { "sell": 4310, "buy": 4265 },
+            "coin": { "sell": 51720, "buy": 51200 },
+            "ounce_egp": { "sell": 229770, "buy": 227440 },
+            "ounce_usd": 4599.57
         },
-        usdGoldDollar: 52.58,
-        usdBankDollar: 51.88,
-        nisabZakat: 606050,
+        usdGoldDollar: 50.5,
+        usdBankDollar: 50.2,
+        nisabZakat: 628150,
         updatedAtText: "أسعار استرشادية (مؤقتة)",
         updatedAtTime: new Date().toISOString(),
         isFallback: true,
@@ -636,106 +637,242 @@ const getFallbackData = (errorReason) => {
 };
 
 async function fetchGoldPrices() {
+    // Try iSagha first
+    try {
+        console.log("Attempting to scrape iSagha...");
+        const result = await scrapeISagha();
+        return result;
+    } catch (isaghaError) {
+        console.error("iSagha scraping failed, falling back to Gold-Price-Today:", isaghaError.message);
+        try {
+            console.log("Attempting to scrape egypt.gold-price-today.com...");
+            const result = await scrapeGoldPriceToday();
+            return result;
+        } catch (gptError) {
+            console.error("Gold-Price-Today scraping failed too:", gptError.message);
+            throw new Error(`Scraping failed for all sources. iSagha: ${isaghaError.message}. GoldPriceToday: ${gptError.message}`);
+        }
+    }
+}
+
+async function scrapeISagha() {
+    const url = "https://market.isagha.com/prices";
+    const headers = {
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Accept-Language": "ar,en;q=0.9"
+    };
+
+    const response = await fetch(url, { headers, signal: AbortSignal.timeout(8000) });
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const html = await response.text();
+    const $ = cheerio.load(html);
+
+    const result = {
+        prices: {},
+        usdGoldDollar: null,
+        usdBankDollar: null,
+        nisabZakat: null,
+        updatedAtText: 'مباشر من الصاغة (آي صاغة)',
+        updatedAtTime: new Date().toISOString(),
+        isFallback: false
+    };
+
+    const cleanNumber = (str) => {
+        const matches = str.match(/[\d,.]+/);
+        if (!matches) return 0;
+        return parseFloat(matches[0].replace(/,/g, ''));
+    };
+
+    // Parse Table 1 (Gold prices)
+    let goldTable = null;
+    $('table').each((i, table) => {
+        const text = $(table).text();
+        if (text.includes('عيار 21') && text.includes('بيع') && text.includes('شراء')) {
+            goldTable = table;
+        }
+    });
+
+    if (goldTable) {
+        $(goldTable).find('tr').each((i, tr) => {
+            const cells = $(tr).find('td');
+            if (cells.length < 2) return;
+
+            const name = $(cells[0]).text().trim();
+            const sellVal = cleanNumber($(cells[1]).text());
+            const buyVal = cells.length >= 4 ? cleanNumber($(cells[3]).text()) : sellVal;
+
+            if (name.includes('عيار 24')) {
+                result.prices['24k'] = { sell: sellVal, buy: buyVal };
+            } else if (name.includes('عيار 22')) {
+                result.prices['22k'] = { sell: sellVal, buy: buyVal };
+            } else if (name.includes('عيار 21')) {
+                result.prices['21k'] = { sell: sellVal, buy: buyVal };
+            } else if (name.includes('عيار 18')) {
+                result.prices['18k'] = { sell: sellVal, buy: buyVal };
+            } else if (name.includes('جنيه ذهب') || name.includes('الجنيه الذهب')) {
+                result.prices['coin'] = { sell: sellVal, buy: buyVal };
+            } else if (name.includes('أوقية الذهب') || name.includes('الاونصة')) {
+                result.prices['ounce_usd'] = sellVal;
+            }
+        });
+    }
+
+    // Parse Table 3 (Currency exchange rates)
+    let currencyTable = null;
+    $('table').each((i, table) => {
+        const text = $(table).text();
+        if (text.includes('الدولار الأمريكي') && text.includes('سعر البيع')) {
+            currencyTable = table;
+        }
+    });
+
+    if (currencyTable) {
+        $(currencyTable).find('tr').each((i, tr) => {
+            const cells = $(tr).find('td');
+            if (cells.length < 3) return;
+
+            const name = $(cells[0]).text().trim();
+            const sellVal = cleanNumber($(cells[1]).text());
+
+            if (name.includes('الدولار الأمريكي')) {
+                result.usdBankDollar = sellVal;
+            }
+        });
+    }
+
+    if (result.prices['24k']) {
+        const p24 = result.prices['24k'];
+        
+        if (!result.prices['22k']) {
+            result.prices['22k'] = {
+                sell: Math.round(p24.sell * 22 / 24 * 100) / 100,
+                buy: Math.round(p24.buy * 22 / 24 * 100) / 100
+            };
+        }
+        
+        result.prices['14k'] = {
+            sell: Math.round(p24.sell * 14 / 24 * 100) / 100,
+            buy: Math.round(p24.buy * 14 / 24 * 100) / 100
+        };
+
+        result.nisabZakat = Math.round(p24.sell * 85);
+
+        const ounceUsd = result.prices['ounce_usd'] || 2500;
+        result.usdGoldDollar = Math.round((p24.sell * 31.1035) / ounceUsd * 100) / 100;
+        
+        if (!result.usdBankDollar) {
+            result.usdBankDollar = 50.0;
+        }
+    }
+
+    if (!result.prices['24k'] || !result.prices['21k']) {
+        throw new Error("Missing key parsed values from iSagha (24k/21k)");
+    }
+
+    return result;
+}
+
+async function scrapeGoldPriceToday() {
     const url = "https://egypt.gold-price-today.com/";
     const headers = {
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
         "Accept-Language": "ar,en;q=0.9"
     };
 
-    try {
-        const response = await fetch(url, { headers, signal: AbortSignal.timeout(8000) });
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+    const response = await fetch(url, { headers, signal: AbortSignal.timeout(8000) });
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const html = await response.text();
+    const $ = cheerio.load(html);
+
+    const result = {
+        prices: {},
+        usdGoldDollar: null,
+        usdBankDollar: null,
+        nisabZakat: null,
+        updatedAtText: '',
+        updatedAtTime: null,
+        isFallback: false
+    };
+
+    const timeEl = $('time[datetime]');
+    if (timeEl.length > 0) {
+        result.updatedAtTime = timeEl.first().attr('datetime');
+        result.updatedAtText = timeEl.first().text().trim();
+    } else {
+        const anyTime = $('time');
+        if (anyTime.length > 0) {
+            result.updatedAtText = anyTime.first().text().trim();
         }
-        const html = await response.text();
-        const $ = cheerio.load(html);
+    }
 
-        const result = {
-            prices: {},
-            usdGoldDollar: null,
-            usdBankDollar: null,
-            nisabZakat: null,
-            updatedAtText: '',
-            updatedAtTime: null,
-            isFallback: false
-        };
+    $('table tbody tr').each((i, row) => {
+        const cells = $(row).find('td');
+        if (cells.length === 0) return;
 
-        // Parse last update time
-        const timeEl = $('time[datetime]');
-        if (timeEl.length > 0) {
-            result.updatedAtTime = timeEl.first().attr('datetime');
-            result.updatedAtText = timeEl.first().text().trim();
-        } else {
-            const anyTime = $('time');
-            if (anyTime.length > 0) {
-                result.updatedAtText = anyTime.first().text().trim();
-            }
-        }
+        const label = $(cells[0]).text().replace(/\s+/g, ' ').trim();
 
-        // Parse rows
-        $('table tbody tr').each((i, row) => {
-            const cells = $(row).find('td');
-            if (cells.length === 0) return;
+        if (cells.length >= 2) {
+            const sellText = $(cells[1]).text().replace(/\s+/g, ' ').trim();
+            const buyText = cells.length >= 3 ? $(cells[2]).text().replace(/\s+/g, ' ').trim() : sellText;
 
-            const label = $(cells[0]).text().replace(/\s+/g, ' ').trim();
+            const cleanNumber = (str) => {
+                const matches = str.match(/[\d,.]+/);
+                if (!matches) return 0;
+                return parseFloat(matches[0].replace(/,/g, ''));
+            };
 
-            if (cells.length >= 2) {
-                const sellText = $(cells[1]).text().replace(/\s+/g, ' ').trim();
-                const buyText = cells.length >= 3 ? $(cells[2]).text().replace(/\s+/g, ' ').trim() : sellText;
+            const sellVal = cleanNumber(sellText);
+            const buyVal = cleanNumber(buyText);
 
-                const cleanNumber = (str) => {
-                    const matches = str.match(/[\d,.]+/);
-                    if (!matches) return 0;
-                    return parseFloat(matches[0].replace(/,/g, ''));
-                };
+            if (label.includes('نصاب الزكاة')) {
+                result.nisabZakat = sellVal;
+            } else if (label.includes('عيار 24')) {
+                result.prices['24k'] = { sell: sellVal, buy: buyVal };
+            } else if (label.includes('عيار 21')) {
+                result.prices['21k'] = { sell: sellVal, buy: buyVal };
+            } else if (label.includes('عيار 18')) {
+                result.prices['18k'] = { sell: sellVal, buy: buyVal };
+            } else if (label.includes('عيار 14')) {
+                result.prices['14k'] = { sell: sellVal, buy: buyVal };
+            } else if (label.includes('الجنيه الذهب')) {
+                result.prices['coin'] = { sell: sellVal, buy: buyVal };
+            } else if (label.includes('الأونصة بالجنيه')) {
+                result.prices['ounce_egp'] = { sell: sellVal, buy: buyVal };
+            } else if (label.includes('الأونصة بالدولار')) {
+                result.prices['ounce_usd'] = sellVal;
+            } else if (label.includes('دولار الصاغة')) {
+                const goldSpan = $(cells[1]).find('.text-amber-700, .text-amber-900');
+                const bankSpan = $(cells[1]).find('.text-emerald-700, .text-emerald-900');
+                if (goldSpan.length > 0) result.usdGoldDollar = cleanNumber(goldSpan.text());
+                if (bankSpan.length > 0) result.usdBankDollar = cleanNumber(bankSpan.text());
 
-                const sellVal = cleanNumber(sellText);
-                const buyVal = cleanNumber(buyText);
-
-                if (label.includes('نصاب الزكاة')) {
-                    result.nisabZakat = sellVal;
-                } else if (label.includes('عيار 24')) {
-                    result.prices['24k'] = { sell: sellVal, buy: buyVal };
-                } else if (label.includes('عيار 21')) {
-                    result.prices['21k'] = { sell: sellVal, buy: buyVal };
-                } else if (label.includes('عيار 18')) {
-                    result.prices['18k'] = { sell: sellVal, buy: buyVal };
-                } else if (label.includes('عيار 14')) {
-                    result.prices['14k'] = { sell: sellVal, buy: buyVal };
-                } else if (label.includes('الجنيه الذهب')) {
-                    result.prices['coin'] = { sell: sellVal, buy: buyVal };
-                } else if (label.includes('الأونصة بالجنيه')) {
-                    result.prices['ounce_egp'] = { sell: sellVal, buy: buyVal };
-                } else if (label.includes('الأونصة بالدولار')) {
-                    result.prices['ounce_usd'] = sellVal;
-                } else if (label.includes('دولار الصاغة')) {
-                    const goldSpan = $(cells[1]).find('.text-amber-700, .text-amber-900');
-                    const bankSpan = $(cells[1]).find('.text-emerald-700, .text-emerald-900');
-                    if (goldSpan.length > 0) result.usdGoldDollar = cleanNumber(goldSpan.text());
-                    if (bankSpan.length > 0) result.usdBankDollar = cleanNumber(bankSpan.text());
-
-                    // Fallback regex parsing if spans classes change
-                    if (!result.usdGoldDollar || !result.usdBankDollar) {
-                        const matches = sellText.match(/[\d.]+/g);
-                        if (matches && matches.length >= 2) {
-                            result.usdGoldDollar = parseFloat(matches[0]);
-                            result.usdBankDollar = parseFloat(matches[1]);
-                        }
+                if (!result.usdGoldDollar || !result.usdBankDollar) {
+                    const matches = sellText.match(/[\d.]+/g);
+                    if (matches && matches.length >= 2) {
+                        result.usdGoldDollar = parseFloat(matches[0]);
+                        result.usdBankDollar = parseFloat(matches[1]);
                     }
                 }
             }
-        });
-
-        // Basic validation: ensure we parsed at least the main karats
-        if (!result.prices['24k'] || !result.prices['21k'] || !result.prices['18k']) {
-            throw new Error("Missing key parsed values (24k/21k/18k)");
         }
+    });
 
-        return result;
-    } catch (error) {
-        console.error("Scraping failed:", error.message);
-        throw error;
+    if (result.prices['24k'] && !result.prices['22k']) {
+        result.prices['22k'] = {
+            sell: Math.round(result.prices['24k'].sell * 22 / 24 * 100) / 100,
+            buy: Math.round(result.prices['24k'].buy * 22 / 24 * 100) / 100
+        };
     }
+
+    if (!result.prices['24k'] || !result.prices['21k'] || !result.prices['18k']) {
+        throw new Error("Missing key parsed values (24k/21k/18k)");
+    }
+
+    return result;
 }
 
 // API Endpoint
