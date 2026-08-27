@@ -27,6 +27,10 @@ const TRANSLATIONS = {
     'auth-brand-title': { ar: 'قيراط', en: 'Qirat' },
     'auth-brand-subtitle': { ar: 'المستشار الفني والادخاري للذهب', en: 'Your Gold Technical & Savings Advisor' },
     'auth-logout-btn': { ar: 'تسجيل الخروج', en: 'Sign Out' },
+    'settings-modal-title': { ar: 'الإعدادات والحساب', en: 'Settings & Account' },
+    'settings-lang-label': { ar: 'لغة التطبيق', en: 'App Language' },
+    'settings-theme-label': { ar: 'المظهر', en: 'Theme' },
+    'settings-btn-title': { ar: 'الإعدادات والحساب', en: 'Settings & Account' },
     'auth-email-label': { ar: 'البريد الإلكتروني', en: 'Email Address' },
     'auth-email-placeholder': { ar: 'مثال: user@example.com', en: 'e.g. user@example.com' },
     'auth-consent-text-part1': { ar: 'أوافق على معالجة بريدي الإلكتروني ورقم هاتفي لتأمين الحساب واستعادة كلمة المرور طبقاً لـ', en: 'I agree to the processing of my email and phone number to secure my account and recover password under the' },
@@ -585,7 +589,7 @@ setInterval(fetchPrices, 30 * 1000);
 });
 
 // --- PWA REGISTRATION ---
-const CURRENT_CACHE = 'qirat-cache-v29';
+const CURRENT_CACHE = 'qirat-cache-v30';
 function registerPWA() {
     if ('serviceWorker' in navigator) {
         // First: unregister any old SW and delete all old caches
@@ -615,17 +619,23 @@ let updateNetworkStatus = null;
 function initNetworkStatus() {
     updateNetworkStatus = () => {
         const badge = document.getElementById('network-status');
-        const text = document.getElementById('network-status-text');
-        if (!badge || !text) return;
+        if (!badge) return;
+        const dot = badge.querySelector('.pulse-dot');
 
         if (navigator.onLine) {
-            badge.style.borderColor = 'rgba(0, 230, 118, 0.2)';
-            badge.querySelector('.pulse-dot').style.backgroundColor = 'var(--success)';
-            text.textContent = currentLanguage === 'en' ? 'Live' : 'مباشر';
+            badge.style.borderColor = 'rgba(16, 185, 129, 0.3)';
+            if (dot) {
+                dot.style.backgroundColor = 'var(--success)';
+                dot.style.boxShadow = '0 0 10px #10B981';
+            }
+            badge.title = currentLanguage === 'en' ? 'Live' : 'مباشر';
         } else {
-            badge.style.borderColor = 'rgba(255, 23, 68, 0.3)';
-            badge.querySelector('.pulse-dot').style.backgroundColor = 'var(--danger)';
-            text.textContent = currentLanguage === 'en' ? 'Offline' : 'غير متصل';
+            badge.style.borderColor = 'rgba(239, 68, 68, 0.3)';
+            if (dot) {
+                dot.style.backgroundColor = 'var(--danger)';
+                dot.style.boxShadow = '0 0 10px #EF4444';
+            }
+            badge.title = currentLanguage === 'en' ? 'Offline' : 'غير متصل';
         }
     };
 
@@ -643,15 +653,21 @@ function initTheme() {
 function setTheme(theme) {
     currentTheme = theme;
     const themeIcon = document.getElementById('theme-icon');
+    const themeSettingsIcon = document.getElementById('theme-icon-settings');
+    const themeTextDisplay = document.getElementById('theme-text-display');
     
     if (theme === 'light') {
         document.body.classList.add('light-theme');
         document.body.classList.remove('dark-theme');
         if (themeIcon) themeIcon.setAttribute('data-lucide', 'moon');
+        if (themeSettingsIcon) themeSettingsIcon.setAttribute('data-lucide', 'moon');
+        if (themeTextDisplay) themeTextDisplay.textContent = currentLanguage === 'en' ? 'Light' : 'فاتح';
     } else {
         document.body.classList.add('dark-theme');
         document.body.classList.remove('light-theme');
         if (themeIcon) themeIcon.setAttribute('data-lucide', 'sun');
+        if (themeSettingsIcon) themeSettingsIcon.setAttribute('data-lucide', 'sun');
+        if (themeTextDisplay) themeTextDisplay.textContent = currentLanguage === 'en' ? 'Dark' : 'داكن';
     }
     
     localStorage.setItem('dahaby_theme', theme);
@@ -1126,7 +1142,17 @@ function setupModals() {
         editGoalModal?.classList.remove('active');
     });
 
-    // Profile Modal Listeners
+    // Settings & Profile Modal Listeners
+    const settingsModal = document.getElementById('modal-settings');
+    document.getElementById('btn-settings-toggle')?.addEventListener('click', () => {
+        updateSettingsAccountSection();
+        settingsModal?.classList.add('active');
+        if (window.lucide) window.lucide.createIcons();
+    });
+    document.getElementById('btn-close-settings-modal')?.addEventListener('click', () => {
+        settingsModal?.classList.remove('active');
+    });
+
     document.getElementById('user-badge')?.addEventListener('click', () => {
         openUserProfileModal();
     });
@@ -2848,4 +2874,63 @@ function setupLanguageToggle() {
             applyLanguage(nextLang);
         });
     });
+}
+
+function updateSettingsAccountSection() {
+    const section = document.getElementById('settings-account-section');
+    if (!section) return;
+
+    const token = localStorage.getItem('dahaby_jwt');
+    const isGuest = localStorage.getItem('dahaby_is_guest') === 'true';
+    const isEn = currentLanguage === 'en';
+
+    if (token && !isGuest) {
+        const phone = localStorage.getItem('dahaby_user_phone') || '';
+        section.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; background: var(--bg-surface-opaque); border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <i data-lucide="user-check" style="width: 18px; height: 18px; color: var(--success);"></i>
+                    <div style="display: flex; flex-direction: column;">
+                        <span style="font-size: 13px; font-weight: 700;">${isEn ? 'Registered Account' : 'الحساب المسجل'}</span>
+                        <span style="font-size: 11px; color: var(--text-secondary);">${phone}</span>
+                    </div>
+                </div>
+                <button class="btn-secondary btn-sm" id="btn-open-profile-from-settings" style="padding: 6px 12px; font-size: 11px; font-weight: 700;">
+                    ${isEn ? 'Details' : 'تفاصيل'}
+                </button>
+            </div>
+            <button class="btn-danger btn-sm" id="auth-logout-btn" style="width: 100%; padding: 10px; font-size: 12px; font-weight: 700; margin-top: 4px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                <i data-lucide="log-out" style="width: 14px; height: 14px;"></i> ${isEn ? 'Sign Out' : 'تسجيل الخروج'}
+            </button>
+        `;
+        
+        document.getElementById('btn-open-profile-from-settings')?.addEventListener('click', () => {
+            document.getElementById('modal-settings')?.classList.remove('active');
+            openUserProfileModal();
+        });
+        document.getElementById('auth-logout-btn')?.addEventListener('click', () => {
+            localStorage.removeItem('dahaby_jwt');
+            localStorage.removeItem('dahaby_is_guest');
+            localStorage.removeItem('dahaby_user_phone');
+            location.reload();
+        });
+    } else {
+        section.innerHTML = `
+            <div style="display: flex; flex-direction: column; gap: 10px; padding: 12px 14px; background: var(--bg-surface-opaque); border-radius: var(--radius-md); border: 1px solid var(--border-color); text-align: center;">
+                <span style="font-size: 12px; color: var(--text-secondary);">${isEn ? 'You are browsing as Guest' : 'أنت تتصفح المنصة حالياً كـ زائر'}</span>
+                <button class="btn-primary btn-sm" id="btn-open-login-from-settings" style="width: 100%; padding: 10px; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                    <i data-lucide="log-in" style="width: 14px; height: 14px;"></i> ${isEn ? 'Sign In / Create Account' : 'تسجيل الدخول / إنشاء حساب'}
+                </button>
+            </div>
+        `;
+
+        document.getElementById('btn-open-login-from-settings')?.addEventListener('click', () => {
+            document.getElementById('modal-settings')?.classList.remove('active');
+            localStorage.removeItem('dahaby_is_guest');
+            const authOverlay = document.getElementById('auth-overlay');
+            if (authOverlay) authOverlay.classList.add('active');
+        });
+    }
+
+    if (window.lucide) window.lucide.createIcons();
 }

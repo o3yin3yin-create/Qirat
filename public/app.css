@@ -101,14 +101,14 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .header-container {
-    height: 70px;
+    height: 52px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: 12px;
-    padding: 0 16px;
+    padding: 6px 14px;
     box-sizing: border-box;
 }
 
@@ -152,26 +152,26 @@ h1, h2, h3, h4, h5, h6 {
     gap: 10px;
 }
 
-.status-badge {
+.status-dot-only {
     display: flex;
     align-items: center;
-    gap: 6px;
-    padding: 0 12px;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
     background: var(--bg-dark);
     border: 1px solid var(--border-color);
-    border-radius: var(--radius-sm);
-    font-size: 11px;
-    font-weight: 700;
-    height: 38px;
     box-sizing: border-box;
     flex-shrink: 0;
 }
 
 .pulse-dot {
-    width: 6px;
-    height: 6px;
+    width: 8px;
+    height: 8px;
     background-color: var(--success);
     border-radius: 50%;
+    box-shadow: 0 0 10px var(--success);
+    transition: var(--transition-smooth);
 }
 
 .icon-btn {
@@ -1071,14 +1071,20 @@ input[type="range"]::-webkit-slider-thumb {
 
 @media (max-width: 600px) {
     .container { padding: 0 12px; }
-    .main-header { padding: 8px 12px !important; }
-    .header-container { flex-direction: column; height: auto; padding: 16px !important; gap: 14px; }
-    .price-cards-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; }
+    .main-header { padding: 6px 12px !important; }
+    .header-container {
+        flex-direction: row !important;
+        height: 48px !important;
+        padding: 6px 12px !important;
+        gap: 10px !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+    }
     .header-actions {
-        width: 100%;
-        flex-wrap: nowrap;
-        justify-content: center;
-        gap: 6px;
+        width: auto !important;
+        flex-wrap: nowrap !important;
+        justify-content: flex-end !important;
+        gap: 8px !important;
     }
     .status-badge {
         padding: 0 8px;
