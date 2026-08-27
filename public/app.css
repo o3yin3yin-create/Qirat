@@ -890,7 +890,7 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 .locker-overlay.active { opacity: 1; pointer-events: all; }
-.locker-modal { width: 100%; max-width: 340px; text-align: center; background: #000000; padding: 24px; border: 1px solid var(--border-color); border-radius: var(--radius-lg); }
+.locker-modal { width: 100%; max-width: 340px; text-align: left; background: #000000; padding: 24px; border: 1px solid var(--border-color); border-radius: var(--radius-lg); }
 
 .locker-icon {
     width: 44px;
