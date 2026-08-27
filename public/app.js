@@ -558,9 +558,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // 6. Check Auth status
     checkAuthStatus();
 
-    // 6.5 Initialize Privacy Blocker Consent
-    initPrivacyCompliance();
-
     // 7. Fetch Prices
     fetchPrices();
 
@@ -573,29 +570,6 @@ document.addEventListener('DOMContentLoaded', () => {
     setupAdminListeners();
     setupTickerToggle();
 });
-
-// --- PRIVACY COMPLIANCE BLOCKER ---
-function initPrivacyCompliance() {
-    const privacyAgreed = localStorage.getItem('dahaby_privacy_agreed');
-    const blockerModal = document.getElementById('modal-privacy-blocker');
-    const consentCheck = document.getElementById('privacy-consent-check');
-    const acceptBtn = document.getElementById('btn-accept-privacy');
-    
-    if (privacyAgreed !== 'true') {
-        if (blockerModal) blockerModal.classList.add('active');
-    } else {
-        if (blockerModal) blockerModal.classList.remove('active');
-    }
-    
-    consentCheck?.addEventListener('change', (e) => {
-        if (acceptBtn) acceptBtn.disabled = !e.target.checked;
-    });
-    
-    acceptBtn?.addEventListener('click', () => {
-        localStorage.setItem('dahaby_privacy_agreed', 'true');
-        if (blockerModal) blockerModal.classList.remove('active');
-    });
-}
 
 // --- PWA REGISTRATION ---
 function registerPWA() {
