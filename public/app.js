@@ -589,7 +589,7 @@ setInterval(fetchPrices, 30 * 1000);
 });
 
 // --- PWA REGISTRATION ---
-const CURRENT_CACHE = 'qirat-cache-v31';
+const CURRENT_CACHE = 'qirat-cache-v32';
 function registerPWA() {
     if ('serviceWorker' in navigator) {
         // First: unregister any old SW and delete all old caches
@@ -655,6 +655,7 @@ function setTheme(theme) {
     const themeIcon = document.getElementById('theme-icon');
     const themeSettingsIcon = document.getElementById('theme-icon-settings');
     const themeTextDisplay = document.getElementById('theme-text-display');
+    const metaThemeColor = document.getElementById('meta-theme-color') || document.querySelector('meta[name="theme-color"]');
     
     if (theme === 'light') {
         document.body.classList.add('light-theme');
@@ -662,12 +663,14 @@ function setTheme(theme) {
         if (themeIcon) themeIcon.setAttribute('data-lucide', 'moon');
         if (themeSettingsIcon) themeSettingsIcon.setAttribute('data-lucide', 'moon');
         if (themeTextDisplay) themeTextDisplay.textContent = currentLanguage === 'en' ? 'Light' : 'فاتح';
+        if (metaThemeColor) metaThemeColor.setAttribute('content', '#FCF9F3');
     } else {
         document.body.classList.add('dark-theme');
         document.body.classList.remove('light-theme');
         if (themeIcon) themeIcon.setAttribute('data-lucide', 'sun');
         if (themeSettingsIcon) themeSettingsIcon.setAttribute('data-lucide', 'sun');
         if (themeTextDisplay) themeTextDisplay.textContent = currentLanguage === 'en' ? 'Dark' : 'داكن';
+        if (metaThemeColor) metaThemeColor.setAttribute('content', '#09090B');
     }
     
     localStorage.setItem('dahaby_theme', theme);
