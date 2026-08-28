@@ -589,7 +589,7 @@ setInterval(fetchPrices, 30 * 1000);
 });
 
 // --- PWA REGISTRATION ---
-const CURRENT_CACHE = 'qirat-cache-v32';
+const CURRENT_CACHE = 'qirat-cache-v33';
 function registerPWA() {
     if ('serviceWorker' in navigator) {
         // First: unregister any old SW and delete all old caches
@@ -656,21 +656,28 @@ function setTheme(theme) {
     const themeSettingsIcon = document.getElementById('theme-icon-settings');
     const themeTextDisplay = document.getElementById('theme-text-display');
     const metaThemeColor = document.getElementById('meta-theme-color') || document.querySelector('meta[name="theme-color"]');
+    const metaAppleStatus = document.getElementById('meta-apple-status') || document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');
     
     if (theme === 'light') {
         document.body.classList.add('light-theme');
         document.body.classList.remove('dark-theme');
+        document.documentElement.classList.add('light-theme');
+        document.documentElement.classList.remove('dark-theme');
         if (themeIcon) themeIcon.setAttribute('data-lucide', 'moon');
         if (themeSettingsIcon) themeSettingsIcon.setAttribute('data-lucide', 'moon');
         if (themeTextDisplay) themeTextDisplay.textContent = currentLanguage === 'en' ? 'Light' : 'فاتح';
         if (metaThemeColor) metaThemeColor.setAttribute('content', '#FCF9F3');
+        if (metaAppleStatus) metaAppleStatus.setAttribute('content', 'default');
     } else {
         document.body.classList.add('dark-theme');
         document.body.classList.remove('light-theme');
+        document.documentElement.classList.add('dark-theme');
+        document.documentElement.classList.remove('light-theme');
         if (themeIcon) themeIcon.setAttribute('data-lucide', 'sun');
         if (themeSettingsIcon) themeSettingsIcon.setAttribute('data-lucide', 'sun');
         if (themeTextDisplay) themeTextDisplay.textContent = currentLanguage === 'en' ? 'Dark' : 'داكن';
         if (metaThemeColor) metaThemeColor.setAttribute('content', '#09090B');
+        if (metaAppleStatus) metaAppleStatus.setAttribute('content', 'black-translucent');
     }
     
     localStorage.setItem('dahaby_theme', theme);

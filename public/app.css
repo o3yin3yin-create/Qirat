@@ -50,8 +50,12 @@
     padding: 0;
 }
 
-body {
+html, body {
     background-color: var(--bg-dark);
+    transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+body {
     color: var(--text-primary);
     font-family: var(--font-main);
     line-height: 1.6;
@@ -59,7 +63,6 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    transition: background-color 0.25s ease, color 0.25s ease;
     padding-bottom: 20px;
 }
 
