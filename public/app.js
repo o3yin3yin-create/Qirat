@@ -589,7 +589,7 @@ setInterval(fetchPrices, 30 * 1000);
 });
 
 // --- PWA REGISTRATION ---
-const CURRENT_CACHE = 'qirat-cache-v34';
+const CURRENT_CACHE = 'qirat-cache-v35';
 function registerPWA() {
     if ('serviceWorker' in navigator) {
         // First: unregister any old SW and delete all old caches
@@ -1346,23 +1346,15 @@ function renderPriceCards(data) {
     if (!container) return;
 
     container.innerHTML = '';
-    const prices = data.prices;
-    
-    const p24 = prices['24k'] || { sell: 0, buy: 0 };
-    const p22 = {
-        sell: Math.round(p24.sell * 22 / 24),
-        buy: Math.round(p24.buy * 22 / 24)
-    };
-
     const isEn = currentLanguage === 'en';
 
     const rows = [
-        { key: '24k', name: isEn ? '24K (Bullion)' : 'عيار 24 (سبائك)', sell: prices['24k']?.sell, buy: prices['24k']?.buy },
-        { key: '22k', name: isEn ? '22K' : 'عيار 22', sell: p22.sell, buy: p22.buy },
-        { key: '21k', name: isEn ? '21K (Market)' : 'عيار 21 (صاغة)', sell: prices['21k']?.sell, buy: prices['21k']?.buy, popular: true },
-        { key: '18k', name: isEn ? '18K (Jewelry)' : 'عيار 18 (مشغولات)', sell: prices['18k']?.sell, buy: prices['18k']?.buy },
-        { key: '14k', name: isEn ? '14K' : 'عيار 14', sell: prices['14k']?.sell, buy: prices['14k']?.buy },
-        { key: 'coin', name: isEn ? 'Gold Coin (8g 21K)' : 'الجنيه الذهب (8ج ع21)', sell: prices['coin']?.sell, buy: prices['coin']?.buy }
+        { key: '24k', name: isEn ? '24K (Bullion)' : 'عيار 24 (سبائك)', sell: getKaratPrice('24k', 'sell'), buy: getKaratPrice('24k', 'buy') },
+        { key: '22k', name: isEn ? '22K' : 'عيار 22', sell: getKaratPrice('22k', 'sell'), buy: getKaratPrice('22k', 'buy') },
+        { key: '21k', name: isEn ? '21K (Market)' : 'عيار 21 (صاغة)', sell: getKaratPrice('21k', 'sell'), buy: getKaratPrice('21k', 'buy'), popular: true },
+        { key: '18k', name: isEn ? '18K (Jewelry)' : 'عيار 18 (مشغولات)', sell: getKaratPrice('18k', 'sell'), buy: getKaratPrice('18k', 'buy') },
+        { key: '14k', name: isEn ? '14K' : 'عيار 14', sell: getKaratPrice('14k', 'sell'), buy: getKaratPrice('14k', 'buy') },
+        { key: 'coin', name: isEn ? 'Gold Coin (8g 21K)' : 'الجنيه الذهب (8ج ع21)', sell: getKaratPrice('coin', 'sell'), buy: getKaratPrice('coin', 'buy') }
     ];
 
     rows.forEach(row => {
@@ -1402,8 +1394,8 @@ function renderPriceCards(data) {
 }
 
 function renderZakatNisab(data) {
-    const p24 = data.prices['24k']?.sell || 0;
-    const nisab = data.nisabZakat || (p24 * 85);
+    const p24 = getKaratPrice('24k', 'sell');
+    const nisab = p24 * 85;
     const egpLabel = currentLanguage === 'en' ? 'EGP' : 'ج.م';
 
     document.getElementById('z-res-nisab-val').textContent = `${formatNumber(nisab)} ${egpLabel}`;
@@ -1712,7 +1704,7 @@ function renderPortfolio() {
         
         let itemValue = 0;
         if (item.type === 'coin') {
-            itemValue = (karatPriceBuy * (item.weight * 8));
+            itemValue = (karatPriceBuy * item.weight);
             totalWeight21 += item.weight * 8;
             typeBreakdown.coin += item.weight * 8;
         } else {
@@ -2034,7 +2026,7 @@ window.deleteTransaction = async function(id) {
 };
 
 function getKaratPrice(karat, type = 'sell') {
-    if (!goldPrices) return 0;
+    if (!goldPrices || !goldPrices.prices) return 0;
     
     if (karat === 'coin') {
         return goldPrices.prices['coin']?.[type] || 0;
@@ -2053,7 +2045,7 @@ function getKaratPrice(karat, type = 'sell') {
     }
     if (karat === '22k') {
         const p24 = goldPrices.prices['24k']?.[type] || 0;
-        return Math.round(p24 * 22 / 24);
+        return (p24 * 22 / 24);
     }
     return 0;
 }
