@@ -104,15 +104,15 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .header-container {
-    height: 52px;
+    height: 64px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     direction: ltr !important;
     background: var(--bg-surface);
     border: 1px solid var(--border-color);
-    border-radius: 12px;
-    padding: 6px 14px;
+    border-radius: 14px;
+    padding: 10px 16px;
     box-sizing: border-box;
 }
 
@@ -201,8 +201,8 @@ h1, h2, h3, h4, h5, h6 {
 
 /* --- MAIN CONTENT & TICKER --- */
 .main-content {
-    margin-top: 24px;
-    margin-bottom: 50px;
+    margin-top: 8px;
+    margin-bottom: 40px;
     flex: 1;
 }
 
@@ -211,7 +211,7 @@ h1, h2, h3, h4, h5, h6 {
     border: 1px solid var(--border-color);
     border-radius: var(--radius-md);
     padding: 12px 18px;
-    margin-bottom: 24px;
+    margin-bottom: 8px;
     display: flex;
     align-items: center;
     gap: 16px;
@@ -408,8 +408,8 @@ h1, h2, h3, h4, h5, h6 {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     gap: 8px;
-    margin-bottom: 12px;
-    padding-top: 10px;
+    margin-bottom: 8px;
+    padding-top: 6px;
 }
 
 .price-box-card {
@@ -1075,12 +1075,12 @@ input[type="range"]::-webkit-slider-thumb {
 
 @media (max-width: 600px) {
     .container { padding: 0 12px; }
-    .main-header { padding: 6px 12px !important; }
+    .main-header { padding: 4px 12px !important; }
     .header-container {
         flex-direction: row !important;
         direction: ltr !important;
-        height: 48px !important;
-        padding: 6px 12px !important;
+        height: 60px !important;
+        padding: 8px 14px !important;
         gap: 10px !important;
         align-items: center !important;
         justify-content: space-between !important;
