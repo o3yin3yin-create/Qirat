@@ -105,6 +105,7 @@ h1, h2, h3, h4, h5, h6 {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    direction: ltr !important;
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: 12px;
@@ -1074,6 +1075,7 @@ input[type="range"]::-webkit-slider-thumb {
     .main-header { padding: 6px 12px !important; }
     .header-container {
         flex-direction: row !important;
+        direction: ltr !important;
         height: 48px !important;
         padding: 6px 12px !important;
         gap: 10px !important;

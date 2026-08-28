@@ -589,7 +589,7 @@ setInterval(fetchPrices, 30 * 1000);
 });
 
 // --- PWA REGISTRATION ---
-const CURRENT_CACHE = 'qirat-cache-v30';
+const CURRENT_CACHE = 'qirat-cache-v31';
 function registerPWA() {
     if ('serviceWorker' in navigator) {
         // First: unregister any old SW and delete all old caches
