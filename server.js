@@ -46,6 +46,15 @@ const PORT = process.env.PORT || 3000;
 // Enable JSON parsing middleware
 app.use(express.json());
 
+// Security Headers Middleware
+app.use((req, res, next) => {
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('X-Frame-Options', 'DENY');
+    res.setHeader('X-XSS-Protection', '1; mode=block');
+    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+    next();
+});
+
 let db;
 const isPg = !!process.env.DATABASE_URL;
 
@@ -227,7 +236,7 @@ function verifyPassword(password, storedPassword) {
 }
 
 // JWT Helpers
-const JWT_SECRET = 'dahaby_egypt_secret_key_2026';
+const JWT_SECRET = process.env.JWT_SECRET || 'dahaby_egypt_secret_key_2026';
 
 function generateToken(userId) {
     return jwt.sign({ userId }, JWT_SECRET, { expiresIn: '30d' });
