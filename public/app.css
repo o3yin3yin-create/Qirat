@@ -528,6 +528,11 @@ select:focus, input:focus {
 .input-with-badge .badge { position: absolute; left: 6px; background: var(--bg-surface-opaque); border: 1px solid var(--border-color); color: var(--text-secondary); font-size: 10px; padding: 3px 8px; border-radius: var(--radius-sm); }
 
 /* --- BUTTONS --- */
+button, .btn-primary, .btn-secondary, .btn-danger {
+    line-height: 1 !important;
+    text-align: center;
+}
+
 button.btn-primary {
     background: var(--gold-secondary);
     color: #ffffff;
@@ -576,8 +581,28 @@ button.btn-secondary:hover {
     border-color: var(--gold-primary);
 }
 
-.btn-sm { padding: 6px 12px !important; font-size: 12px !important; }
-.btn-xs { padding: 4px 8px !important; font-size: 11px !important; }
+.btn-sm {
+    height: 32px !important;
+    min-height: 32px !important;
+    padding: 0 14px !important;
+    font-size: 12px !important;
+    line-height: 1 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.btn-xs {
+    height: 28px !important;
+    min-height: 28px !important;
+    padding: 0 10px !important;
+    font-size: 11px !important;
+    line-height: 1 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
 .btn-icon-only { width: 38px; height: 38px; padding: 0 !important; }
 
 /* --- PORTFOLIO & DCA STYLING (Tab 2) --- */

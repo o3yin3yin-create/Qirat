@@ -28,7 +28,7 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     
     <!-- Main Stylesheet -->
-    <link rel="stylesheet" href="app.css?v=5.4">
+    <link rel="stylesheet" href="app.css?v=5.5">
 </head>
 <body class="dark-theme">
 
@@ -472,11 +472,71 @@
                     </button>
                 </div>
 
+                <!-- Contact Us setting -->
+                <div class="settings-row" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; background: var(--bg-surface-opaque); border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <i data-lucide="message-square" style="width: 18px; height: 18px; color: var(--gold-primary);"></i>
+                        <span style="font-size: 13px; font-weight: 700;" data-i18n="settings-contact-label">تواصل معنا والدعم</span>
+                    </div>
+                    <button class="btn-secondary btn-sm" id="btn-open-contact-from-settings" style="font-size: 12px; font-weight: 700;">
+                        <span data-i18n="settings-contact-btn">تواصل</span>
+                    </button>
+                </div>
+
+                <!-- Privacy Policy & Terms setting -->
+                <div class="settings-row" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; background: var(--bg-surface-opaque); border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <i data-lucide="shield-check" style="width: 18px; height: 18px; color: var(--gold-primary);"></i>
+                        <span style="font-size: 13px; font-weight: 700;" data-i18n="settings-privacy-label">الخصوصية والشروط</span>
+                    </div>
+                    <button class="btn-secondary btn-sm" id="btn-open-privacy-from-settings" style="font-size: 12px; font-weight: 700;">
+                        <span data-i18n="settings-privacy-btn">عرض</span>
+                    </button>
+                </div>
+
                 <hr class="footer-divider" style="margin: 4px 0;">
 
                 <!-- Account / Profile Section -->
                 <div id="settings-account-section" style="display: flex; flex-direction: column; gap: 10px;">
                     <!-- Populated dynamically via JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Contact Us & Technical Support -->
+    <div class="modal-overlay" id="modal-contact-us">
+        <div class="modal-content" style="max-width: 420px; padding: 24px; text-align: center;">
+            <button class="modal-close-btn" id="btn-close-contact-modal">
+                <i data-lucide="x"></i>
+            </button>
+            <div class="modal-header" style="text-align: center; margin-bottom: 20px;">
+                <h3 style="font-size: 18px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <i data-lucide="message-square" class="gold-text"></i>
+                    <span data-i18n="contact-modal-title">تواصل معنا والدعم الفني</span>
+                </h3>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 14px;">
+                <p style="font-size: 12px; color: var(--text-secondary);" data-i18n="contact-modal-desc">
+                    نحن هنا لمساعدتك دائماً! يمكنك التواصل المباشر مع الدعم الفني ومطور المنصة عبر الوسائل التالية:
+                </p>
+
+                <!-- WhatsApp Button -->
+                <a href="https://wa.me/201050442007" target="_blank" class="btn-primary" style="background: #25D366; border-color: #25D366; color: #FFF; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 13px; padding: 12px; border-radius: var(--radius-md);">
+                    <i data-lucide="phone"></i> <span data-i18n="contact-whatsapp-btn">تواصل عبر واتساب (WhatsApp)</span>
+                </a>
+
+                <!-- Email Button -->
+                <a href="mailto:omarelhelbawy@gmail.com" class="btn-secondary" style="text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 13px; padding: 12px; border-radius: var(--radius-md);">
+                    <i data-lucide="mail"></i> <span data-i18n="contact-email-btn">إرسال بريد إلكتروني (Email)</span>
+                </a>
+
+                <!-- Developer Info Box -->
+                <div style="margin-top: 10px; padding: 12px; background: var(--bg-surface-opaque); border-radius: var(--radius-md); border: 1px solid var(--border-color); font-size: 11px; text-align: center;">
+                    <span class="text-muted" data-i18n="contact-developer-label">مطور وصانع المنصة:</span>
+                    <div style="font-weight: 800; color: var(--gold-primary); font-size: 13px; margin-top: 4px;">Omar Adel (El Helbawy)</div>
+                    <div style="color: var(--text-secondary); margin-top: 2px;">الهاتف: 01050442007</div>
                 </div>
             </div>
         </div>
@@ -1299,6 +1359,6 @@
     </div>
 
     <!-- Scripts -->
-    <script src="app.js?v=5.4"></script>
+    <script src="app.js?v=5.5"></script>
 </body>
 </html>

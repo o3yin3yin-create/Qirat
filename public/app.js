@@ -31,6 +31,15 @@ const TRANSLATIONS = {
     'settings-lang-label': { ar: 'لغة التطبيق', en: 'App Language' },
     'settings-theme-label': { ar: 'المظهر', en: 'Theme' },
     'settings-btn-title': { ar: 'الإعدادات والحساب', en: 'Settings & Account' },
+    'settings-contact-label': { ar: 'تواصل معنا والدعم الفني', en: 'Contact Us & Support' },
+    'settings-contact-btn': { ar: 'تواصل', en: 'Contact' },
+    'settings-privacy-label': { ar: 'سياسة الخصوصية والشروط', en: 'Privacy Policy & Terms' },
+    'settings-privacy-btn': { ar: 'عرض', en: 'View' },
+    'contact-modal-title': { ar: 'تواصل معنا والدعم الفني', en: 'Contact Us & Support' },
+    'contact-modal-desc': { ar: 'نحن هنا لمساعدتك دائماً! يمكنك التواصل المباشر مع الدعم الفني ومطور المنصة عبر الوسائل التالية:', en: 'We are always here to help! You can directly contact technical support and the developer via the following channels:' },
+    'contact-whatsapp-btn': { ar: 'تواصل عبر واتساب (WhatsApp)', en: 'Chat on WhatsApp' },
+    'contact-email-btn': { ar: 'إرسال بريد إلكتروني (Email)', en: 'Send an Email' },
+    'contact-developer-label': { ar: 'مطور وصانع المنصة:', en: 'Platform Lead & Developer:' },
     'auth-email-label': { ar: 'البريد الإلكتروني', en: 'Email Address' },
     'auth-email-placeholder': { ar: 'مثال: user@example.com', en: 'e.g. user@example.com' },
     'auth-consent-text-part1': { ar: 'أوافق على معالجة بريدي الإلكتروني ورقم هاتفي لتأمين الحساب واستعادة كلمة المرور طبقاً لـ', en: 'I agree to the processing of my email and phone number to secure my account and recover password under the' },
@@ -589,7 +598,7 @@ setInterval(fetchPrices, 30 * 1000);
 });
 
 // --- PWA REGISTRATION ---
-const CURRENT_CACHE = 'qirat-cache-v36';
+const CURRENT_CACHE = 'qirat-cache-v37';
 function registerPWA() {
     if ('serviceWorker' in navigator) {
         // First: unregister any old SW and delete all old caches
@@ -1207,6 +1216,24 @@ function setupModals() {
     });
     document.getElementById('btn-close-policy-ok')?.addEventListener('click', () => {
         privacyPolicyModal?.classList.remove('active');
+    });
+
+    // Contact Us Modal Listeners
+    const contactModal = document.getElementById('modal-contact-us');
+    document.getElementById('btn-open-contact-from-settings')?.addEventListener('click', () => {
+        settingsModal?.classList.remove('active');
+        contactModal?.classList.add('active');
+        if (window.lucide) window.lucide.createIcons();
+    });
+    document.getElementById('btn-close-contact-modal')?.addEventListener('click', () => {
+        contactModal?.classList.remove('active');
+    });
+
+    // Privacy Policy from Settings
+    document.getElementById('btn-open-privacy-from-settings')?.addEventListener('click', () => {
+        settingsModal?.classList.remove('active');
+        privacyPolicyModal?.classList.add('active');
+        if (window.lucide) window.lucide.createIcons();
     });
 
     // Close on overlay click
@@ -2732,7 +2759,10 @@ async function openUserProfileModal() {
     
     const token = localStorage.getItem('dahaby_jwt');
     const isGuest = localStorage.getItem('dahaby_is_guest') === 'true';
-    if (!token && !isGuest) return;
+    const storedPhone = localStorage.getItem('dahaby_user_phone') || '';
+
+    // Always show modal immediately!
+    modal.classList.add('active');
     
     // Set weights helper function
     const setWeights = () => {
@@ -2762,6 +2792,9 @@ async function openUserProfileModal() {
         document.getElementById('prof-eq21').textContent = `${eq21Weight.toFixed(2)} ${unit}`;
     };
 
+    setWeights();
+    if (window.lucide) window.lucide.createIcons();
+
     if (isGuest) {
         document.getElementById('prof-name').textContent = currentLanguage === 'en' ? 'Guest' : 'زائر';
         document.getElementById('prof-phone').textContent = currentLanguage === 'en' ? 'N/A (Local)' : 'غير متوفر (محلي)';
@@ -2772,48 +2805,49 @@ async function openUserProfileModal() {
         }
         const emailEditBox = document.getElementById('prof-email-edit-box');
         if (emailEditBox) emailEditBox.style.display = 'none';
-        
-        setWeights();
-        modal.classList.add('active');
-        if (window.lucide) window.lucide.createIcons();
         return;
     }
-    
-    try {
-        const response = await fetch('/api/user/profile', {
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
-        if (response.ok) {
-            const user = await response.json();
-            document.getElementById('prof-name').textContent = user.name;
-            document.getElementById('prof-phone').textContent = user.phone;
-            
-            const emailSpan = document.getElementById('prof-email');
-            const emailEditBox = document.getElementById('prof-email-edit-box');
-            const emailInput = document.getElementById('prof-email-input');
-            
-            if (user.email) {
-                if (emailSpan) {
-                    emailSpan.textContent = user.email;
-                    emailSpan.style.color = '';
+
+    // Populate default from local user phone if available
+    if (storedPhone) {
+        document.getElementById('prof-phone').textContent = storedPhone;
+        document.getElementById('prof-name').textContent = storedPhone === '01050442007' 
+            ? (currentLanguage === 'en' ? 'Omar El Helbawy (Admin)' : 'عمر الهلباوي (مدير المنصة)') 
+            : (currentLanguage === 'en' ? 'Registered User' : 'مستخدم مسجل');
+    }
+
+    if (token) {
+        try {
+            const response = await fetch('/api/user/profile', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (response.ok) {
+                const user = await response.json();
+                document.getElementById('prof-name').textContent = user.name || (user.phone === '01050442007' ? 'عمر الهلباوي' : 'مستخدم مسجل');
+                document.getElementById('prof-phone').textContent = user.phone;
+                
+                const emailSpan = document.getElementById('prof-email');
+                const emailEditBox = document.getElementById('prof-email-edit-box');
+                const emailInput = document.getElementById('prof-email-input');
+                
+                if (user.email) {
+                    if (emailSpan) {
+                        emailSpan.textContent = user.email;
+                        emailSpan.style.color = '';
+                    }
+                    if (emailEditBox) emailEditBox.style.display = 'none';
+                } else {
+                    if (emailSpan) {
+                        emailSpan.textContent = currentLanguage === 'en' ? 'Not Registered (Required)' : 'غير مسجل (مطلوب)';
+                        emailSpan.style.color = '#EF4444';
+                    }
+                    if (emailEditBox) emailEditBox.style.display = 'flex';
+                    if (emailInput) emailInput.value = '';
                 }
-                if (emailEditBox) emailEditBox.style.display = 'none';
-            } else {
-                if (emailSpan) {
-                    emailSpan.textContent = currentLanguage === 'en' ? 'Not Registered (Required)' : 'غير مسجل (مطلوب)';
-                    emailSpan.style.color = '#EF4444';
-                }
-                if (emailEditBox) emailEditBox.style.display = 'flex';
-                if (emailInput) emailInput.value = '';
             }
-            
-            setWeights();
-            
-            modal.classList.add('active');
-            if (window.lucide) window.lucide.createIcons();
+        } catch (err) {
+            console.warn('Network issue fetching user profile, displaying local stored profile:', err);
         }
-    } catch (err) {
-        console.error('Error fetching user profile:', err);
     }
 }
 
