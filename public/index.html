@@ -28,7 +28,7 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     
     <!-- Main Stylesheet -->
-    <link rel="stylesheet" href="app.css?v=5.5">
+    <link rel="stylesheet" href="app.css?v=5.6">
 </head>
 <body class="dark-theme">
 
@@ -456,7 +456,7 @@
                         <i data-lucide="globe" style="width: 18px; height: 18px; color: var(--gold-primary);"></i>
                         <span style="font-size: 13px; font-weight: 700;" data-i18n="settings-lang-label">لغة التطبيق</span>
                     </div>
-                    <button class="btn-secondary btn-sm" id="btn-lang-toggle" style="padding: 6px 16px; font-size: 12px; font-weight: 700;">
+                    <button class="btn-secondary btn-setting-action" id="btn-lang-toggle">
                         EN
                     </button>
                 </div>
@@ -467,8 +467,8 @@
                         <i data-lucide="sun" id="theme-icon-settings" style="width: 18px; height: 18px; color: var(--gold-primary);"></i>
                         <span style="font-size: 13px; font-weight: 700;" data-i18n="settings-theme-label">المظهر</span>
                     </div>
-                    <button class="btn-secondary btn-sm" id="btn-theme-toggle" style="padding: 6px 16px; font-size: 12px; font-weight: 700; display: flex; align-items: center; gap: 6px;">
-                        <i data-lucide="sun" id="theme-icon" style="width: 14px; height: 14px;"></i> <span id="theme-text-display">داكن</span>
+                    <button class="btn-secondary btn-setting-action" id="btn-theme-toggle">
+                        <i data-lucide="sun" id="theme-icon" style="width: 14px; height: 14px; margin-inline-end: 4px;"></i> <span id="theme-text-display">داكن</span>
                     </button>
                 </div>
 
@@ -478,7 +478,7 @@
                         <i data-lucide="message-square" style="width: 18px; height: 18px; color: var(--gold-primary);"></i>
                         <span style="font-size: 13px; font-weight: 700;" data-i18n="settings-contact-label">تواصل معنا والدعم</span>
                     </div>
-                    <button class="btn-secondary btn-sm" id="btn-open-contact-from-settings" style="font-size: 12px; font-weight: 700;">
+                    <button class="btn-secondary btn-setting-action" id="btn-open-contact-from-settings">
                         <span data-i18n="settings-contact-btn">تواصل</span>
                     </button>
                 </div>
@@ -489,7 +489,7 @@
                         <i data-lucide="shield-check" style="width: 18px; height: 18px; color: var(--gold-primary);"></i>
                         <span style="font-size: 13px; font-weight: 700;" data-i18n="settings-privacy-label">الخصوصية والشروط</span>
                     </div>
-                    <button class="btn-secondary btn-sm" id="btn-open-privacy-from-settings" style="font-size: 12px; font-weight: 700;">
+                    <button class="btn-secondary btn-setting-action" id="btn-open-privacy-from-settings">
                         <span data-i18n="settings-privacy-btn">عرض</span>
                     </button>
                 </div>
@@ -1359,6 +1359,6 @@
     </div>
 
     <!-- Scripts -->
-    <script src="app.js?v=5.5"></script>
+    <script src="app.js?v=5.6"></script>
 </body>
 </html>

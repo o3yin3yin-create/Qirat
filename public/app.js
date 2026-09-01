@@ -598,7 +598,7 @@ setInterval(fetchPrices, 30 * 1000);
 });
 
 // --- PWA REGISTRATION ---
-const CURRENT_CACHE = 'qirat-cache-v37';
+const CURRENT_CACHE = 'qirat-cache-v38';
 function registerPWA() {
     if ('serviceWorker' in navigator) {
         // First: unregister any old SW and delete all old caches
@@ -2931,12 +2931,12 @@ function updateSettingsAccountSection() {
                         <span style="font-size: 11px; color: var(--text-secondary);">${phone}</span>
                     </div>
                 </div>
-                <button class="btn-secondary btn-sm" id="btn-open-profile-from-settings" style="padding: 6px 12px; font-size: 11px; font-weight: 700;">
+                <button class="btn-secondary btn-setting-action" id="btn-open-profile-from-settings">
                     ${isEn ? 'Details' : 'تفاصيل'}
                 </button>
             </div>
-            <button class="btn-danger btn-sm" id="auth-logout-btn" style="width: 100%; padding: 10px; font-size: 12px; font-weight: 700; margin-top: 4px; display: flex; align-items: center; justify-content: center; gap: 6px;">
-                <i data-lucide="log-out" style="width: 14px; height: 14px;"></i> ${isEn ? 'Sign Out' : 'تسجيل الخروج'}
+            <button class="btn-danger" id="auth-logout-btn" style="width: 100%; height: 42px; font-size: 13px; font-weight: 700; margin-top: 4px; display: flex; align-items: center; justify-content: center; gap: 8px; border-radius: var(--radius-md);">
+                <i data-lucide="log-out" style="width: 16px; height: 16px;"></i> ${isEn ? 'Sign Out' : 'تسجيل الخروج'}
             </button>
         `;
         

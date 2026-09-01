@@ -603,6 +603,34 @@ button.btn-secondary:hover {
     justify-content: center !important;
 }
 
+/* Symmetrical fixed-width setting action buttons */
+.btn-setting-action {
+    width: 78px !important;
+    min-width: 78px !important;
+    height: 34px !important;
+    min-height: 34px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+    border-radius: var(--radius-sm) !important;
+    box-sizing: border-box !important;
+    flex-shrink: 0 !important;
+}
+
+.btn-setting-action span,
+.btn-setting-action i {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    line-height: 1 !important;
+}
+
 .btn-icon-only { width: 38px; height: 38px; padding: 0 !important; }
 
 /* --- PORTFOLIO & DCA STYLING (Tab 2) --- */
