@@ -598,7 +598,7 @@ setInterval(fetchPrices, 30 * 1000);
 });
 
 // --- PWA REGISTRATION ---
-const CURRENT_CACHE = 'qirat-cache-v39';
+const CURRENT_CACHE = 'qirat-cache-v40';
 function registerPWA() {
     if ('serviceWorker' in navigator) {
         // First: unregister any old SW and delete all old caches
@@ -1398,21 +1398,23 @@ function renderPriceCards(data) {
 
         box.innerHTML = `
             ${row.popular ? popularBadge : ''}
-            <h5>${row.name}</h5>
+            <div class="price-box-header">
+                <h5>${row.name}</h5>
+                <span class="price-box-change ${changeClass}">
+                    <i data-lucide="${changeIcon}" style="width: 12px; height: 12px;"></i>
+                    ${Math.abs(change)}%
+                </span>
+            </div>
             <div class="price-box-values">
                 <div class="price-box-val">
-                    <span>${buyLabel}</span>
-                    <span class="text-rose">${formatNumber(row.buy)}</span>
+                    <span class="val-label">${buyLabel}</span>
+                    <span class="val-num text-rose">${formatNumber(row.buy)} <span class="val-currency">${isEn ? 'EGP' : 'ج.م'}</span></span>
                 </div>
                 <div class="price-box-val">
-                    <span>${sellLabel}</span>
-                    <span class="text-emerald">${formatNumber(row.sell)}</span>
+                    <span class="val-label">${sellLabel}</span>
+                    <span class="val-num text-emerald">${formatNumber(row.sell)} <span class="val-currency">${isEn ? 'EGP' : 'ج.م'}</span></span>
                 </div>
             </div>
-            <span class="price-box-change ${changeClass}">
-                <i data-lucide="${changeIcon}" style="width: 10px; height: 10px;"></i>
-                ${Math.abs(change)}%
-            </span>
         `;
         container.appendChild(box);
     });

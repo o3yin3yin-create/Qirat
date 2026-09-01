@@ -403,24 +403,27 @@ h1, h2, h3, h4, h5, h6 {
     color: var(--text-secondary);
 }
 
-/* --- PRICES DISPLAY (Tab 1) --- */
+/* --- PRICES DISPLAY (Tab 1 - Single Column Full-Width Cards) --- */
 .price-cards-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 8px;
-    margin-bottom: 8px;
-    padding-top: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 12px;
+    padding-top: 8px;
 }
 
 .price-box-card {
     background: var(--bg-surface);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-md);
-    padding: 14px 8px 12px;
-    text-align: center;
+    padding: 14px 16px 14px;
+    text-align: start;
     position: relative;
     transition: var(--transition-smooth);
     overflow: visible;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
 .price-box-card:hover {
@@ -436,11 +439,10 @@ h1, h2, h3, h4, h5, h6 {
 .popular-badge {
     position: absolute;
     top: -10px;
-    left: 50%;
-    transform: translateX(-50%);
+    margin-inline-start: 16px;
     background: var(--gold-primary);
     color: #ffffff;
-    font-size: 9px;
+    font-size: 9.5px;
     font-weight: 700;
     padding: 2px 10px;
     border-radius: 50px;
@@ -448,30 +450,66 @@ h1, h2, h3, h4, h5, h6 {
     z-index: 5;
 }
 
-.price-box-card h5 {
-    font-size: 12px;
-    color: var(--text-secondary);
-    margin-bottom: 8px;
-}
-
-.price-box-values {
+.price-box-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 4px;
-    margin-bottom: 6px;
+    width: 100%;
+}
+
+.price-box-card h5 {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.price-box-change {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.price-box-values {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    align-items: center;
+    background: var(--bg-dark);
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color);
 }
 
 .price-box-val {
     display: flex;
     flex-direction: column;
-    flex: 1;
-    min-width: 0;
+    gap: 2px;
 }
 
-.price-box-val span:first-child { font-size: 9px; color: var(--text-muted); white-space: nowrap; }
-.price-box-val span:last-child { font-size: 13.5px; font-weight: 700; font-family: var(--font-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.price-box-change { display: inline-flex; align-items: center; gap: 2px; font-size: 10px; font-weight: 700; }
+.price-box-val .val-label {
+    font-size: 11px;
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+.price-box-val .val-num {
+    font-size: 20px;
+    font-weight: 800;
+    font-family: var(--font-main);
+    line-height: 1.1;
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+}
+
+.price-box-val .val-currency {
+    font-size: 11px;
+    font-weight: 600;
+    opacity: 0.85;
+}
 
 .chart-wrapper {
     height: 180px;
