@@ -124,6 +124,16 @@ h1, h2, h3, h4, h5, h6 {
     gap: 10px;
 }
 
+.logo-area img, .auth-brand-logo img {
+    filter: brightness(0) invert(1);
+    transition: filter 0.25s ease;
+}
+
+.light-theme .logo-area img,
+.light-theme .auth-brand-logo img {
+    filter: brightness(0);
+}
+
 .logo-icon {
     width: 32px;
     height: 32px;

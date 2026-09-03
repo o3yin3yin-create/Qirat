@@ -407,6 +407,12 @@ async function checkAuthStatus() {
     if (authOverlay) authOverlay.classList.remove('active');
     if (userBadge) userBadge.style.display = 'flex';
     
+    // Clear password inputs when logged in to prevent iOS Safari auto password manager sheet
+    const loginPw = document.getElementById('login-password');
+    const regPw = document.getElementById('reg-password');
+    if (loginPw) loginPw.value = '';
+    if (regPw) regPw.value = '';
+    
     if (isGuest) {
         const guestName = currentLanguage === 'en' ? 'Guest' : 'زائر';
         if (userPhoneDisplay) userPhoneDisplay.textContent = guestName;
@@ -730,7 +736,15 @@ function render24kCandlesticks(tf = currentCandlestickTF) {
         const bodyH = Math.max(3, Math.abs(yOpen - yClose));
 
         ctx.fillStyle = color;
-        ctx.fillRect(x - candleWidth / 2, bodyY, candleWidth, bodyH);
+        const r = Math.min(3.5, candleWidth / 2, bodyH / 2);
+        const candleX = x - candleWidth / 2;
+        if (ctx.roundRect) {
+            ctx.beginPath();
+            ctx.roundRect(candleX, bodyY, candleWidth, bodyH, r);
+            ctx.fill();
+        } else {
+            ctx.fillRect(candleX, bodyY, candleWidth, bodyH);
+        }
     });
 
     // Live Price Dashed Line
@@ -762,7 +776,7 @@ function setupCandlestickTimeframes() {
 }
 
 // --- PWA REGISTRATION ---
-const CURRENT_CACHE = 'qirat-cache-v42';
+const CURRENT_CACHE = 'qirat-cache-v43';
 function registerPWA() {
     if ('serviceWorker' in navigator) {
         // First: unregister any old SW and delete all old caches
