@@ -1,13 +1,13 @@
-/* --- CSS DESIGN SYSTEM FOR DAHABY EGYPT (MIDNIGHT ASH & URBAN GREY PALETTE) --- */
+/* --- CSS DESIGN SYSTEM FOR DAHABY EGYPT (V6.5 - MODERN MINIMALIST & COMFORTABLE UI) --- */
 
 :root {
-    /* Color Palette Constants - Midnight Ash, Urban Grey & Crystal White */
-    --gold-primary: #DBDBDB;         /* Urban Grey Accent */
-    --gold-secondary: #111111;       /* Midnight Ash Deep Accent */
-    --gold-light: #DBDBDB;           /* Urban Grey Light */
-    --success: #10B981;              /* Emerald Green Numbers (Preserved) */
-    --danger: #EF4444;               /* Rose Red Numbers (Preserved) */
-    --info: #0EA5E9;                 /* Sky Info */
+    /* Color Palette Constants - InTown Flat Palette */
+    --gold-primary: #A08965;         /* Muted Gold Accent */
+    --gold-secondary: #21304E;       /* Deep Navy Accent */
+    --gold-light: #CCCAC6;           /* Concrete Light Gray */
+    --success: #10B981;              /* Modern Emerald Success */
+    --danger: #EF4444;               /* Modern Rose Danger */
+    --info: #0EA5E9;                 /* Modern Sky Info */
     
     --radius-sm: 8px;                /* Soft Modern Rounded Corners */
     --radius-md: 12px;               /* Medium Rounded */
@@ -16,31 +16,29 @@
     --container-width: 1050px;
     --font-main: 'Tajawal', sans-serif;
     
-    /* Midnight Ash Dark Mode (Default) */
-    --bg-dark: #111111;              /* Midnight Ash (#111111) Main Dark Background */
-    --bg-surface: #1C1C1C;           /* Dark Surface Card */
-    --bg-surface-opaque: #262626;    /* Active Fields/Focus */
-    --border-color: #333333;         /* Structural Border */
-    --border-light: #222222;         /* Subtle Border */
-    --text-primary: #FFFFFF;         /* Crystal White (#FFFFFF) Primary Text */
-    --text-secondary: #DBDBDB;       /* Urban Grey (#DBDBDB) Subtext & Labels */
-    --text-muted: #999999;           /* Muted Grey Text */
-    --gold-glow: transparent;
-    --shadow-color: transparent;
+    /* OLED/Minimalist Dark Mode (Default) */
+    --bg-dark: #09090B;              /* Premium Zinc-950 Dark Background */
+    --bg-surface: #18181B;           /* Zinc-900 Surface Card */
+    --bg-surface-opaque: #27272A;    /* Zinc-800 Active Fields/Focus */
+    --border-color: #27272A;         /* Zinc-800 Structural Border */
+    --border-light: #1F1F23;         /* Zinc-850 Subtle Border */
+    --text-primary: #FCF9F3;         /* Warm Ivory for High Contrast Text */
+    --text-secondary: #A1A1AA;       /* Zinc-400 for subtext */
+    --text-muted: #71717A;           /* Zinc-500 for muted text */
+    --gold-glow: transparent;        /* Eliminated glow */
+    --shadow-color: transparent;     /* Eliminated dropshadows for clean minimalist layout */
 }
 
-/* Crystal White & Urban Grey Light Theme */
+/* Light Theme Variables (Flat, Clean & Soft) */
 .light-theme {
-    --bg-dark: #FFFFFF;              /* Crystal White (#FFFFFF) Main Background */
-    --bg-surface: #F5F5F5;           /* Soft White Surface Card */
-    --bg-surface-opaque: #E5E5E5;    /* Light Active Fields */
-    --border-color: #DBDBDB;         /* Urban Grey (#DBDBDB) Border */
-    --border-light: #E8E8E8;         /* Subtle Light Border */
-    --text-primary: #111111;         /* Midnight Ash (#111111) Dark Text */
-    --text-secondary: #555555;       /* Dark Subtext */
-    --text-muted: #777777;           /* Muted Subtext */
-    --gold-primary: #111111;         /* Midnight Ash Accent in Light Mode */
-    --gold-secondary: #DBDBDB;       /* Urban Grey Secondary Accent */
+    --bg-dark: #FCF9F3;              /* Warm Ivory Background */
+    --bg-surface: #FFFFFF;           /* Pure White Card Surface */
+    --bg-surface-opaque: #F4F4F5;    /* Zinc-100 Light Off-White */
+    --border-color: #E4E4E7;         /* Zinc-200 Light Border */
+    --border-light: #F4F4F5;         /* Zinc-100 Subtle Border */
+    --text-primary: #18181B;         /* Zinc-900 Dark Text */
+    --text-secondary: #71717A;       /* Zinc-500 Subtext */
+    --text-muted: #A1A1AA;           /* Zinc-400 Muted Text */
     --gold-glow: transparent;
     --shadow-color: transparent;
 }
