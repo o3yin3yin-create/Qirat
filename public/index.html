@@ -28,7 +28,7 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     
     <!-- Main Stylesheet -->
-    <link rel="stylesheet" href="app.css?v=6.6">
+    <link rel="stylesheet" href="app.css?v=6.7">
 </head>
 <body class="dark-theme">
 
@@ -486,28 +486,37 @@
 
             <!-- TAB 2: PORTFOLIO & GOALS -->
             <div class="tab-panel" id="panel-portfolio" role="tabpanel">
-                <!-- Controls -->
-                <div class="portfolio-header-controls">
-                    <div class="portfolio-select-group">
-                        <label for="portfolio-selector" class="font-bold" data-i18n="port-active-label">المحفظة النشطة:</label>
-                        <select id="portfolio-selector">
-                            <!-- Loaded -->
-                        </select>
-                        <button class="btn-secondary btn-sm btn-icon-only" id="btn-add-portfolio" title="إضافة محفظة" data-i18n-title="port-add-title">
-                            <i data-lucide="plus"></i>
-                        </button>
-                        <button class="btn-secondary btn-sm btn-icon-only gold-text" id="btn-edit-portfolio" title="تعديل اسم المحفظة" data-i18n-title="port-edit-title">
-                            <i data-lucide="edit-2"></i>
-                        </button>
-                        <button class="btn-secondary btn-sm btn-icon-only text-rose" id="btn-delete-portfolio" title="حذف المحفظة" data-i18n-title="port-delete-title">
-                            <i data-lucide="trash-2"></i>
+                <!-- Portfolio Selector & Controls Header Card -->
+                <div class="card-glass portfolio-selector-card" style="margin-bottom: 14px; padding: 14px 16px;">
+                    <!-- Top Row: Title Label & Add Gold Action Button -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; gap: 10px;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <i data-lucide="briefcase" style="width: 16px; height: 16px; color: var(--gold-primary);"></i>
+                            <span style="font-size: 13px; font-weight: 800; color: var(--text-primary);" data-i18n="port-active-label">المحفظة النشطة:</span>
+                        </div>
+                        <button class="btn-primary btn-sm" id="btn-open-tx-modal" style="height: 32px; padding: 0 12px; font-size: 12px;">
+                            <i data-lucide="plus-circle" style="width: 14px; height: 14px;"></i> <span data-i18n="port-add-gold-btn">إضافة ذهب ➕</span>
                         </button>
                     </div>
 
-                    <div class="portfolio-action-btns">
-                        <button class="btn-primary btn-sm" id="btn-open-tx-modal">
-                            <i data-lucide="plus-circle"></i> <span data-i18n="port-add-gold-btn">إضافة ذهب ➕</span>
-                        </button>
+                    <!-- Bottom Row: Wide Selector Dropdown & Action Icons -->
+                    <div class="portfolio-controls-row" style="display: flex; align-items: center; gap: 8px; width: 100%;">
+                        <div style="flex: 1; min-width: 0;">
+                            <select id="portfolio-selector" style="height: 38px; font-size: 13px; font-weight: 700; width: 100%;">
+                                <!-- Loaded dynamically -->
+                            </select>
+                        </div>
+                        <div class="portfolio-action-icons" style="display: flex; align-items: center; gap: 6px; flex-shrink: 0;">
+                            <button class="btn-secondary btn-sm btn-icon-only" id="btn-add-portfolio" title="إضافة محفظة جديد" data-i18n-title="port-add-title" style="width: 36px; height: 38px;">
+                                <i data-lucide="plus"></i>
+                            </button>
+                            <button class="btn-secondary btn-sm btn-icon-only gold-text" id="btn-edit-portfolio" title="تعديل اسم المحفظة" data-i18n-title="port-edit-title" style="width: 36px; height: 38px;">
+                                <i data-lucide="edit-2"></i>
+                            </button>
+                            <button class="btn-secondary btn-sm btn-icon-only text-rose" id="btn-delete-portfolio" title="حذف المحفظة" data-i18n-title="port-delete-title" style="width: 36px; height: 38px;">
+                                <i data-lucide="trash-2"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -1190,6 +1199,6 @@
     </div>
 
     <!-- Scripts -->
-    <script src="app.js?v=6.6"></script>
+    <script src="app.js?v=6.7"></script>
 </body>
 </html>
