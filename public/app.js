@@ -1018,7 +1018,7 @@ function setupCandlestickTimeframes() {
 }
 
 // --- PWA REGISTRATION ---
-const CURRENT_CACHE = 'qirat-cache-v46';
+const CURRENT_CACHE = 'qirat-cache-v47';
 function registerPWA() {
     if ('serviceWorker' in navigator) {
         // First: unregister any old SW and delete all old caches
@@ -1754,22 +1754,29 @@ function renderAllData() {
 
     const egpLabel = currentLanguage === 'en' ? 'EGP' : 'ج.م';
 
-    // 1. Live Ticker
-    document.getElementById('tick-gold-dollar').textContent = `${formatNumber(data.usdGoldDollar)} ${egpLabel}`;
-    document.getElementById('tick-bank-dollar').textContent = `${formatNumber(data.usdBankDollar)} ${egpLabel}`;
+    // 1. Live Ticker (Safely handled if removed)
+    const tickGoldDollar = document.getElementById('tick-gold-dollar');
+    if (tickGoldDollar) tickGoldDollar.textContent = `${formatNumber(data.usdGoldDollar)} ${egpLabel}`;
+    
+    const tickBankDollar = document.getElementById('tick-bank-dollar');
+    if (tickBankDollar) tickBankDollar.textContent = `${formatNumber(data.usdBankDollar)} ${egpLabel}`;
     
     if (data.usdGoldDollar && data.usdBankDollar) {
         const gap = ((data.usdGoldDollar - data.usdBankDollar) / data.usdBankDollar) * 100;
         const gapEl = document.getElementById('tick-gap');
-        gapEl.textContent = `${gap.toFixed(1)}%`;
-        gapEl.className = gap > 2 ? 'item-val font-bold text-rose' : 'item-val font-bold text-emerald';
+        if (gapEl) {
+            gapEl.textContent = `${gap.toFixed(1)}%`;
+            gapEl.className = gap > 2 ? 'item-val font-bold text-rose' : 'item-val font-bold text-emerald';
+        }
     }
     
-    document.getElementById('tick-ounce').textContent = `$${formatNumber(data.prices.ounce_usd)}`;
+    const tickOunce = document.getElementById('tick-ounce');
+    if (tickOunce) tickOunce.textContent = `$${formatNumber(data.prices.ounce_usd)}`;
     
-    if (!data.isOffline) {
-        document.getElementById('tick-update-time').textContent = translateUpdatedTime(data.updatedAtText);
-        document.getElementById('tick-update-time').classList.remove('text-rose');
+    const tickUpdateTime = document.getElementById('tick-update-time');
+    if (tickUpdateTime && !data.isOffline) {
+        tickUpdateTime.textContent = translateUpdatedTime(data.updatedAtText);
+        tickUpdateTime.classList.remove('text-rose');
     }
 
     // 2. Pricing Box Cards Grid

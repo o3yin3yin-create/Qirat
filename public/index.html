@@ -28,7 +28,7 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     
     <!-- Main Stylesheet -->
-    <link rel="stylesheet" href="app.css?v=6.5">
+    <link rel="stylesheet" href="app.css?v=6.6">
 </head>
 <body class="dark-theme">
 
@@ -410,40 +410,6 @@
 
     <!-- Main Content -->
     <main class="container main-content">
-        <!-- Live Ticker (Gaps and USD) -->
-        <div class="live-ticker-card" id="live-ticker-toggle">
-            <div class="ticker-label">
-                <i data-lucide="trending-up" class="gold-text"></i>
-                <span data-i18n="ticker-title">مؤشرات السوق</span>
-                <i data-lucide="chevron-down" class="ticker-chevron-icon"></i>
-            </div>
-            <div class="ticker-values" id="live-ticker-values">
-                <div class="ticker-item">
-                    <span class="item-name" data-i18n="ticker-gold-dollar">دولار الصاغة:</span>
-                    <span class="item-val font-bold" id="tick-gold-dollar">--.-- ج.م</span>
-                </div>
-                <div class="ticker-separator"></div>
-                <div class="ticker-item">
-                    <span class="item-name" data-i18n="ticker-bank-dollar">الدولار البنكي:</span>
-                    <span class="item-val" id="tick-bank-dollar">--.-- ج.م</span>
-                </div>
-                <div class="ticker-separator"></div>
-                <div class="ticker-item">
-                    <span class="item-name" data-i18n="ticker-gap">الفجوة:</span>
-                    <span class="item-val font-bold" id="tick-gap">--.-- %</span>
-                </div>
-                <div class="ticker-separator"></div>
-                <div class="ticker-item">
-                    <span class="item-name" data-i18n="ticker-ounce">أونصة البورصة:</span>
-                    <span class="item-val font-bold gold-text" id="tick-ounce">$--.--</span>
-                </div>
-                <div class="ticker-separator"></div>
-                <div class="ticker-item">
-                    <span class="item-name" data-i18n="ticker-last-update">آخر تحديث:</span>
-                    <span class="item-val text-muted" id="tick-update-time" data-i18n="ticker-loading">جاري التحميل...</span>
-                </div>
-            </div>
-        </div>
 
         <!-- Navigation Tabs -->
         <nav class="tabs-nav" role="tablist">
@@ -1224,6 +1190,6 @@
     </div>
 
     <!-- Scripts -->
-    <script src="app.js?v=6.5"></script>
+    <script src="app.js?v=6.6"></script>
 </body>
 </html>
