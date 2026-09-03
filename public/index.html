@@ -28,7 +28,7 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     
     <!-- Main Stylesheet -->
-    <link rel="stylesheet" href="app.css?v=6.8">
+    <link rel="stylesheet" href="app.css?v=6.9">
 </head>
 <body class="dark-theme">
 
@@ -600,29 +600,15 @@
                     </div>
                 </div>
 
-                <!-- Holdings Table List -->
-                <div class="card-glass">
-                    <div class="card-header-clean">
-                        <h4><i data-lucide="list" class="gold-text"></i> <span data-i18n="holdings-title">ممتلكات المحفظة الحالية</span></h4>
+                <!-- Holdings Cards List -->
+                <div class="card-glass" style="padding: 16px;">
+                    <div class="card-header-clean" style="margin-bottom: 14px;">
+                        <h4 style="font-size: 15px; font-weight: 800; margin: 0; display: flex; align-items: center; gap: 8px;">
+                            <i data-lucide="layers" class="gold-text"></i> <span data-i18n="holdings-title">بيان ممتلكات المحفظة الذهبية تفصيلياً</span>
+                        </h4>
                     </div>
-                    <div class="table-wrapper">
-                        <table class="table-glass" id="portfolio-table">
-                            <thead>
-                                <tr>
-                                    <th data-i18n="holdings-th-karat">الشكل / العيار</th>
-                                    <th data-i18n="holdings-th-weight">الوزن</th>
-                                    <th data-i18n="holdings-th-buyprice">إجمالي سعر الشراء</th>
-                                    <th data-i18n="holdings-th-spotval">القيمة الحالية</th>
-                                    <th data-i18n="holdings-th-profit">صافي الأرباح والخسائر</th>
-                                    <th data-i18n="holdings-th-delete">حذف</th>
-                                </tr>
-                            </thead>
-                            <tbody id="portfolio-holdings-list">
-                                <tr>
-                                    <td colspan="6" class="text-center text-muted" data-i18n="holdings-empty-state">المحفظة خالية، سجل عملية شراء لتتبع مدخراتك.</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <div id="portfolio-holdings-list" class="holdings-cards-container" style="display: flex; flex-direction: column; gap: 10px;">
+                        <div class="text-center py-6 text-muted" data-i18n="holdings-empty-state">المحفظة خالية، سجل عملية شراء لتتبع مدخراتك.</div>
                     </div>
                 </div>
             </div>
@@ -1199,6 +1185,6 @@
     </div>
 
     <!-- Scripts -->
-    <script src="app.js?v=6.8"></script>
+    <script src="app.js?v=6.9"></script>
 </body>
 </html>

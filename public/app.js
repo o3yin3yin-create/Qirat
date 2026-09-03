@@ -1018,7 +1018,7 @@ function setupCandlestickTimeframes() {
 }
 
 // --- PWA REGISTRATION ---
-const CURRENT_CACHE = 'qirat-cache-v49';
+const CURRENT_CACHE = 'qirat-cache-v50';
 function registerPWA() {
     if ('serviceWorker' in navigator) {
         // First: unregister any old SW and delete all old caches
@@ -2105,7 +2105,7 @@ function renderPortfolio() {
     list.innerHTML = '';
 
     if (!portfoliosData || !portfoliosData.portfolios[activePortfolioId]) {
-        list.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-muted">${currentLanguage === 'en' ? 'Please unlock your portfolio first.' : 'الرجاء فك قفل محفظتك أولاً.'}</td></tr>`;
+        list.innerHTML = `<div class="text-center py-6 text-muted">${currentLanguage === 'en' ? 'Please unlock your portfolio first.' : 'الرجاء فك قفل محفظتك أولاً.'}</div>`;
         return;
     }
 
@@ -2122,14 +2122,14 @@ function renderPortfolio() {
     }
 
     if (!goldPrices) {
-        list.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-muted">${currentLanguage === 'en' ? 'Loading prices...' : 'جاري تحميل الأسعار...'}</td></tr>`;
+        list.innerHTML = `<div class="text-center py-6 text-muted">${currentLanguage === 'en' ? 'Loading prices...' : 'جاري تحميل الأسعار...'}</div>`;
         return;
     }
 
     const holdingsList = p.holdings || [];
 
     if (holdingsList.length === 0) {
-        list.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-muted">${currentLanguage === 'en' ? 'Portfolio is empty, record a purchase to track your savings.' : 'المحفظة خالية، سجل عملية شراء لتتبع مدخراتك.'}</td></tr>`;
+        list.innerHTML = `<div class="text-center py-6 text-muted">${currentLanguage === 'en' ? 'Portfolio is empty, record a purchase to track your savings.' : 'المحفظة خالية، سجل عملية شراء لتتبع مدخراتك.'}</div>`;
         updatePortfolioSummary(0, 0, 0, { bar: 0, coin: 0, jewelry: 0, scrap: 0 }, 0, 0, { '24k': 0, '21k': 0, '18k': 0, '14k': 0, 'coin': 0 }, {});
         return;
     }
@@ -2218,20 +2218,45 @@ function renderPortfolio() {
             buyPriceText = `<span class="text-muted">${isEn ? 'Unknown' : 'غير معروف'}</span>`;
         }
 
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td class="font-bold">${typeLabel} (${getKaratLabel(item.karat)})</td>
-            <td>${item.weight} <span class="text-xs text-muted">${item.type === 'coin' ? (isEn ? 'coin(s)' : 'جنيه') : (isEn ? 'g' : 'جرام')}</span></td>
-            <td>${buyPriceText}</td>
-            <td class="font-bold">${formatNumber(itemValue)} ${egpLabel}</td>
-            <td class="${profitClass}">${profitText}</td>
-            <td>
-                <button class="delete-btn" onclick="deleteTransaction('${item.id}')">
-                    <i data-lucide="trash-2" style="width: 13px; height: 13px;"></i>
+        const typeIcon = item.type === 'bar' ? '🥇' : item.type === 'coin' ? '🪙' : item.type === 'jewelry' ? '💎' : '🔨';
+
+        const card = document.createElement('div');
+        card.className = 'card-glass holding-item-card';
+        card.style.cssText = 'padding: 14px; margin-bottom: 8px; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: var(--bg-surface); transition: var(--transition-smooth);';
+        
+        card.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <span class="badge badge-gold font-bold" style="font-size: 12px; padding: 4px 10px; border-radius: var(--radius-sm); display: inline-flex; align-items: center; gap: 6px;">
+                    <span>${typeIcon}</span> ${typeLabel} (${getKaratLabel(item.karat)})
+                </span>
+                <button class="delete-btn" onclick="deleteTransaction('${item.id}')" title="${isEn ? 'Delete' : 'حذف'}" style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); color: #EF4444; width: 32px; height: 32px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: var(--transition-smooth);">
+                    <i data-lucide="trash-2" style="width: 14px; height: 14px;"></i>
                 </button>
-            </td>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; background: var(--bg-dark); padding: 10px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+                <div>
+                    <span class="text-muted" style="font-size: 10px; display: block; margin-bottom: 2px;">${isEn ? 'Total Weight' : 'الوزن الإجمالي'}</span>
+                    <span class="font-bold" style="font-size: 14px; color: var(--text-primary);">${item.weight} <span style="font-size: 11px; font-weight: 500;" class="text-muted">${item.type === 'coin' ? (isEn ? 'coin(s)' : 'جنيه') : (isEn ? 'g' : 'جرام')}</span></span>
+                </div>
+                <div>
+                    <span class="text-muted" style="font-size: 10px; display: block; margin-bottom: 2px;">${isEn ? 'Total Purchase Cost' : 'إجمالي سعر الشراء'}</span>
+                    <div style="font-size: 13px;">${buyPriceText}</div>
+                </div>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 4px; font-size: 12px;">
+                <div>
+                    <span class="text-muted" style="font-size: 10px; display: block; margin-bottom: 2px;">${isEn ? 'Current Market Value' : 'القيمة الحالية بالصاغة'}</span>
+                    <span class="font-bold gold-text" style="font-size: 14px;">${formatNumber(itemValue)} ${egpLabel}</span>
+                </div>
+                <div style="text-align: left;">
+                    <span class="text-muted" style="font-size: 10px; display: block; margin-bottom: 2px;">${isEn ? 'Net Profit / Loss' : 'صافي الأرباح والخسائر'}</span>
+                    <span class="${profitClass}" style="font-size: 13px;">${profitText}</span>
+                </div>
+            </div>
         `;
-        list.appendChild(tr);
+        list.appendChild(card);
     });
 
     if (window.lucide) window.lucide.createIcons();
