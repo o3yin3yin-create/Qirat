@@ -1018,7 +1018,7 @@ function setupCandlestickTimeframes() {
 }
 
 // --- PWA REGISTRATION ---
-const CURRENT_CACHE = 'qirat-cache-v48';
+const CURRENT_CACHE = 'qirat-cache-v49';
 function registerPWA() {
     if ('serviceWorker' in navigator) {
         // First: unregister any old SW and delete all old caches
@@ -2399,11 +2399,12 @@ function renderAllocationChart(typeBreakdown) {
     
     let chartColors;
     if (hasData) {
-        chartColors = ['#A08965', '#21304E', '#CCCAC6', '#2E2E2E'];
-    } else {
         chartColors = isLight 
-            ? ['rgba(0,0,0,0.05)', 'rgba(0,0,0,0.05)', 'rgba(0,0,0,0.05)', 'rgba(0,0,0,0.05)']
-            : ['rgba(255,255,255,0.05)', 'rgba(255,255,255,0.05)', 'rgba(255,255,255,0.05)', 'rgba(255,255,255,0.05)'];
+            ? ['#111111', '#555555', '#888888', '#BBBBBB'] 
+            : ['#FFFFFF', '#DBDBDB', '#888888', '#444444'];
+    } else {
+        const placeholderColor = isLight ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.06)';
+        chartColors = [placeholderColor, placeholderColor, placeholderColor, placeholderColor];
     }
 
     allocationChart = new Chart(ctx, {
@@ -2413,8 +2414,10 @@ function renderAllocationChart(typeBreakdown) {
             datasets: [{
                 data: chartData,
                 backgroundColor: chartColors,
-                borderWidth: 1.5,
-                borderColor: isLight ? '#ffffff' : '#0a0a0c'
+                borderRadius: 8,
+                spacing: 4,
+                borderWidth: 0,
+                hoverOffset: 6
             }]
         },
         options: {
@@ -2424,8 +2427,8 @@ function renderAllocationChart(typeBreakdown) {
                 legend: { display: false },
                 tooltip: {
                     rtl: !isEn,
-                    titleFont: { family: isEn ? 'Inter' : 'Tajawal', size: 10 },
-                    bodyFont: { family: isEn ? 'Inter' : 'Tajawal', size: 10 },
+                    titleFont: { family: isEn ? 'Inter' : 'Tajawal', size: 11 },
+                    bodyFont: { family: isEn ? 'Inter' : 'Tajawal', size: 11 },
                     callbacks: {
                         label: function(context) {
                             if (!hasData) return isEn ? ' No holdings in portfolio' : ' لا يوجد ممتلكات في المحفظة';
@@ -2435,7 +2438,7 @@ function renderAllocationChart(typeBreakdown) {
                     }
                 }
             },
-            cutout: '75%'
+            cutout: '72%'
         }
     });
 }
