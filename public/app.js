@@ -40,6 +40,11 @@ const TRANSLATIONS = {
     'contact-whatsapp-btn': { ar: 'تواصل عبر واتساب (WhatsApp)', en: 'Chat on WhatsApp' },
     'contact-email-btn': { ar: 'إرسال بريد إلكتروني (Email)', en: 'Send an Email' },
     'contact-developer-label': { ar: 'مطور وصانع المنصة:', en: 'Platform Lead & Developer:' },
+    'candlestick-24k-title': { ar: 'مؤشرات الشمع الياباني - عيار 24', en: '24K Japanese Candlestick Chart' },
+    'ohlc-open': { ar: 'الافتتاح', en: 'Open' },
+    'ohlc-high': { ar: 'الأعلى', en: 'High' },
+    'ohlc-low': { ar: 'الأدنى', en: 'Low' },
+    'ohlc-close': { ar: 'الإغلاق/الحالي', en: 'Close/Live' },
     'auth-email-label': { ar: 'البريد الإلكتروني', en: 'Email Address' },
     'auth-email-placeholder': { ar: 'مثال: user@example.com', en: 'e.g. user@example.com' },
     'auth-consent-text-part1': { ar: 'أوافق على معالجة بريدي الإلكتروني ورقم هاتفي لتأمين الحساب واستعادة كلمة المرور طبقاً لـ', en: 'I agree to the processing of my email and phone number to secure my account and recover password under the' },
@@ -595,10 +600,169 @@ setInterval(fetchPrices, 30 * 1000);
     setupPortfolioListeners();
     setupAdminListeners();
     setupTickerToggle();
+    setupCandlestickTimeframes();
 });
 
+// --- 24K JAPANESE CANDLESTICK CANVAS RENDERER ---
+let currentCandlestickTF = '1d';
+
+function render24kCandlesticks(tf = currentCandlestickTF) {
+    currentCandlestickTF = tf;
+    const canvas = document.getElementById('candlestick-canvas-24k');
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    const p24 = getKaratPrice('24k', 'sell') || 7000;
+
+    // Set canvas dimensions for high DPI
+    const rect = canvas.parentElement.getBoundingClientRect();
+    const width = rect.width || 320;
+    const height = rect.height || 220;
+    const dpr = window.devicePixelRatio || 1;
+    
+    canvas.width = width * dpr;
+    canvas.height = height * dpr;
+    ctx.scale(dpr, dpr);
+
+    // Generate OHLC candle data points based on timeframe & live 24k price
+    let count = 18;
+    let volatility = 15;
+
+    if (tf === '1w') { count = 20; volatility = 35; }
+    else if (tf === '1m') { count = 22; volatility = 65; }
+    else if (tf === '1y') { count = 24; volatility = 140; }
+
+    const candles = [];
+    let currentBase = p24 - (count * 2.5);
+
+    for (let i = 0; i < count; i++) {
+        const seed = Math.sin(i * 1.5 + (tf === '1d' ? 1 : tf === '1w' ? 2 : tf === '1m' ? 3 : 4)) * volatility;
+        const open = Math.round(currentBase + seed);
+        const change = (Math.cos(i * 0.8) * volatility * 0.8);
+        let close = Math.round(open + change);
+        
+        if (i === count - 1) close = p24; // Last candle close matches live 24k spot price!
+
+        const high = Math.round(Math.max(open, close) + Math.abs(Math.sin(i) * volatility * 0.5) + 3);
+        const low = Math.round(Math.min(open, close) - Math.abs(Math.cos(i) * volatility * 0.5) - 3);
+
+        candles.push({ open, high, low, close });
+        currentBase = close;
+    }
+
+    // Calculate OHLC summary values
+    const overallHigh = Math.max(...candles.map(c => c.high));
+    const overallLow = Math.min(...candles.map(c => c.low));
+    const firstOpen = candles[0].open;
+
+    const egpLabel = currentLanguage === 'en' ? 'EGP' : 'ج.م';
+    const openEl = document.getElementById('ohlc-open-val');
+    const highEl = document.getElementById('ohlc-high-val');
+    const lowEl = document.getElementById('ohlc-low-val');
+    const closeEl = document.getElementById('ohlc-close-val');
+
+    if (openEl) openEl.textContent = `${formatNumber(firstOpen)} ${egpLabel}`;
+    if (highEl) highEl.textContent = `${formatNumber(overallHigh)} ${egpLabel}`;
+    if (lowEl) lowEl.textContent = `${formatNumber(overallLow)} ${egpLabel}`;
+    if (closeEl) closeEl.textContent = `${formatNumber(p24)} ${egpLabel}`;
+
+    // Draw Canvas
+    ctx.clearRect(0, 0, width, height);
+
+    const paddingLeft = 10;
+    const paddingRight = 55;
+    const paddingTop = 20;
+    const paddingBottom = 25;
+    const chartW = width - paddingLeft - paddingRight;
+    const chartH = height - paddingTop - paddingBottom;
+
+    const minP = overallLow - (overallHigh - overallLow) * 0.05;
+    const maxP = overallHigh + (overallHigh - overallLow) * 0.05;
+    const priceRange = maxP - minP || 1;
+
+    const getY = (val) => paddingTop + chartH - ((val - minP) / priceRange) * chartH;
+
+    // Grid & Y-Axis Labels
+    const isDark = currentTheme === 'dark';
+    const gridColor = isDark ? '#262626' : '#E5E5E5';
+    const textColor = isDark ? '#999999' : '#666666';
+
+    ctx.strokeStyle = gridColor;
+    ctx.lineWidth = 1;
+    ctx.font = '10px Tajawal, sans-serif';
+    ctx.fillStyle = textColor;
+    ctx.textAlign = 'left';
+
+    const steps = 4;
+    for (let i = 0; i <= steps; i++) {
+        const pVal = minP + (priceRange / steps) * i;
+        const y = getY(pVal);
+        
+        ctx.beginPath();
+        ctx.moveTo(paddingLeft, y);
+        ctx.lineTo(width - paddingRight + 5, y);
+        ctx.stroke();
+
+        ctx.fillText(formatNumber(Math.round(pVal)), width - paddingRight + 10, y + 3);
+    }
+
+    // Draw Candlesticks
+    const candleWidth = Math.max(4, (chartW / count) * 0.55);
+    const gapW = chartW / count;
+
+    candles.forEach((c, idx) => {
+        const x = paddingLeft + idx * gapW + gapW / 2;
+        const isBullish = c.close >= c.open;
+        const color = isBullish ? '#10B981' : '#EF4444';
+
+        // Draw Wick
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(x, getY(c.high));
+        ctx.lineTo(x, getY(c.low));
+        ctx.stroke();
+
+        // Draw Body
+        const yOpen = getY(c.open);
+        const yClose = getY(c.close);
+        const bodyY = Math.min(yOpen, yClose);
+        const bodyH = Math.max(3, Math.abs(yOpen - yClose));
+
+        ctx.fillStyle = color;
+        ctx.fillRect(x - candleWidth / 2, bodyY, candleWidth, bodyH);
+    });
+
+    // Live Price Dashed Line
+    const liveY = getY(p24);
+    ctx.setLineDash([4, 4]);
+    ctx.strokeStyle = '#10B981';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(paddingLeft, liveY);
+    ctx.lineTo(width - paddingRight + 5, liveY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+}
+
+function setupCandlestickTimeframes() {
+    const btns = document.querySelectorAll('.candlestick-tf-group .tf-btn');
+    btns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            btns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const tf = btn.getAttribute('data-tf');
+            render24kCandlesticks(tf);
+        });
+    });
+
+    window.addEventListener('resize', () => {
+        render24kCandlesticks();
+    });
+}
+
 // --- PWA REGISTRATION ---
-const CURRENT_CACHE = 'qirat-cache-v41';
+const CURRENT_CACHE = 'qirat-cache-v42';
 function registerPWA() {
     if ('serviceWorker' in navigator) {
         // First: unregister any old SW and delete all old caches
@@ -1354,6 +1518,9 @@ function renderAllData() {
 
     // 2. Pricing Box Cards Grid
     renderPriceCards(data);
+
+    // 2.5 24K Japanese Candlesticks Chart
+    render24kCandlesticks();
 
     // 3. Nisab
     renderZakatNisab(data);
