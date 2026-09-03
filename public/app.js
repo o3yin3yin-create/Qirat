@@ -774,8 +774,10 @@ setInterval(fetchPrices, 30 * 1000);
     setupCandlestickTimeframes();
 });
 
-// --- 24K JAPANESE CANDLESTICK CANVAS RENDERER ---
+// --- 24K JAPANESE CANDLESTICK CANVAS RENDERER (INTERACTIVE) ---
 let currentCandlestickTF = '1d';
+let activeCandleData = [];
+let hoveredCandleIndex = null;
 
 function render24kCandlesticks(tf = currentCandlestickTF) {
     currentCandlestickTF = tf;
@@ -820,6 +822,7 @@ function render24kCandlesticks(tf = currentCandlestickTF) {
         candles.push({ open, high, low, close });
         currentBase = close;
     }
+    activeCandleData = candles;
 
     // Calculate OHLC summary values
     const overallHigh = Math.max(...candles.map(c => c.high));
@@ -832,10 +835,19 @@ function render24kCandlesticks(tf = currentCandlestickTF) {
     const lowEl = document.getElementById('ohlc-low-val');
     const closeEl = document.getElementById('ohlc-close-val');
 
-    if (openEl) openEl.textContent = `${formatNumber(firstOpen)} ${egpLabel}`;
-    if (highEl) highEl.textContent = `${formatNumber(overallHigh)} ${egpLabel}`;
-    if (lowEl) lowEl.textContent = `${formatNumber(overallLow)} ${egpLabel}`;
-    if (closeEl) closeEl.textContent = `${formatNumber(p24)} ${egpLabel}`;
+    // Update banner based on hover or live overall
+    if (hoveredCandleIndex !== null && candles[hoveredCandleIndex]) {
+        const hc = candles[hoveredCandleIndex];
+        if (openEl) openEl.textContent = `${formatNumber(hc.open)} ${egpLabel}`;
+        if (highEl) highEl.textContent = `${formatNumber(hc.high)} ${egpLabel}`;
+        if (lowEl) lowEl.textContent = `${formatNumber(hc.low)} ${egpLabel}`;
+        if (closeEl) closeEl.textContent = `${formatNumber(hc.close)} ${egpLabel}`;
+    } else {
+        if (openEl) openEl.textContent = `${formatNumber(firstOpen)} ${egpLabel}`;
+        if (highEl) highEl.textContent = `${formatNumber(overallHigh)} ${egpLabel}`;
+        if (lowEl) lowEl.textContent = `${formatNumber(overallLow)} ${egpLabel}`;
+        if (closeEl) closeEl.textContent = `${formatNumber(p24)} ${egpLabel}`;
+    }
 
     // Draw Canvas
     ctx.clearRect(0, 0, width, height);
@@ -885,10 +897,11 @@ function render24kCandlesticks(tf = currentCandlestickTF) {
         const x = paddingLeft + idx * gapW + gapW / 2;
         const isBullish = c.close >= c.open;
         const color = isBullish ? '#10B981' : '#EF4444';
+        const isHovered = hoveredCandleIndex === idx;
 
         // Draw Wick
         ctx.strokeStyle = color;
-        ctx.lineWidth = 1.5;
+        ctx.lineWidth = isHovered ? 2.5 : 1.5;
         ctx.beginPath();
         ctx.moveTo(x, getY(c.high));
         ctx.lineTo(x, getY(c.low));
@@ -907,21 +920,48 @@ function render24kCandlesticks(tf = currentCandlestickTF) {
             ctx.beginPath();
             ctx.roundRect(candleX, bodyY, candleWidth, bodyH, r);
             ctx.fill();
+            if (isHovered) {
+                ctx.strokeStyle = isDark ? '#FFFFFF' : '#111111';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+            }
         } else {
             ctx.fillRect(candleX, bodyY, candleWidth, bodyH);
         }
     });
 
-    // Live Price Dashed Line
-    const liveY = getY(p24);
-    ctx.setLineDash([4, 4]);
-    ctx.strokeStyle = '#10B981';
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(paddingLeft, liveY);
-    ctx.lineTo(width - paddingRight + 5, liveY);
-    ctx.stroke();
-    ctx.setLineDash([]);
+    // Live Price Dashed Line / Crosshair
+    if (hoveredCandleIndex !== null && candles[hoveredCandleIndex]) {
+        const hc = candles[hoveredCandleIndex];
+        const hx = paddingLeft + hoveredCandleIndex * gapW + gapW / 2;
+        const hy = getY(hc.close);
+
+        // Vertical Crosshair Line
+        ctx.setLineDash([3, 3]);
+        ctx.strokeStyle = isDark ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.4)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(hx, paddingTop);
+        ctx.lineTo(hx, height - paddingBottom);
+        ctx.stroke();
+
+        // Horizontal Crosshair Line
+        ctx.beginPath();
+        ctx.moveTo(paddingLeft, hy);
+        ctx.lineTo(width - paddingRight + 5, hy);
+        ctx.stroke();
+        ctx.setLineDash([]);
+    } else {
+        const liveY = getY(p24);
+        ctx.setLineDash([4, 4]);
+        ctx.strokeStyle = '#10B981';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(paddingLeft, liveY);
+        ctx.lineTo(width - paddingRight + 5, liveY);
+        ctx.stroke();
+        ctx.setLineDash([]);
+    }
 }
 
 function setupCandlestickTimeframes() {
@@ -931,9 +971,46 @@ function setupCandlestickTimeframes() {
             btns.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             const tf = btn.getAttribute('data-tf');
+            hoveredCandleIndex = null;
             render24kCandlesticks(tf);
         });
     });
+
+    const canvas = document.getElementById('candlestick-canvas-24k');
+    if (canvas) {
+        const handlePointer = (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const clientX = e.touches && e.touches[0] ? e.touches[0].clientX : e.clientX;
+            const posX = clientX - rect.left;
+            
+            const paddingLeft = 10;
+            const paddingRight = 55;
+            const chartW = rect.width - paddingLeft - paddingRight;
+            const count = activeCandleData.length || 18;
+            const gapW = chartW / count;
+
+            const idx = Math.floor((posX - paddingLeft) / gapW);
+            if (idx >= 0 && idx < count) {
+                if (hoveredCandleIndex !== idx) {
+                    hoveredCandleIndex = idx;
+                    render24kCandlesticks();
+                }
+            }
+        };
+
+        const resetPointer = () => {
+            if (hoveredCandleIndex !== null) {
+                hoveredCandleIndex = null;
+                render24kCandlesticks();
+            }
+        };
+
+        canvas.addEventListener('mousemove', handlePointer);
+        canvas.addEventListener('mouseleave', resetPointer);
+        canvas.addEventListener('touchstart', handlePointer, { passive: true });
+        canvas.addEventListener('touchmove', handlePointer, { passive: true });
+        canvas.addEventListener('touchend', resetPointer, { passive: true });
+    }
 
     window.addEventListener('resize', () => {
         render24kCandlesticks();
@@ -941,7 +1018,7 @@ function setupCandlestickTimeframes() {
 }
 
 // --- PWA REGISTRATION ---
-const CURRENT_CACHE = 'qirat-cache-v45';
+const CURRENT_CACHE = 'qirat-cache-v46';
 function registerPWA() {
     if ('serviceWorker' in navigator) {
         // First: unregister any old SW and delete all old caches
