@@ -28,7 +28,7 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     
     <!-- Main Stylesheet -->
-    <link rel="stylesheet" href="app.css?v=6.2">
+    <link rel="stylesheet" href="app.css?v=6.3">
 </head>
 <body class="dark-theme">
 
@@ -57,7 +57,7 @@
                 </div>
                 <div class="input-group">
                     <label for="login-password" data-i18n="auth-password-label">كلمة المرور</label>
-                    <input type="password" id="login-password" placeholder="أدخل كلمة المرور" data-i18n-placeholder="auth-password-placeholder" autocomplete="off" required>
+                    <input type="text" id="login-password" placeholder="أدخل كلمة المرور" data-i18n-placeholder="auth-password-placeholder" autocomplete="off" style="-webkit-text-security: disc; -moz-text-security: disc; text-security: disc;" required>
                 </div>
                 <div style="text-align: left; margin-top: -5px; margin-bottom: 10px;">
                     <a href="#" onclick="toggleAuthForms(event, 'forgot')" class="text-xs text-muted" style="text-decoration: none; font-size: 11px;" data-i18n="auth-forgot-link">نسيت كلمة السر؟</a>
@@ -107,7 +107,7 @@
                 </div>
                 <div class="input-group">
                     <label for="reg-password" data-i18n="auth-password-label">كلمة المرور</label>
-                    <input type="password" id="reg-password" placeholder="6 أحرف أو أرقام كحد أدنى" data-i18n-placeholder="auth-password-reg-placeholder" autocomplete="off" required>
+                    <input type="text" id="reg-password" placeholder="6 أحرف أو أرقام كحد أدنى" data-i18n-placeholder="auth-password-reg-placeholder" autocomplete="off" style="-webkit-text-security: disc; -moz-text-security: disc; text-security: disc;" required>
                 </div>
                 
                 <div style="display: flex; align-items: flex-start; gap: 8px; margin-top: 10px; font-size: 11px;">
@@ -167,7 +167,7 @@
                     </div>
                     <div class="input-group" style="margin-top: 10px;">
                         <label for="forgot-new-password" data-i18n="auth-forgot-newpw-label">كلمة المرور الجديدة</label>
-                        <input type="password" id="forgot-new-password" placeholder="كلمة المرور الجديدة (6 أحرف/أرقام كحد أدنى)" data-i18n-placeholder="auth-forgot-newpw-placeholder">
+                        <input type="text" id="forgot-new-password" placeholder="كلمة المرور الجديدة (6 أحرف/أرقام كحد أدنى)" data-i18n-placeholder="auth-forgot-newpw-placeholder" autocomplete="off" style="-webkit-text-security: disc; -moz-text-security: disc; text-security: disc;">
                     </div>
                     <button type="submit" id="btn-forgot-submit" class="btn-primary" style="margin-top: 15px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;">
                         <span data-i18n="auth-forgot-submit-btn">تحديث كلمة المرور والدخول</span> <i data-lucide="check-check"></i>
@@ -1261,7 +1261,7 @@
                             <form id="admin-reset-pw-form" style="display: flex; gap: 8px; align-items: flex-end;">
                                 <input type="hidden" id="admin-reset-user-id">
                                 <div style="flex: 1;">
-                                    <input type="password" id="admin-reset-new-password" placeholder="أدخل الباسورد الجديد (6 أحرف/أرقام كحد أدنى)" required style="height: 38px; width: 100%;">
+                                    <input type="text" id="admin-reset-new-password" placeholder="أدخل الباسورد الجديد (6 أحرف/أرقام كحد أدنى)" autocomplete="off" required style="height: 38px; width: 100%; -webkit-text-security: disc; -moz-text-security: disc; text-security: disc;">
                                 </div>
                                 <button type="submit" class="btn-primary" style="height: 38px; width: auto; min-width: 140px;">تحديث الباسورد <i data-lucide="save"></i></button>
                             </form>
@@ -1380,6 +1380,6 @@
     </div>
 
     <!-- Scripts -->
-    <script src="app.js?v=6.2"></script>
+    <script src="app.js?v=6.3"></script>
 </body>
 </html>
