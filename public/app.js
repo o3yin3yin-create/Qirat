@@ -1018,7 +1018,7 @@ function setupCandlestickTimeframes() {
 }
 
 // --- PWA REGISTRATION ---
-const CURRENT_CACHE = 'qirat-cache-v50';
+const CURRENT_CACHE = 'qirat-cache-v51';
 function registerPWA() {
     if ('serviceWorker' in navigator) {
         // First: unregister any old SW and delete all old caches
@@ -2218,7 +2218,8 @@ function renderPortfolio() {
             buyPriceText = `<span class="text-muted">${isEn ? 'Unknown' : 'غير معروف'}</span>`;
         }
 
-        const typeIcon = item.type === 'bar' ? '🥇' : item.type === 'coin' ? '🪙' : item.type === 'jewelry' ? '💎' : '🔨';
+        const typeIconName = item.type === 'bar' ? 'shield' : item.type === 'coin' ? 'disc' : item.type === 'jewelry' ? 'gem' : 'hammer';
+        const calcPricePerUnit = hasKnownCost ? (item.buyPrice / item.weight) : 0;
 
         const card = document.createElement('div');
         card.className = 'card-glass holding-item-card';
@@ -2227,25 +2228,34 @@ function renderPortfolio() {
         card.innerHTML = `
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                 <span class="badge badge-gold font-bold" style="font-size: 12px; padding: 4px 10px; border-radius: var(--radius-sm); display: inline-flex; align-items: center; gap: 6px;">
-                    <span>${typeIcon}</span> ${typeLabel} (${getKaratLabel(item.karat)})
+                    <i data-lucide="${typeIconName}" style="width: 14px; height: 14px;"></i> ${typeLabel} (${getKaratLabel(item.karat)})
                 </span>
                 <button class="delete-btn" onclick="deleteTransaction('${item.id}')" title="${isEn ? 'Delete' : 'حذف'}" style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); color: #EF4444; width: 32px; height: 32px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: var(--transition-smooth);">
                     <i data-lucide="trash-2" style="width: 14px; height: 14px;"></i>
                 </button>
             </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; background: var(--bg-dark); padding: 10px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
-                <div>
-                    <span class="text-muted" style="font-size: 10px; display: block; margin-bottom: 2px;">${isEn ? 'Total Weight' : 'الوزن الإجمالي'}</span>
-                    <span class="font-bold" style="font-size: 14px; color: var(--text-primary);">${item.weight} <span style="font-size: 11px; font-weight: 500;" class="text-muted">${item.type === 'coin' ? (isEn ? 'coin(s)' : 'جنيه') : (isEn ? 'g' : 'جرام')}</span></span>
+            <div style="background: var(--bg-dark); padding: 10px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-color); margin-bottom: 10px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: ${hasKnownCost ? '8px' : '0'};">
+                    <div>
+                        <span class="text-muted" style="font-size: 10px; display: block; margin-bottom: 2px;">${isEn ? 'Total Weight' : 'الوزن الإجمالي'}</span>
+                        <span class="font-bold" style="font-size: 14px; color: var(--text-primary);">${item.weight} <span style="font-size: 11px; font-weight: 500;" class="text-muted">${item.type === 'coin' ? (isEn ? 'coin(s)' : 'جنيه') : (isEn ? 'g' : 'جرام')}</span></span>
+                    </div>
+                    <div>
+                        <span class="text-muted" style="font-size: 10px; display: block; margin-bottom: 2px;">${isEn ? 'Total Purchase Cost' : 'إجمالي سعر الشراء'}</span>
+                        <span class="font-bold" style="font-size: 14px; color: var(--text-primary);">${hasKnownCost ? formatNumber(item.buyPrice) + ' ' + egpLabel : (isEn ? 'Unknown' : 'غير معروف')}</span>
+                    </div>
                 </div>
-                <div>
-                    <span class="text-muted" style="font-size: 10px; display: block; margin-bottom: 2px;">${isEn ? 'Total Purchase Cost' : 'إجمالي سعر الشراء'}</span>
-                    <div style="font-size: 13px;">${buyPriceText}</div>
-                </div>
+
+                ${hasKnownCost ? `
+                    <div style="border-top: 1px dashed var(--border-color); padding-top: 6px; margin-top: 4px; font-size: 11px; color: var(--text-secondary); display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                        <span>${isEn ? `Price per ${unitLabel}:` : `سعر ${unitLabel} وقت الشراء:`}</span>
+                        <span class="font-bold" style="color: var(--text-primary);">${formatNumber(calcPricePerUnit)} ${egpLabel}</span>
+                    </div>
+                ` : ''}
             </div>
 
-            <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 4px; font-size: 12px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 2px; font-size: 12px;">
                 <div>
                     <span class="text-muted" style="font-size: 10px; display: block; margin-bottom: 2px;">${isEn ? 'Current Market Value' : 'القيمة الحالية بالصاغة'}</span>
                     <span class="font-bold gold-text" style="font-size: 14px;">${formatNumber(itemValue)} ${egpLabel}</span>
